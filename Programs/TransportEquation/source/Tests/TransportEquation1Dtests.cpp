@@ -1,99 +1,20 @@
+//
+// Created by GSench on 14.12.2021.
+//
+
 #include <math.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <functional>
 
-#include "THINC1D.h"
-#include "InterpolationFunctions.h"
+#include "TransportEquation1Dtests.h"
+#include "../TransportEquationSolver/InterpolationFunctions.h"
+#include "../TransportEquationSolver/THINC1D.h"
 
 using namespace std;
 
 const string OUTPUT_PATH = R"(C:\Programing\C++\TransportEquation\)";
-
-struct THINC1Dparams {
-    int cellCount = 20;
-    double area = 1;
-    int stepN = 100;
-    double CFL = 0.3;
-    double u = 0.1;
-    double eps = 1e-4;
-    double beta = 3.5;
-    std::string resultFilename = "THINC1DOutput.txt";
-    function<function<double(double)>(vector<double>, int, double, double, double)> PsyFunc =
-        [&](const vector<double>& f, int i, double b, double h, double e)->function<double(double)> {
-        return PsyTHINCandMUSCL(f, i, b, h, e);
-    };
-};
-
-void initF(vector<double> &f, int L, int R) {
-    for (int i = 0; i < L; i++)
-        f[i] = 0;
-    f[L] = 1;
-    for (int i = L + 1; i < R; i++)
-        f[i] = 1;
-    f[R] = 1;
-    for (int i = R + 1; i < f.size(); i++)
-        f[i] = 0;
-}
-
-double THINC1D(const THINC1Dparams& p, vector<double> &f, const vector<double>& fexact) {
-    double h = p.area / p.cellCount;
-    double timeStep = p.CFL * h / p.u;
-
-    vector<double> fnext = f;
-
-    ofstream myfile;
-    myfile.open(OUTPUT_PATH+p.resultFilename);
-    myfile << "t=0" << endl;
-    for (int i = 0; i < p.cellCount; i++) {
-        myfile << (i+0.5)*h << "\t" << f[i] << endl;
-    }
-
-    for (int n = 0; n < p.stepN; n++) {
-
-        //first previous Psy is from last cell (cycled space)
-        function<double(double)> PsyPrevVirt = p.PsyFunc(f, p.cellCount - 1, p.beta, h, p.eps);
-        function<double(double)> PsyPrev = [=](double x)->double {
-            return PsyPrevVirt(x+p.cellCount*h);
-        };
-
-        for (int i = 0; i < p.cellCount; i++) {
-            int iPrev = i != 0 ? i - 1 : p.cellCount - 1;
-            int iNext = i != p.cellCount - 1 ? i + 1 : 0;
-
-            double fi = f[i];
-            double fiPrev = f[iPrev];
-            double fiNext = f[iNext];
-            double xL = i * h;
-            double xR = (i + 1) * h;
-
-            function<double(double)> Psy = p.PsyFunc(f, i, p.beta, h, p.eps);
-
-            double fiR = Psy(xR - p.u * timeStep / 2); //flow on right cell side is from current cell (upwind)
-            double fiL = PsyPrev(xL - p.u * timeStep / 2); //flow on left cell side is from previous cell (upwind)
-            fnext[i] = fi - p.u / h * (fiR - fiL) * timeStep;
-            
-            PsyPrev = Psy;
-        }
-        myfile << "t="<< n+1 << endl;
-        for (int i = 0; i < p.cellCount; i++) {
-            f[i] = fnext[i];
-            myfile << (i + 0.5) * h << "\t" << f[i] << endl;
-        }
-    }
-
-    double error = 0;
-    for (int i = 0; i < p.cellCount; i++) {
-        error += pow(f[i]*h - fexact[i] * h, 2);
-    }
-    error = sqrt(error);
-
-    myfile << "error=" << error;
-
-    myfile.close();
-    return error;
-}
 
 void oldTestCompare() {
     THINC1Dparams params;
@@ -111,9 +32,9 @@ void oldTestCompare() {
     f[0] = 0.5;
     vector<double> fexact = f;
     params.PsyFunc =
-        [&](const vector<double>& f, int i, double b, double h, double e)->function<double(double)> {
-            return PsyTHINCandGodunov(f, i, b, h, e);
-    };
+            [&](const vector<double>& f, int i, double b, double h, double e)->function<double(double)> {
+                return PsyTHINCandGodunov(f, i, b, h, e);
+            };
     THINC1D(params, f, fexact);
 }
 
@@ -177,7 +98,7 @@ void THINC1Dtests() {
         myfi << endl;
 
         for (int i = iNmin; i < iNmax; i++) {
-            int N = params.CFL * 10.0 * pow(2, i); //params.CFL*10 ÷òîáû N áûë êðàòåí CFL
+            int N = params.CFL * 10.0 * pow(2, i); //params.CFL*10 Ñ‡Ñ‚Ð¾Ð±Ñ‹ N Ð±Ñ‹Ð» ÐºÑ€Ð°Ñ‚ÐµÐ½ CFL
             params.cellCount = N;
             double L = N / 2;
             double R = N - 1;
@@ -191,7 +112,7 @@ void THINC1Dtests() {
             cout << "N" << N << "\t";
             myfi << "N" << N << "\t";
             for (int j = 0; j < jTmax; j++) {
-                params.resultFilename = "CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt";
+                params.resultFilePath = OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt";
                 double error = THINC1D(params, f, fexact);
                 printf("%.4f\t", error);
                 myfi << error << "\t";
@@ -203,5 +124,5 @@ void THINC1Dtests() {
         myfi << endl;
     }
     myfi.close();
-    
+
 }

@@ -1,5 +1,4 @@
-#include "THINC1D.h"
-#include "THINCUtils.h"
+#include "Tests/TransportEquation1Dtests.h"
 
 int main() {
     THINC1Dtests();

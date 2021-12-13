@@ -1,7 +1,7 @@
 #include <vector>
 #include <functional>
 
-#include "MathUtils.h"
+#include "../math/MathUtils.h"
 #include "THINCUtils.h"
 
 using namespace std;

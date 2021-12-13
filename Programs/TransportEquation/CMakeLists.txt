@@ -4,17 +4,17 @@ project(TransportEquation)
 set(CMAKE_CXX_STANDARD 11)
 
 set(PROJECT_HEADERS
-        InterpolationFunctions.h
-        MathUtils.h
-        THINC1D.h
-        THINCUtils.h
-        )
+        source/TransportEquationSolver/InterpolationFunctions.h
+        source/math/MathUtils.h
+        source/TransportEquationSolver/THINC1D.h
+        source/TransportEquationSolver/THINCUtils.h
+        source/Tests/TransportEquation1Dtests.cpp source/Tests/TransportEquation1Dtests.h)
 set(PROJECT_SOURCES
-        main.cpp
-        InterpolationFunctions.cpp
-        MathUtils.cpp
-        THINC1D.cpp
-        THINCUtils.cpp
-        CompilerDifferenceHighlighter.cpp)
+        source/main.cpp
+        source/TransportEquationSolver/InterpolationFunctions.cpp
+        source/math/MathUtils.cpp
+        source/TransportEquationSolver/THINC1D.cpp
+        source/TransportEquationSolver/THINCUtils.cpp
+        source/stuff/CompilerDifferenceHighlighter.cpp source/Tests/TransportEquation1Dtests.cpp source/Tests/TransportEquation1Dtests.h source/TransportEquationSolver/THINC1DparamsStruct.h)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})
