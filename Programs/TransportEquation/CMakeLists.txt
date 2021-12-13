@@ -15,6 +15,6 @@ set(PROJECT_SOURCES
         source/math/MathUtils.cpp
         source/TransportEquationSolver/Solver1D/THINC1D.cpp
         source/TransportEquationSolver/THINCUtils.cpp
-        source/stuff/CompilerDifferenceHighlighter.cpp source/Tests/TransportEquation1Dtests.cpp source/Tests/TransportEquation1Dtests.h source/TransportEquationSolver/Solver1D/THINC1DparamsStruct.h)
+        source/stuff/CompilerDifferenceHighlighter.cpp source/Tests/TransportEquation1Dtests.cpp source/Tests/TransportEquation1Dtests.h source/TransportEquationSolver/Solver1D/THINC1DparamsStruct.h source/TransportEquationSolver/Solver2D/World2D.cpp source/TransportEquationSolver/Solver2D/World2D.h source/TransportEquationSolver/Solver2D/Solver2D.cpp source/TransportEquationSolver/Solver2D/Solver2D.h)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})

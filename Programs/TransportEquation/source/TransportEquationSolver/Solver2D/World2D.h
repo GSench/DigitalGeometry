@@ -1,0 +1,14 @@
+//
+// Created by GSench on 14.12.2021.
+//
+
+#ifndef TRANSPORTEQUATION_WORLD2D_H
+#define TRANSPORTEQUATION_WORLD2D_H
+
+
+class World2D {
+
+};
+
+
+#endif //TRANSPORTEQUATION_WORLD2D_H
