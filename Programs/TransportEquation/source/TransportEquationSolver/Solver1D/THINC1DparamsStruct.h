@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "InterpolationFunctions.h"
+#include "../InterpolationFunctions.h"
 
 using namespace std;
 

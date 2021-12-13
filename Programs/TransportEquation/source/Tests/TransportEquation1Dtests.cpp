@@ -10,7 +10,7 @@
 
 #include "TransportEquation1Dtests.h"
 #include "../TransportEquationSolver/InterpolationFunctions.h"
-#include "../TransportEquationSolver/THINC1D.h"
+#include "../TransportEquationSolver/Solver1D/THINC1D.h"
 
 using namespace std;
 

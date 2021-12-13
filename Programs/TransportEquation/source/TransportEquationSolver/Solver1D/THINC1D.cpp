@@ -5,7 +5,7 @@
 #include <functional>
 
 #include "THINC1D.h"
-#include "InterpolationFunctions.h"
+#include "../InterpolationFunctions.h"
 
 using namespace std;
 
