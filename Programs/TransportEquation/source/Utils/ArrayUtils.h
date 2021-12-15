@@ -5,6 +5,7 @@
 #ifndef TRANSPORTEQUATION_ARRAYUTILS_H
 #define TRANSPORTEQUATION_ARRAYUTILS_H
 
-double** define2DArray(int n, int m, double val);
+template <typename T>
+T** define2DArray(int n, int m, T val);
 
 #endif //TRANSPORTEQUATION_ARRAYUTILS_H

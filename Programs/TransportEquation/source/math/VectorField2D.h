@@ -7,6 +7,7 @@
 
 
 class VectorField2D {
+private:
 
 };
 

@@ -11,10 +11,8 @@
 
 using namespace std;
 
-const int X = 0;
 const int XL = 0;
 const int XR = 1;
-const int Y = 1;
 const int YL = 2;
 const int YR = 3;
 
