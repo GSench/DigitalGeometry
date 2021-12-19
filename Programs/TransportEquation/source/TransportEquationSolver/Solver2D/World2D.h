@@ -24,7 +24,7 @@ private:
     double height = 1;
     double dx = width/widthI;
     double dy = height/heightI;
-    double** world;
+    vector<double> world;
 public:
     World2D(int widthI, int heightI, double width, double height):
         widthI(widthI),
@@ -33,23 +33,23 @@ public:
         height(height),
         dx(width/widthI),
         dy(height/heightI),
-        world(define2DArray(widthI, heightI, 0)){}
+        world(widthI * heightI){}
     double get(int ix, int iy){
         //xi %= widthI;
         //yi %= heightI;
-        return world[iy][ix];
+        return world[iy * widthI + ix];
     }
     void set(int ix, int iy, double val){
         //xi %= widthI;
         //yi %= heightI;
-        world[iy][ix] = val;
+        world[iy * widthI + ix] = val;
     }
     double getWithOffset(int ix, int iy, int offsetIX, int offsetIY){
         ix = (ix+offsetIX) % widthI;
         ix += (ix<0) * widthI;
         iy = (iy+offsetIY) % heightI;
         iy += (iy<0) * heightI;
-        return world[iy][ix];
+        return world[iy * widthI + ix];
     }
     void getCellBounds(int xi, int yi, double cell[]) const {
         //xi %= widthI;

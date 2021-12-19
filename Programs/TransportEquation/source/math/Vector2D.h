@@ -5,7 +5,8 @@
 #ifndef TRANSPORTEQUATION_VECTOR2D_H
 #define TRANSPORTEQUATION_VECTOR2D_H
 
-#include "MathUtils.h"
+const int X = 0;
+const int Y = 1;
 
 class Vector2D {
 public:
