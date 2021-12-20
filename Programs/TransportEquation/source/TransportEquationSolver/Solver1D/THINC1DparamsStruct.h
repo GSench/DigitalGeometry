@@ -13,9 +13,10 @@ struct THINC1Dparams {
     double u = 0.1;
     double eps = 1e-4;
     double beta = 3.5;
-    std::string resultFilePath = "THINC1DOutput.txt";
+    string resultFilePath = "THINC1DOutput.txt";
     function<function<double(double)>(double, double, double, int, double, double, double)> PsyFunc =
             [&](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
                 return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);
             };
+    string PsyFuncName = "Psy THINC + MUSCL";
 };

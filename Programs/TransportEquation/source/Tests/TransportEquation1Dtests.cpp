@@ -7,6 +7,7 @@
 #include <fstream>
 #include <vector>
 #include <functional>
+#include <iterator>
 
 #include "TransportEquation1Dtests.h"
 #include "../TransportEquationSolver/InterpolationFunctions.h"
@@ -125,4 +126,69 @@ void THINC1Dtests() {
     }
     myfi.close();
 
+}
+
+void test1DSolution(const vector<double>& f,
+                    const string& debugFilePath,
+                    const THINC1Dparams& params,
+                    double acceptDiffer) {
+    ifstream debugFile(debugFilePath);
+    double fiDebug;
+    istream_iterator<double> start(debugFile), end;
+    vector<double> fDebug(start, end);
+    bool FAIL = false;
+    for(int i=0; i<params.cellCount; i++){
+        if(abs(f[i]-fDebug[i]) > acceptDiffer){
+            cout <<
+            "ERROR at " << i << " cell: " <<
+            "fNew = " << f[i] << " , fOld = " << fDebug[i] <<
+            " difference = " << abs(f[i]-fDebug[i]) << endl;
+            FAIL = true;
+        }
+    }
+    cout << endl <<
+    "------------------" << endl <<
+    "Psy function: " << params.PsyFuncName << endl <<
+    "cellCount: " << params.cellCount << " stepN: " << params.stepN << endl <<
+    "CFL: " << params.CFL << " Area size: " << params.area << endl <<
+    "beta: " << params.beta << " eps: " << params.eps << " u: " << params.u << endl <<
+    "------------------" << endl <<
+    (FAIL ? "TEST FAILED" : "TEST SUCCEEDED") << endl;
+}
+
+void test1DSolver(){
+    // Debug params
+    THINC1Dparams params;
+
+    // Scalar params
+    params.area = 1;
+    params.u = 0.1;
+    params.eps = 1e-4;
+    params.beta = 3.5;
+
+    // Test specific params
+    params.PsyFunc = [=](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
+        return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);
+    };
+    params.PsyFuncName = "Psy THINC + MUSCL";
+    params.CFL = 0.3;
+    int i = 9;
+    int N = params.CFL * 10.0 * pow(2, i);
+    params.cellCount = N;
+    int T = (double) N / params.CFL;
+    int j = 6;
+    params.stepN = T * j;
+
+    // f init
+    double L = N / 2;
+    double R = N - 1;
+    vector<double> f(N);
+    initF(f, L, R);
+    vector<double> fexact = f;
+
+    THINC1D(params, f, fexact);
+
+    string debugFilePath =
+            "C:\\Programing\\Projects\\DigitalGeometry\\Programs\\Output\\StandardResults\\THINC_MUSCL\\N768_T6.txt";
+    test1DSolution(f, debugFilePath, params, 0.0);
 }
