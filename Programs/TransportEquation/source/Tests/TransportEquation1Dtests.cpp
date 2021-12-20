@@ -14,7 +14,7 @@
 
 using namespace std;
 
-const string OUTPUT_PATH = R"(C:\Programing\C++\TransportEquation\)";
+const string OUTPUT_PATH = R"(C:\Programing\Projects\DigitalGeometry\Programs\Output\)";
 
 void oldTestCompare() {
     THINC1Dparams params;
@@ -32,8 +32,8 @@ void oldTestCompare() {
     f[0] = 0.5;
     vector<double> fexact = f;
     params.PsyFunc =
-            [&](const vector<double>& f, int i, double b, double h, double e)->function<double(double)> {
-                return PsyTHINCandGodunov(f, i, b, h, e);
+            [&](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
+                return PsyTHINCandGodunov(fi, fiPrev, fiNext, i, b, h, e);
             };
     THINC1D(params, f, fexact);
 }
@@ -49,8 +49,8 @@ void debugDifference(){
     vector<double> fexact = f;
     int T = (double)N / params.CFL;
     params.stepN = T*2;
-    params.PsyFunc = [&](const vector<double>& f, int i, double b, double h, double e)->function<double(double)> {
-        return PsyTHINCandMUSCL(f, i, b, h, e);
+    params.PsyFunc = [&](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
+        return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);
     };
     THINC1D(params, f, fexact);
 }
@@ -67,18 +67,18 @@ void THINC1Dtests() {
     myfi.open(OUTPUT_PATH+"CalculationResults/error.txt");
     myfi << endl;
 
-    vector< function<function<double(double)>(vector<double>, int, double, double, double)> > PsyFunctions(4);
-    PsyFunctions[0] = [&](const vector<double>& f, int i, double b, double h, double e)->function<double(double)> {
-        return PsyGodunov(f, i, b, h, e);
+    vector< function<function<double(double)>(double, double, double, int, double, double, double)> > PsyFunctions(4);
+    PsyFunctions[0] = [=](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
+        return PsyGodunov(fi);
     };
-    PsyFunctions[1] = [&](const vector<double>& f, int i, double b, double h, double e)->function<double(double)> {
-        return PsyMUSCL(f, i, b, h, e);
+    PsyFunctions[1] = [=](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
+        return PsyMUSCL(fi, fiPrev, fiNext, i, h);
     };
-    PsyFunctions[2] = [&](const vector<double>& f, int i, double b, double h, double e)->function<double(double)> {
-        return PsyTHINCandGodunov(f, i, b, h, e);
+    PsyFunctions[2] = [=](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
+        return PsyTHINCandGodunov(fi, fiPrev, fiNext, i, b, h, e);
     };
-    PsyFunctions[3] = [&](const vector<double>& f, int i, double b, double h, double e)->function<double(double)> {
-        return PsyTHINCandMUSCL(f, i, b, h, e);
+    PsyFunctions[3] = [=](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
+        return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);
     };
 
     vector<string> titles{ "Godunov", "MUSCL", "THINC_Godunov", "THINC_MUSCL" };

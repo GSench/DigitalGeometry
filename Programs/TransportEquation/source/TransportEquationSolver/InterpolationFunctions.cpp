@@ -6,20 +6,13 @@
 
 using namespace std;
 
-function<double(double)> PsyGodunov(const vector<double>& f, int i, double beta, double h, double eps) {
+function<double(double)> PsyGodunov(double fi) {
     return [=](double x)->double {
-        return f[i];
+        return fi;
     };
 }
 
-function<double(double)> PsyMUSCL(const vector<double>& f, int i, double beta, double h, double eps) {
-    int iPrev = i != 0 ? i - 1 : f.size() - 1;
-    int iNext = i != f.size() - 1 ? i + 1 : 0;
-
-    double fi = f[i];
-    double fiPrev = f[iPrev];
-    double fiNext = f[iNext];
-
+function<double(double)> PsyMUSCL(double fi, double fiPrev, double fiNext, int i, double h) {
     double dfR = (fiNext - fi) / h;
     double dfL = (fi - fiPrev) / h;
 
@@ -31,17 +24,9 @@ function<double(double)> PsyMUSCL(const vector<double>& f, int i, double beta, d
     };
 }
 
-function<double(double)> PsyTHINCandGodunov(const vector<double>& f, int i, double beta, double h, double eps) {
-
-    int iPrev = i != 0 ? i - 1 : f.size() - 1;
-    int iNext = i != f.size() - 1 ? i + 1 : 0;
-
+function<double(double)> PsyTHINCandGodunov(double fi, double fiPrev, double fiNext, int i, double beta, double h, double eps) {
     double xL = i * h;
-    double xR = (i + 1) * h;
-
-    double fi = f[i];
-    double fiPrev = f[iPrev];
-    double fiNext = f[iNext];
+    //double xR = (i + 1) * h;
 
     double fiMin = min(fiPrev, fiNext);
     double fiMax = max(fiPrev, fiNext);
@@ -60,17 +45,9 @@ function<double(double)> PsyTHINCandGodunov(const vector<double>& f, int i, doub
     };
 }
 
-function<double(double)> PsyTHINCandMUSCL(const vector<double>& f, int i, double beta, double h, double eps) {
-
-    int iPrev = i != 0 ? i - 1 : f.size() - 1;
-    int iNext = i != f.size() - 1 ? i + 1 : 0;
-
+function<double(double)> PsyTHINCandMUSCL(double fi, double fiPrev, double fiNext, int i, double beta, double h, double eps) {
     double xL = i * h;
-    double xR = (i + 1) * h;
-
-    double fi = f[i];
-    double fiPrev = f[iPrev];
-    double fiNext = f[iNext];
+    //double xR = (i + 1) * h;
 
     double fiMin = min(fiPrev, fiNext);
     double fiMax = max(fiPrev, fiNext);

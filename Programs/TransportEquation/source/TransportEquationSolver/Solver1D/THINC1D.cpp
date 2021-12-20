@@ -36,7 +36,14 @@ double THINC1D(const THINC1Dparams& p, vector<double> &f, const vector<double>& 
     for (int n = 0; n < p.stepN; n++) {
 
         //first previous Psy is from last cell (cycled space)
-        function<double(double)> PsyPrevVirt = p.PsyFunc(f, p.cellCount - 1, p.beta, h, p.eps);
+        function<double(double)> PsyPrevVirt = p.PsyFunc(
+                f[p.cellCount - 1],
+                f[p.cellCount - 2],
+                f[0],
+                p.cellCount - 1,
+                p.beta,
+                h,
+                p.eps);
         function<double(double)> PsyPrev = [=](double x)->double {
             return PsyPrevVirt(x+p.cellCount*h);
         };
@@ -51,7 +58,7 @@ double THINC1D(const THINC1Dparams& p, vector<double> &f, const vector<double>& 
             double xL = i * h;
             double xR = (i + 1) * h;
 
-            function<double(double)> Psy = p.PsyFunc(f, i, p.beta, h, p.eps);
+            function<double(double)> Psy = p.PsyFunc(fi, fiPrev, fiNext, i, p.beta, h, p.eps);
 
             double fiR = Psy(xR - p.u * timeStep / 2); //flow on right cell side is from current cell (upwind)
             double fiL = PsyPrev(xL - p.u * timeStep / 2); //flow on left cell side is from previous cell (upwind)
