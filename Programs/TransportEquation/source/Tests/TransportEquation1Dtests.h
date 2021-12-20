@@ -4,3 +4,4 @@
 void THINC1Dtests();
 void oldTestCompare();
 void debugDifference();
+void test1DSolver();

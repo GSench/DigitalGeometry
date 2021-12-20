@@ -17,45 +17,6 @@ using namespace std;
 
 const string OUTPUT_PATH = R"(C:\Programing\Projects\DigitalGeometry\Programs\Output\)";
 
-void oldTestCompare() {
-    THINC1Dparams params;
-    params.cellCount = 20;
-    int hsL = params.cellCount / 2;
-    params.area = 1;
-    params.stepN = 100;
-    params.CFL = 0.3;
-    params.u = 0.1;
-    params.eps = 1e-4;
-    params.beta = 3.5;
-    vector<double> f(params.cellCount);
-    initF(f, hsL, params.cellCount-1);
-    f[hsL - 1] = 0.5;
-    f[0] = 0.5;
-    vector<double> fexact = f;
-    params.PsyFunc =
-            [&](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
-                return PsyTHINCandGodunov(fi, fiPrev, fiNext, i, b, h, e);
-            };
-    THINC1D(params, f, fexact);
-}
-
-void debugDifference(){
-    THINC1Dparams params;
-    int N = 12;
-    params.cellCount = N;
-    double L = N / 2;
-    double R = N - 1;
-    vector<double> f(N);
-    initF(f, L, R);
-    vector<double> fexact = f;
-    int T = (double)N / params.CFL;
-    params.stepN = T*2;
-    params.PsyFunc = [&](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
-        return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);
-    };
-    THINC1D(params, f, fexact);
-}
-
 void THINC1Dtests() {
 
     int iNmax = 9;
@@ -128,16 +89,33 @@ void THINC1Dtests() {
 
 }
 
-void test1DSolution(const vector<double>& f,
+bool test1DSolution(const vector<double>& f,
                     const string& debugFilePath,
-                    const THINC1Dparams& params,
+                    double cellCount,
                     double acceptDiffer) {
     ifstream debugFile(debugFilePath);
-    double fiDebug;
-    istream_iterator<double> start(debugFile), end;
-    vector<double> fDebug(start, end);
+    double xiDebug, fiDebug;
+    string s;
+    double v, error = 0;
+    vector<double> fDebug(cellCount, 0.0);
+    cout << "READING FILE: " << debugFilePath << endl;
+    while(true){
+        debugFile >> s >> v;
+        if(s=="error"){
+            //cout << "error = "<< v << endl;
+            error = v;
+            break;
+        } else if(s=="t") {
+            //cout << "t = " << v << endl;
+            for(int i=0; i<cellCount; i++){
+                debugFile >> xiDebug >> fiDebug;
+                fDebug[i] = fiDebug;
+            }
+        }
+    }
+
     bool FAIL = false;
-    for(int i=0; i<params.cellCount; i++){
+    for(int i=0; i<cellCount; i++){
         if(abs(f[i]-fDebug[i]) > acceptDiffer){
             cout <<
             "ERROR at " << i << " cell: " <<
@@ -146,14 +124,7 @@ void test1DSolution(const vector<double>& f,
             FAIL = true;
         }
     }
-    cout << endl <<
-    "------------------" << endl <<
-    "Psy function: " << params.PsyFuncName << endl <<
-    "cellCount: " << params.cellCount << " stepN: " << params.stepN << endl <<
-    "CFL: " << params.CFL << " Area size: " << params.area << endl <<
-    "beta: " << params.beta << " eps: " << params.eps << " u: " << params.u << endl <<
-    "------------------" << endl <<
-    (FAIL ? "TEST FAILED" : "TEST SUCCEEDED") << endl;
+    return !FAIL;
 }
 
 void test1DSolver(){
@@ -172,7 +143,7 @@ void test1DSolver(){
     };
     params.PsyFuncName = "Psy THINC + MUSCL";
     params.CFL = 0.3;
-    int i = 9;
+    int i = 8;
     int N = params.CFL * 10.0 * pow(2, i);
     params.cellCount = N;
     int T = (double) N / params.CFL;
@@ -190,5 +161,14 @@ void test1DSolver(){
 
     string debugFilePath =
             "C:\\Programing\\Projects\\DigitalGeometry\\Programs\\Output\\StandardResults\\THINC_MUSCL\\N768_T6.txt";
-    test1DSolution(f, debugFilePath, params, 0.0);
+    bool testResult = test1DSolution(f, debugFilePath, params.cellCount, 1e-6);
+
+    cout << endl <<
+         "------------------" << endl <<
+         "Psy function: " << params.PsyFuncName << endl <<
+         "cellCount: " << params.cellCount << " stepN: " << params.stepN << endl <<
+         "CFL: " << params.CFL << " Area size: " << params.area << endl <<
+         "beta: " << params.beta << " eps: " << params.eps << " u: " << params.u << endl <<
+         "------------------" << endl <<
+         (testResult ? "TEST SUCCEEDED" : "TEST FAILED") << endl;
 }
