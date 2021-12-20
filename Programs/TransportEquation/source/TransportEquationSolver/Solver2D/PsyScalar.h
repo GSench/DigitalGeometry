@@ -2,11 +2,12 @@
 // Created by GSench on 14.12.2021.
 //
 
-#ifndef TRANSPORTEQUATION_WORLD2D_H
-#define TRANSPORTEQUATION_WORLD2D_H
+#ifndef TRANSPORTEQUATION_PSYSCALAR_H
+#define TRANSPORTEQUATION_PSYSCALAR_H
 
 #include <vector>
 #include <cstdlib>
+#include <fstream>
 #include "../../Utils/ArrayUtils.h"
 
 using namespace std;
@@ -16,7 +17,7 @@ const int XR = 1;
 const int YL = 2;
 const int YR = 3;
 
-class World2D {
+class PsyScalar {
 private:
     int widthI = 100;
     int heightI = 100;
@@ -26,7 +27,7 @@ private:
     double dy = height/heightI;
     vector<double> world;
 public:
-    World2D(int widthI, int heightI, double width, double height):
+    PsyScalar(int widthI, int heightI, double width, double height):
         widthI(widthI),
         heightI(heightI),
         width(width),
@@ -59,7 +60,15 @@ public:
         cell[YL] = yi * dy;
         cell[YR] = (yi+1) * dy;
     }
+    void printToFile(ofstream& file, bool printAxes){
+        // TODO print Axes if printAxes
+        for(int iy = 0; iy < heightI; iy++){
+            for(int ix = 0; ix < widthI; ix++)
+                file << world[iy*widthI + ix] << '\t';
+            file << endl;
+        }
+    }
 };
 
 
-#endif //TRANSPORTEQUATION_WORLD2D_H
+#endif //TRANSPORTEQUATION_PSYSCALAR_H
