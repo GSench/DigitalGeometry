@@ -235,8 +235,8 @@ void test1DSolverStandard(){
     THINC1D(params, f, fexact);
     cout << "Computing with standard solver" << endl;
     THINC1DDebug(paramsDebug, fStd, fExStd);
-    for(int i=0; i<fStd.size(); i++)
-        cout << i << "\t" << fStd[i] << endl;
+    /*for(int i=0; i<fStd.size(); i++)
+        cout << i << "\t" << fStd[i] << endl;*/
     cout << "Comparing solutions" << endl;
     bool testResult = compare1DSolutions(f, fStd, params.cellCount, 0.0);
 
