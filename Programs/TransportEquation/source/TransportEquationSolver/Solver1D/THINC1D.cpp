@@ -61,6 +61,7 @@ void THINC1D(const THINC1Dparams& p, vector<double> &f, Solver1DOutput& output) 
         }
         for (int i = 0; i < p.cellCount; i++)
             f[i] = fnext[i];
+        output.print(f, n+1, h);
     }
 }
 
