@@ -182,44 +182,44 @@ void test1DSolverWithFile(){
 
 void test1DSolverStandard(){
     // Debug params
-    THINC1Dparams params;
     THINC1DparamsDebug paramsDebug;
 
     // Scalar params
-    params.area = 1;
-    params.u = 0.1;
-    params.eps = 1e-4;
-    params.beta = 3.5;
-
     paramsDebug.area = 1;
     paramsDebug.u = 0.1;
     paramsDebug.eps = 1e-4;
     paramsDebug.beta = 3.5;
 
     // Test specific params
+    paramsDebug.PsyFunc = [=](const vector<double>& f, int i, double beta, double h, double eps)->function<double(double)> {
+        return PsyTHINCandMUSCLDebug(f, i, beta, h, eps);
+    };
+
+    paramsDebug.CFL = 0.3;
+
+    int i = 8;
+    int N = paramsDebug.CFL * 10.0 * pow(2, i);
+    paramsDebug.cellCount = N;
+
+    int T = (double) N / paramsDebug.CFL;
+    int j = 6;
+    int time = T * j;
+    paramsDebug.stepN = time;
+
+    THINC1Dparams params;
+    params.area = 1;
+    params.u = 0.1;
+    params.eps = 1e-4;
+    params.beta = 3.5;
     params.PsyFunc = [=](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
         return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);
     };
     params.PsyFuncName = "Psy THINC + MUSCL";
     params.resultFilePath = "";
-
-    paramsDebug.PsyFunc = [=](const vector<double>& f, int i, double beta, double h, double eps)->function<double(double)> {
-        return PsyTHINCandMUSCLDebug(f, i, beta, h, eps);
-    };
-
     params.CFL = 0.3;
-    paramsDebug.CFL = 0.3;
-
-    int i = 8;
-    int N = params.CFL * 10.0 * pow(2, i);
     params.cellCount = N;
-    paramsDebug.cellCount = N;
-
-    int T = (double) N / params.CFL;
-    int j = 6;
-    int time = T * j;
     params.stepN = time;
-    paramsDebug.stepN = time;
+
 
     // f init
     double L = N / 2;
