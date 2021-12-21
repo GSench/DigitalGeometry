@@ -1,6 +1,6 @@
 #include "Tests/TransportEquation1Dtests.h"
 
 int main() {
-    test1DSolver();
+    test1DSolverStandard();
     return 0;
 }

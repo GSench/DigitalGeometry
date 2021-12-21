@@ -12,6 +12,7 @@
 #include "TransportEquation1Dtests.h"
 #include "../TransportEquationSolver/InterpolationFunctions.h"
 #include "../TransportEquationSolver/Solver1D/THINC1D.h"
+#include "StandardSolver.h"
 
 using namespace std;
 
@@ -89,10 +90,25 @@ void THINC1Dtests() {
 
 }
 
-bool test1DSolution(const vector<double>& f,
-                    const string& debugFilePath,
-                    double cellCount,
-                    double acceptDiffer) {
+bool compare1DSolutions(const vector<double>& f1, const vector<double>& f2, int cellCount, double acceptDiffer){
+    bool FAIL = false;
+    for(int i=0; i<cellCount; i++){
+        double diff = abs(f1[i]-f2[i]);
+        if(diff > acceptDiffer){
+            cout <<
+                 "ERROR at " << i << " cell: " <<
+                 "f1 = " << f1[i] << " , f2 = " << f2[i] <<
+                 " difference = " << diff << endl;
+            FAIL = true;
+        }
+    }
+    return !FAIL;
+}
+
+bool test1DSolutionWithFile(const vector<double>& f,
+                            const string& debugFilePath,
+                            double cellCount,
+                            double acceptDiffer) {
     ifstream debugFile(debugFilePath);
     double xiDebug, fiDebug;
     string s;
@@ -114,20 +130,11 @@ bool test1DSolution(const vector<double>& f,
         }
     }
 
-    bool FAIL = false;
-    for(int i=0; i<cellCount; i++){
-        if(abs(f[i]-fDebug[i]) > acceptDiffer){
-            cout <<
-            "ERROR at " << i << " cell: " <<
-            "fNew = " << f[i] << " , fOld = " << fDebug[i] <<
-            " difference = " << abs(f[i]-fDebug[i]) << endl;
-            FAIL = true;
-        }
-    }
-    return !FAIL;
+
+    return compare1DSolutions(f, fDebug, cellCount, acceptDiffer);
 }
 
-void test1DSolver(){
+void test1DSolverWithFile(){
     // Debug params
     THINC1Dparams params;
 
@@ -161,7 +168,77 @@ void test1DSolver(){
 
     string debugFilePath =
             "C:\\Programing\\Projects\\DigitalGeometry\\Programs\\Output\\StandardResults\\THINC_MUSCL\\N768_T6.txt";
-    bool testResult = test1DSolution(f, debugFilePath, params.cellCount, 1e-6);
+    bool testResult = test1DSolutionWithFile(f, debugFilePath, params.cellCount, 1e-6);
+
+    cout << endl <<
+         "------------------" << endl <<
+         "Psy function: " << params.PsyFuncName << endl <<
+         "cellCount: " << params.cellCount << " stepN: " << params.stepN << endl <<
+         "CFL: " << params.CFL << " Area size: " << params.area << endl <<
+         "beta: " << params.beta << " eps: " << params.eps << " u: " << params.u << endl <<
+         "------------------" << endl <<
+         (testResult ? "TEST SUCCEEDED" : "TEST FAILED") << endl;
+}
+
+void test1DSolverStandard(){
+    // Debug params
+    THINC1Dparams params;
+    THINC1DparamsDebug paramsDebug;
+
+    // Scalar params
+    params.area = 1;
+    params.u = 0.1;
+    params.eps = 1e-4;
+    params.beta = 3.5;
+
+    paramsDebug.area = 1;
+    paramsDebug.u = 0.1;
+    paramsDebug.eps = 1e-4;
+    paramsDebug.beta = 3.5;
+
+    // Test specific params
+    params.PsyFunc = [=](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
+        return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);
+    };
+    params.PsyFuncName = "Psy THINC + MUSCL";
+    params.resultFilePath = "";
+
+    paramsDebug.PsyFunc = [=](const vector<double>& f, int i, double beta, double h, double eps)->function<double(double)> {
+        return PsyTHINCandMUSCLDebug(f, i, beta, h, eps);
+    };
+
+    params.CFL = 0.3;
+    paramsDebug.CFL = 0.3;
+
+    int i = 8;
+    int N = params.CFL * 10.0 * pow(2, i);
+    params.cellCount = N;
+    paramsDebug.cellCount = N;
+
+    int T = (double) N / params.CFL;
+    int j = 6;
+    int time = T * j;
+    params.stepN = time;
+    paramsDebug.stepN = time;
+
+    // f init
+    double L = N / 2;
+    double R = N - 1;
+    vector<double> f(N);
+    initF(f, L, R);
+    vector<double> fexact = f;
+
+    vector<double> fStd = f;
+    vector<double> fExStd = fexact;
+
+    cout << "Computing with current solver" << endl;
+    THINC1D(params, f, fexact);
+    cout << "Computing with standard solver" << endl;
+    THINC1DDebug(paramsDebug, fStd, fExStd);
+    for(int i=0; i<fStd.size(); i++)
+        cout << i << "\t" << fStd[i] << endl;
+    cout << "Comparing solutions" << endl;
+    bool testResult = compare1DSolutions(f, fStd, params.cellCount, 0.0);
 
     cout << endl <<
          "------------------" << endl <<
