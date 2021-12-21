@@ -1,11 +1,10 @@
-#include <math.h>
-#include <iostream>
-#include <fstream>
+#include <cmath>
 #include <vector>
 #include <functional>
 
 #include "THINC1D.h"
 #include "../InterpolationFunctions.h"
+#include "Solver1DOutput.h"
 
 using namespace std;
 
@@ -20,18 +19,12 @@ void initF(vector<double> &f, int L, int R) {
         f[i] = 0;
 }
 
-double THINC1D(const THINC1Dparams& p, vector<double> &f, const vector<double>& fexact) {
+void THINC1D(const THINC1Dparams& p, vector<double> &f, Solver1DOutput& output) {
     double h = p.area / p.cellCount;
     double timeStep = p.CFL * h / p.u;
-
     vector<double> fnext = f;
 
-    ofstream myfile;
-    myfile.open(p.resultFilePath);
-    myfile << "t=0" << endl;
-    for (int i = 0; i < p.cellCount; i++) {
-        myfile << (i+0.5)*h << "\t" << f[i] << endl;
-    }
+    output.print(f, 0, h);
 
     for (int n = 0; n < p.stepN; n++) {
 
@@ -66,22 +59,16 @@ double THINC1D(const THINC1Dparams& p, vector<double> &f, const vector<double>& 
             
             PsyPrev = Psy;
         }
-        myfile << "t="<< n+1 << endl;
-        for (int i = 0; i < p.cellCount; i++) {
+        for (int i = 0; i < p.cellCount; i++)
             f[i] = fnext[i];
-            myfile << (i + 0.5) * h << "\t" << f[i] << endl;
-        }
     }
+}
 
+double errorL2(vector<double> &f, const vector<double>& fexact, double h){
     double error = 0;
-    for (int i = 0; i < p.cellCount; i++) {
+    for (int i = 0; i < f.size(); i++) {
         error += pow(f[i]*h - fexact[i] * h, 2);
     }
     error = sqrt(error);
-
-    myfile << "error=" << error;
-
-    myfile.close();
     return error;
 }
-

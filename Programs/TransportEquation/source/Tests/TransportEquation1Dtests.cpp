@@ -4,7 +4,6 @@
 
 #include <math.h>
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include <functional>
 #include <iterator>
@@ -13,6 +12,7 @@
 #include "../TransportEquationSolver/InterpolationFunctions.h"
 #include "../TransportEquationSolver/Solver1D/THINC1D.h"
 #include "StandardSolver.h"
+#include "../TransportEquationSolver/Solver1D/Solver1DOutput.h"
 
 using namespace std;
 
@@ -75,8 +75,16 @@ void THINC1Dtests() {
             cout << "N" << N << "\t";
             myfi << "N" << N << "\t";
             for (int j = 0; j < jTmax; j++) {
-                params.resultFilePath = OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt";
-                double error = THINC1D(params, f, fexact);
+                Solver1DOutput output(
+                        true,
+                        true,
+                        true,
+                        OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt");
+                THINC1D(params, f, output);
+                double error = errorL2(f, fexact, params.area/params.cellCount);
+                string errorLine = "error "+ to_string(error);
+                output.printLine(errorLine);
+                output.finish();
                 printf("%.4f\t", error);
                 myfi << error << "\t";
             }
@@ -162,9 +170,9 @@ void test1DSolverWithFile(){
     double R = N - 1;
     vector<double> f(N);
     initF(f, L, R);
-    vector<double> fexact = f;
 
-    THINC1D(params, f, fexact);
+    Solver1DOutput nOut = noOutput();
+    THINC1D(params, f, nOut);
 
     string debugFilePath =
             "C:\\Programing\\Projects\\DigitalGeometry\\Programs\\Output\\StandardResults\\THINC_MUSCL\\N768_T6.txt";
@@ -215,7 +223,6 @@ void test1DSolverStandard(){
         return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);
     };
     params.PsyFuncName = "Psy THINC + MUSCL";
-    params.resultFilePath = "";
     params.CFL = 0.3;
     params.cellCount = N;
     params.stepN = time;
@@ -232,7 +239,8 @@ void test1DSolverStandard(){
     vector<double> fExStd = fexact;
 
     cout << "Computing with current solver" << endl;
-    THINC1D(params, f, fexact);
+    Solver1DOutput nOut = noOutput();
+    THINC1D(params, f, nOut);
     cout << "Computing with standard solver" << endl;
     THINC1DDebug(paramsDebug, fStd, fExStd);
     /*for(int i=0; i<fStd.size(); i++)
