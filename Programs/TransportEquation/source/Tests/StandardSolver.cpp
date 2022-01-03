@@ -159,7 +159,7 @@ double THINC1DDebug(const THINC1DparamsDebug& p, vector<double> &f, const vector
 
             double fiR = Psy(xR - p.u * timeStep / 2); //flow on right cell side is from current cell (upwind)
             double fiL = PsyPrev(xL - p.u * timeStep / 2); //flow on left cell side is from previous cell (upwind)
-            fnext[i] = fi - p.u / h * (fiR - fiL) * timeStep;
+            fnext[i] = fi - 1.0 / h * (fiR * p.u - fiL * p.u) * timeStep;
 
             PsyPrev = Psy;
         }

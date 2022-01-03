@@ -69,6 +69,11 @@ void THINC1Dtests() {
             initF(f, L, R);
             vector<double> fexact = f;
 
+            vector<double> uStatic(params.cellCount+1, 0.1);
+            function<vector<double>(int)> u = [=](int t05n)->vector<double>{
+                return uStatic;
+            };
+
             int T = (double)N / params.CFL;
             params.stepN = T;
 
@@ -80,7 +85,7 @@ void THINC1Dtests() {
                         true,
                         true,
                         OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt");
-                SolveTransportEquation1D(params, f, output);
+                SolveTransportEquation1D(params, f, u, output);
                 double error = errorL2(f, fexact, params.area/params.cellCount);
                 string errorLine = "error "+ to_string(error);
                 output.printLine(errorLine);
@@ -171,8 +176,13 @@ void test1DSolverWithFile(){
     vector<double> f(N);
     initF(f, L, R);
 
+    vector<double> uStatic(params.cellCount+1, 0.1);
+    function<vector<double>(int)> u = [=](int t05n)->vector<double>{
+        return uStatic;
+    };
+
     Solver1DOutput nOut = noOutput();
-    SolveTransportEquation1D(params, f, nOut);
+    SolveTransportEquation1D(params, f, u, nOut);
 
     string debugFilePath =
             "C:\\Programing\\Projects\\DigitalGeometry\\Programs\\Output\\StandardResults\\THINC_MUSCL\\N768_T6.txt";
@@ -227,6 +237,11 @@ void test1DSolverStandard(){
     params.cellCount = N;
     params.stepN = time;
 
+    vector<double> uStatic(params.cellCount+1, 0.1);
+    function<vector<double>(int)> u = [=](int t05n)->vector<double>{
+        return uStatic;
+    };
+
 
     // f init
     double L = N / 2;
@@ -240,7 +255,7 @@ void test1DSolverStandard(){
 
     cout << "Computing with current solver" << endl;
     Solver1DOutput nOut = noOutput();
-    SolveTransportEquation1D(params, f, nOut);
+    SolveTransportEquation1D(params, f, u, nOut);
     cout << "Computing with standard solver" << endl;
     THINC1DDebug(paramsDebug, fStd, fExStd);
     /*for(int i=0; i<fStd.size(); i++)

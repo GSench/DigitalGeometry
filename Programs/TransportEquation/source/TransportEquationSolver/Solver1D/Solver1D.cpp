@@ -19,7 +19,11 @@ void initF(vector<double> &f, int L, int R) {
         f[i] = 0;
 }
 
-void SolveTransportEquation1D(const Solver1DParams& p, vector<double> &f, Solver1DOutput& output) {
+void SolveTransportEquation1D(const Solver1DParams& p,
+                              vector<double> &f,
+                              const function<vector<double>(int)> &u, // u(t): u(n + 1/2)[i +- 1/2]: velocity vector field at half of time steps: u(0) is at t=0, u(1) is at t=dt/2, u(2) is at t=dt, u(2*n) is at t=n*dt
+                              // velocity vector field on cells' bounds: u[0] is in x=0: left side of 0s cell, u[1] is in x=dx: right side of 0s cell, left side of 1st cell
+                              Solver1DOutput& output) {
     double h = p.area / p.cellCount;
     double timeStep = p.CFL * h / p.u;
     vector<double> fnext = f;
@@ -53,9 +57,9 @@ void SolveTransportEquation1D(const Solver1DParams& p, vector<double> &f, Solver
 
             function<double(double)> Psy = p.PsyFunc(fi, fiPrev, fiNext, i, p.beta, h, p.eps);
 
-            double fiR = Psy(xR - p.u * timeStep / 2); //flow on right cell side is from current cell (upwind)
-            double fiL = PsyPrev(xL - p.u * timeStep / 2); //flow on left cell side is from previous cell (upwind)
-            fnext[i] = fi - p.u / h * (fiR - fiL) * timeStep;
+            double fiR = Psy(getXforInterpolation(xR, u(2*n)[i+1], timeStep / 2)); //flow on right cell side is from current cell (upwind)
+            double fiL = PsyPrev(getXforInterpolation(xL, u(2*n)[i], timeStep / 2)); //flow on left cell side is from previous cell (upwind)
+            fnext[i] = fi - 1.0 / h * (fiR*u(2*n)[i+1] - fiL*u(2*n)[i]) * timeStep;
             
             PsyPrev = Psy;
         }

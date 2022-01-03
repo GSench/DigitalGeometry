@@ -72,3 +72,7 @@ function<double(double)> PsyTHINCandMUSCL(double fi, double fiPrev, double fiNex
         return fiMin + (Fi)(beta, gamma, xL, h, xiavg)(x) * deltaFi;
     };
 }
+
+double getXforInterpolation(double x, double u, double t){
+    return x - u * t;
+}
