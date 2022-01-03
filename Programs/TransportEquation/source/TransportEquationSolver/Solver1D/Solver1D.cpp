@@ -8,6 +8,16 @@
 
 using namespace std;
 
+struct Cell1D {
+    int i;
+    double h;
+    double fi;
+    double fiPrev;
+    double fiNext;
+    double xL;
+    double xR;
+};
+
 void initF(vector<double> &f, int L, int R) {
     for (int i = 0; i < L; i++)
         f[i] = 0;
@@ -19,12 +29,25 @@ void initF(vector<double> &f, int L, int R) {
         f[i] = 0;
 }
 
-vector<double> SolverStep(const Solver1DParams& p,
+double fNext(const Solver1DParams& p,
+             const vector<double>& u05t,
+             double timeStep,
+             Cell1D c,
+             function<double(double)> &PsyPrev){
+
+    function<double(double)> Psy = p.PsyFunc(c.fi, c.fiPrev, c.fiNext, c.i, p.beta, c.h, p.eps);
+
+    double fiR = Psy(getXforInterpolation(c.xR, u05t[c.i+1], timeStep / 2)); //flow on right cell side is from current cell (upwind)
+    double fiL = PsyPrev(getXforInterpolation(c.xL, u05t[c.i], timeStep / 2)); //flow on left cell side is from previous cell (upwind)
+    PsyPrev = Psy;
+    return c.fi - 1.0 / c.h * (fiR*u05t[c.i+1] - fiL*u05t[c.i]) * timeStep;
+}
+
+void SolverStep(const Solver1DParams& p,
                           vector<double> &f,
                           const vector<double>& u05t,
                           double h,
                           double timeStep){
-    vector<double> fnext(f.size());
     //first previous Psy is from last cell (cycled space)
     function<double(double)> PsyPrevVirt = p.PsyFunc(
             f[p.cellCount - 1],
@@ -38,25 +61,17 @@ vector<double> SolverStep(const Solver1DParams& p,
         return PsyPrevVirt(x+p.cellCount*h);
     };
 
-    for (int i = 0; i < p.cellCount; i++) {
-        int iPrev = i != 0 ? i - 1 : p.cellCount - 1;
-        int iNext = i != p.cellCount - 1 ? i + 1 : 0;
-
-        double fi = f[i];
-        double fiPrev = f[iPrev];
-        double fiNext = f[iNext];
-        double xL = i * h;
-        double xR = (i + 1) * h;
-
-        function<double(double)> Psy = p.PsyFunc(fi, fiPrev, fiNext, i, p.beta, h, p.eps);
-
-        double fiR = Psy(getXforInterpolation(xR, u05t[i+1], timeStep / 2)); //flow on right cell side is from current cell (upwind)
-        double fiL = PsyPrev(getXforInterpolation(xL, u05t[i], timeStep / 2)); //flow on left cell side is from previous cell (upwind)
-        fnext[i] = fi - 1.0 / h * (fiR*u05t[i+1] - fiL*u05t[i]) * timeStep;
-
-        PsyPrev = Psy;
+    double fiPrev = f[p.cellCount - 1];
+    double fiFirst = f[0];
+    for (int i = 0; i < p.cellCount-1; i++) {
+        Cell1D cell1D{i, h, f[i], fiPrev, f[i+1], i*h, (i+1)*h};
+        double saveFi = f[i];
+        f[i] = fNext(p, u05t, timeStep, cell1D, PsyPrev);
+        fiPrev = saveFi;
     }
-    return fnext;
+    int iLast = p.cellCount-1;
+    Cell1D cell1D{iLast, h, f[iLast], fiPrev, fiFirst, iLast*h, (iLast+1)*h};
+    f[iLast] = fNext(p, u05t, timeStep, cell1D, PsyPrev);
 }
 
 void SolveTransportEquation1D(const Solver1DParams& p,
@@ -69,7 +84,7 @@ void SolveTransportEquation1D(const Solver1DParams& p,
 
     output.print(f, 0, h);
     for (int n = 0; n < p.stepN; n++) {
-        f = SolverStep(p, f, u(2*n), h, timeStep);
+        SolverStep(p, f, u(2*n), h, timeStep);
         output.print(f, n+1, h);
     }
 }
