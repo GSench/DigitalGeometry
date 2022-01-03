@@ -5,7 +5,7 @@
 
 using namespace std;
 
-struct THINC1Dparams {
+struct Solver1DParams {
     int cellCount = 20;
     double area = 1;
     int stepN = 100;

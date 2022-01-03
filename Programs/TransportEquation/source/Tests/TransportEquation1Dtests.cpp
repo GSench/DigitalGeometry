@@ -10,7 +10,7 @@
 
 #include "TransportEquation1Dtests.h"
 #include "../TransportEquationSolver/InterpolationFunctions.h"
-#include "../TransportEquationSolver/Solver1D/THINC1D.h"
+#include "../TransportEquationSolver/Solver1D/Solver1D.h"
 #include "StandardSolver.h"
 #include "../TransportEquationSolver/Solver1D/Solver1DOutput.h"
 
@@ -24,7 +24,7 @@ void THINC1Dtests() {
     int iNmin = 3;
     int jTmax = 6;
 
-    THINC1Dparams params;
+    Solver1DParams params;
 
     ofstream myfi;
     myfi.open(OUTPUT_PATH+"CalculationResults/error.txt");
@@ -80,7 +80,7 @@ void THINC1Dtests() {
                         true,
                         true,
                         OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt");
-                THINC1D(params, f, output);
+                SolveTransportEquation1D(params, f, output);
                 double error = errorL2(f, fexact, params.area/params.cellCount);
                 string errorLine = "error "+ to_string(error);
                 output.printLine(errorLine);
@@ -144,7 +144,7 @@ bool test1DSolutionWithFile(const vector<double>& f,
 
 void test1DSolverWithFile(){
     // Debug params
-    THINC1Dparams params;
+    Solver1DParams params;
 
     // Scalar params
     params.area = 1;
@@ -172,7 +172,7 @@ void test1DSolverWithFile(){
     initF(f, L, R);
 
     Solver1DOutput nOut = noOutput();
-    THINC1D(params, f, nOut);
+    SolveTransportEquation1D(params, f, nOut);
 
     string debugFilePath =
             "C:\\Programing\\Projects\\DigitalGeometry\\Programs\\Output\\StandardResults\\THINC_MUSCL\\N768_T6.txt";
@@ -214,7 +214,7 @@ void test1DSolverStandard(){
     int time = T * j;
     paramsDebug.stepN = time;
 
-    THINC1Dparams params;
+    Solver1DParams params;
     params.area = 1;
     params.u = 0.1;
     params.eps = 1e-4;
@@ -240,7 +240,7 @@ void test1DSolverStandard(){
 
     cout << "Computing with current solver" << endl;
     Solver1DOutput nOut = noOutput();
-    THINC1D(params, f, nOut);
+    SolveTransportEquation1D(params, f, nOut);
     cout << "Computing with standard solver" << endl;
     THINC1DDebug(paramsDebug, fStd, fExStd);
     /*for(int i=0; i<fStd.size(); i++)

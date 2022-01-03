@@ -1,9 +1,9 @@
 #include <vector>
-#include "THINC1DparamsStruct.h"
+#include "Solver1DParamsStruct.h"
 #include "Solver1DOutput.h"
 
 using namespace std;
 
-void THINC1D(const THINC1Dparams&, vector<double>&, Solver1DOutput&);
+void SolveTransportEquation1D(const Solver1DParams &p, vector<double> &f, Solver1DOutput &output);
 double errorL2(vector<double>&, const vector<double>&, double);
 void initF(vector<double>&f,int L,int R);

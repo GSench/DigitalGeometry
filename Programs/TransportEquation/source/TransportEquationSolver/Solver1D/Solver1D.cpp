@@ -2,7 +2,7 @@
 #include <vector>
 #include <functional>
 
-#include "THINC1D.h"
+#include "Solver1D.h"
 #include "../InterpolationFunctions.h"
 #include "Solver1DOutput.h"
 
@@ -19,7 +19,7 @@ void initF(vector<double> &f, int L, int R) {
         f[i] = 0;
 }
 
-void THINC1D(const THINC1Dparams& p, vector<double> &f, Solver1DOutput& output) {
+void SolveTransportEquation1D(const Solver1DParams& p, vector<double> &f, Solver1DOutput& output) {
     double h = p.area / p.cellCount;
     double timeStep = p.CFL * h / p.u;
     vector<double> fnext = f;

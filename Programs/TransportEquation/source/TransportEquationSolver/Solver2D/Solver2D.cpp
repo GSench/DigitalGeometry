@@ -4,14 +4,14 @@
 
 #include "Solver2D.h"
 #include "PsyScalar.h"
-#include "../Solver1D/THINC1D.h"
+#include "../Solver1D/Solver1D.h"
 #include <functional>
 #include <fstream>
 #include "../../math/VectorField2D.h"
 
 using namespace std;
 /*
-void SolveTransportEquation2D(PsyScalar f, function<VectorField2D(int, double)> u, THINC1Dparams p){
+void SolveTransportEquation2D(PsyScalar f, function<VectorField2D(int, double)> u, Solver1DParams p){
     double h = p.area / p.cellCount;
     double timeStep = p.CFL * h / p.u;
 

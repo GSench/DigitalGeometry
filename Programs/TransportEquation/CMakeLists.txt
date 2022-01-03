@@ -6,19 +6,19 @@ set(CMAKE_CXX_STANDARD 11)
 set(PROJECT_HEADERS
         source/TransportEquationSolver/InterpolationFunctions.h
         source/math/MathUtils.h
-        source/TransportEquationSolver/Solver1D/THINC1D.h
+        source/TransportEquationSolver/Solver1D/Solver1D.h
         source/TransportEquationSolver/THINCUtils.h
         source/Tests/TransportEquation1Dtests.cpp source/Tests/TransportEquation1Dtests.h)
 set(PROJECT_SOURCES
         source/main.cpp
         source/TransportEquationSolver/InterpolationFunctions.cpp
         source/math/MathUtils.cpp
-        source/TransportEquationSolver/Solver1D/THINC1D.cpp
+        source/TransportEquationSolver/Solver1D/Solver1D.cpp
         source/TransportEquationSolver/THINCUtils.cpp
         source/stuff/CompilerDifferenceHighlighter.cpp
         source/Tests/TransportEquation1Dtests.cpp
         source/Tests/TransportEquation1Dtests.h
-        source/TransportEquationSolver/Solver1D/THINC1DparamsStruct.h
+        source/TransportEquationSolver/Solver1D/Solver1DParamsStruct.h
         source/TransportEquationSolver/Solver2D/PsyScalar.h
         source/TransportEquationSolver/Solver2D/Solver2D.cpp
         source/TransportEquationSolver/Solver2D/Solver2D.h
