@@ -55,19 +55,20 @@ void SolverStep(Solver1DParams p,
             p.cellCount - 1,
             p.beta,
             h,
-            p.eps);
+            p.eps); // this func is built on last cell, will give wrong value in first cell
     function<double(double)> PsyPrev = [=](double x)->double {
-        return PsyPrevVirt(x+p.cellCount*h);
+        return PsyPrevVirt(x+p.cellCount*h); // PsyPrev just shifts PsyPrevVirt
     };
 
-    double fiPrev = f[p.cellCount - 1];
-    double fiFirst = f[0];
-    for (int i = 0; i < p.cellCount-1; i++) {
+    double fiPrev = f[p.cellCount - 1]; // fiPrev for 1st cell is fi in the last cell
+    double fiFirst = f[0]; // saving old value of f0, to use it as fiNext in the last cell
+    for (int i = 0; i < p.cellCount-1; i++) { // calculating all cells except last
         Cell1D cell1D{i, h, f[i], fiPrev, f[i+1], i*h, (i+1)*h, u05t[i], u05t[i+1]};
-        double saveFi = f[i];
+        double saveFi = f[i]; // saving old value of each fi, to use it as fiPrev in the next cell
         f[i] = fNext(p, cell1D, PsyPrev);
-        fiPrev = saveFi;
+        fiPrev = saveFi; // using saved fi as fiPrev in the next cell
     }
+    // fiNext for last cell is old f0, so we calc this separately
     int iLast = p.cellCount-1;
     Cell1D cell1D{iLast, h, f[iLast], fiPrev, fiFirst, iLast*h, (iLast+1)*h};
     f[iLast] = fNext(p, cell1D, PsyPrev);
