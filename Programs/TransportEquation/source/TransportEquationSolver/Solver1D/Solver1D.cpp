@@ -16,6 +16,8 @@ struct Cell1D {
     double fiNext;
     double xL;
     double xR;
+    double uL;
+    double uR;
 };
 
 void initF(vector<double> &f, int L, int R) {
@@ -29,24 +31,23 @@ void initF(vector<double> &f, int L, int R) {
         f[i] = 0;
 }
 
-double fNext(const Solver1DParams& p,
-             const vector<double>& u05t,
-             double timeStep,
+double fNext(Solver1DParams p,
              Cell1D c,
              function<double(double)> &PsyPrev){
-
+    double timeStep = p.timeStep();
     function<double(double)> Psy = p.PsyFunc(c.fi, c.fiPrev, c.fiNext, c.i, p.beta, c.h, p.eps);
 
-    double fiR = Psy(getXforInterpolation(c.xR, u05t[c.i+1], timeStep / 2)); //flow on right cell side is from current cell (upwind)
-    double fiL = PsyPrev(getXforInterpolation(c.xL, u05t[c.i], timeStep / 2)); //flow on left cell side is from previous cell (upwind)
+    double fiR = Psy(getXforInterpolation(c.xR, c.uR, timeStep / 2)); //flow on right cell side is from current cell (upwind)
+    double fiL = PsyPrev(getXforInterpolation(c.xL, c.uL, timeStep / 2)); //flow on left cell side is from previous cell (upwind)
     PsyPrev = Psy;
-    return c.fi - 1.0 / c.h * (fiR*u05t[c.i+1] - fiL*u05t[c.i]) * timeStep;
+    return c.fi - 1.0 / c.h * (fiR*c.uR - fiL*c.uL) * timeStep;
 }
 
 void SolverStep(Solver1DParams p,
                 vector<double> &f,
                 const vector<double>& u05t){
     double h = p.h();
+    double timeStep = p.timeStep();
     //first previous Psy is from last cell (cycled space)
     function<double(double)> PsyPrevVirt = p.PsyFunc(
             f[p.cellCount - 1],
@@ -63,14 +64,14 @@ void SolverStep(Solver1DParams p,
     double fiPrev = f[p.cellCount - 1];
     double fiFirst = f[0];
     for (int i = 0; i < p.cellCount-1; i++) {
-        Cell1D cell1D{i, h, f[i], fiPrev, f[i+1], i*h, (i+1)*h};
+        Cell1D cell1D{i, h, f[i], fiPrev, f[i+1], i*h, (i+1)*h, u05t[i], u05t[i+1]};
         double saveFi = f[i];
-        f[i] = fNext(p, u05t, p.timeStep(), cell1D, PsyPrev);
+        f[i] = fNext(p, cell1D, PsyPrev);
         fiPrev = saveFi;
     }
     int iLast = p.cellCount-1;
     Cell1D cell1D{iLast, h, f[iLast], fiPrev, fiFirst, iLast*h, (iLast+1)*h};
-    f[iLast] = fNext(p, u05t, p.timeStep(), cell1D, PsyPrev);
+    f[iLast] = fNext(p, cell1D, PsyPrev);
 }
 
 void SolveTransportEquation1D(Solver1DParams p,
