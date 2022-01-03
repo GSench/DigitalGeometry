@@ -1,5 +1,5 @@
 #include <vector>
-#include "Solver1DParamsStruct.h"
+#include "Solver1DParams.h"
 #include "Solver1DOutput.h"
 
 using namespace std;
