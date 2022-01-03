@@ -17,6 +17,7 @@ public:
     double u = 0.1;
     double eps = 1e-4;
     double beta = 3.5;
+    bool periodicBoundaries = true;
     function<function<double(double)>(double, double, double, int, double, double, double)> PsyFunc =
             [&](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
                 return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);

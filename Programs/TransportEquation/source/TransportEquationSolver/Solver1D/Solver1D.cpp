@@ -47,21 +47,31 @@ void SolverStep(Solver1DParams p,
                 vector<double> &f,
                 const vector<double>& u05t){
     double h = p.h();
-    //first previous Psy is from last cell (cycled space)
-    function<double(double)> PsyPrevVirt = p.PsyFunc(
-            f[p.cellCount - 1],
-            f[p.cellCount - 2],
-            f[0],
-            p.cellCount - 1,
-            p.beta,
-            h,
-            p.eps); // this func is built on last cell, will give wrong value in first cell
-    function<double(double)> PsyPrev = [=](double x)->double {
-        return PsyPrevVirt(x+p.cellCount*h); // PsyPrev just shifts PsyPrevVirt
-    };
 
-    double fiPrev = f[p.cellCount - 1]; // fiPrev for 1st cell is fi in the last cell
-    double fiFirst = f[0]; // saving old value of f0, to use it as fiNext in the last cell
+    function<double(double)> PsyPrev = [=](double x)->double {
+        return 0;
+    };
+    if(p.periodicBoundaries){
+        //first previous Psy is from last cell (cycled space)
+        function<double(double)> PsyPrevVirt = p.PsyFunc(
+                f[p.cellCount - 1],
+                f[p.cellCount - 2],
+                f[0],
+                p.cellCount - 1,
+                p.beta,
+                h,
+                p.eps); // this func is built on last cell, will give wrong value in first cell
+        PsyPrev = [=](double x)->double {
+            return PsyPrevVirt(x+p.cellCount*h); // PsyPrev just shifts PsyPrevVirt
+        };
+    }
+
+    double fiPrev = 0;
+    double fiAfterLast = 0;
+    if(p.periodicBoundaries){
+        fiPrev = f[p.cellCount - 1]; // fiPrev for 1st cell is fi in the last cell
+        fiAfterLast = f[0]; // saving old value of f0, to use it as fiNext in the last cell
+    }
     for (int i = 0; i < p.cellCount-1; i++) { // calculating all cells except last
         Cell1D cell1D{i, h, f[i], fiPrev, f[i+1], i*h, (i+1)*h, u05t[i], u05t[i+1]};
         double saveFi = f[i]; // saving old value of each fi, to use it as fiPrev in the next cell
@@ -70,7 +80,7 @@ void SolverStep(Solver1DParams p,
     }
     // fiNext for last cell is old f0, so we calc this separately
     int iLast = p.cellCount-1;
-    Cell1D cell1D{iLast, h, f[iLast], fiPrev, fiFirst, iLast*h, (iLast+1)*h, u05t[iLast], u05t[iLast+1]};
+    Cell1D cell1D{iLast, h, f[iLast], fiPrev, fiAfterLast, iLast * h, (iLast + 1) * h, u05t[iLast], u05t[iLast + 1]};
     f[iLast] = fNext(p, cell1D, PsyPrev);
 }
 

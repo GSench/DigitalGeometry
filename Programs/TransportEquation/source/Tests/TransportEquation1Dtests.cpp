@@ -236,6 +236,7 @@ void test1DSolverStandard(){
     params.CFL = 0.3;
     params.cellCount = N;
     params.stepN = time;
+    params.periodicBoundaries = true;
 
     vector<double> uStatic(params.cellCount+1, 0.1);
     function<vector<double>(int)> u = [=](int t05n)->vector<double>{
