@@ -43,11 +43,10 @@ double fNext(const Solver1DParams& p,
     return c.fi - 1.0 / c.h * (fiR*u05t[c.i+1] - fiL*u05t[c.i]) * timeStep;
 }
 
-void SolverStep(const Solver1DParams& p,
-                          vector<double> &f,
-                          const vector<double>& u05t,
-                          double h,
-                          double timeStep){
+void SolverStep(Solver1DParams p,
+                vector<double> &f,
+                const vector<double>& u05t){
+    double h = p.h();
     //first previous Psy is from last cell (cycled space)
     function<double(double)> PsyPrevVirt = p.PsyFunc(
             f[p.cellCount - 1],
@@ -66,26 +65,23 @@ void SolverStep(const Solver1DParams& p,
     for (int i = 0; i < p.cellCount-1; i++) {
         Cell1D cell1D{i, h, f[i], fiPrev, f[i+1], i*h, (i+1)*h};
         double saveFi = f[i];
-        f[i] = fNext(p, u05t, timeStep, cell1D, PsyPrev);
+        f[i] = fNext(p, u05t, p.timeStep(), cell1D, PsyPrev);
         fiPrev = saveFi;
     }
     int iLast = p.cellCount-1;
     Cell1D cell1D{iLast, h, f[iLast], fiPrev, fiFirst, iLast*h, (iLast+1)*h};
-    f[iLast] = fNext(p, u05t, timeStep, cell1D, PsyPrev);
+    f[iLast] = fNext(p, u05t, p.timeStep(), cell1D, PsyPrev);
 }
 
-void SolveTransportEquation1D(const Solver1DParams& p,
+void SolveTransportEquation1D(Solver1DParams p,
                               vector<double> &f,
                               const function<vector<double>(int)> &u, // u(t): u(n + 1/2)[i +- 1/2]: velocity vector field at half of time steps: u(0) is at t=0, u(1) is at t=dt/2, u(2) is at t=dt, u(2*n) is at t=n*dt
                               // velocity vector field on cells' bounds: u[0] is in x=0: left side of 0s cell, u[1] is in x=dx: right side of 0s cell, left side of 1st cell
                               Solver1DOutput& output) {
-    double h = p.area / p.cellCount;
-    double timeStep = p.CFL * h / p.u;
-
-    output.print(f, 0, h);
+    output.print(f, 0, p.h());
     for (int n = 0; n < p.stepN; n++) {
-        SolverStep(p, f, u(2*n), h, timeStep);
-        output.print(f, n+1, h);
+        SolverStep(p, f, u(2*n));
+        output.print(f, n+1, p.h());
     }
 }
 

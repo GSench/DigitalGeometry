@@ -5,7 +5,11 @@
 
 using namespace std;
 
-struct Solver1DParams {
+class Solver1DParams {
+private:
+    double dx = 0;
+    double dt = 0;
+public:
     int cellCount = 20;
     double area = 1;
     int stepN = 100;
@@ -18,4 +22,12 @@ struct Solver1DParams {
                 return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);
             };
     string PsyFuncName = "Psy THINC + MUSCL";
+    double h() {
+        if(dx==0) dx = area/cellCount;
+        return dx;
+    }
+    double timeStep(){
+        if(dt==0) dt = CFL * h() / u;
+        return dt;
+    }
 };
