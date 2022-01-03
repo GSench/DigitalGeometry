@@ -70,7 +70,7 @@ void SolverStep(Solver1DParams p,
     }
     // fiNext for last cell is old f0, so we calc this separately
     int iLast = p.cellCount-1;
-    Cell1D cell1D{iLast, h, f[iLast], fiPrev, fiFirst, iLast*h, (iLast+1)*h};
+    Cell1D cell1D{iLast, h, f[iLast], fiPrev, fiFirst, iLast*h, (iLast+1)*h, u05t[iLast], u05t[iLast+1]};
     f[iLast] = fNext(p, cell1D, PsyPrev);
 }
 
