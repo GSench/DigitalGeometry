@@ -47,7 +47,6 @@ void SolverStep(Solver1DParams p,
                 vector<double> &f,
                 const vector<double>& u05t){
     double h = p.h();
-    double timeStep = p.timeStep();
     //first previous Psy is from last cell (cycled space)
     function<double(double)> PsyPrevVirt = p.PsyFunc(
             f[p.cellCount - 1],
