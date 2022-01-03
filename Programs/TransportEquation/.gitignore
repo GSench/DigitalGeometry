@@ -73,3 +73,7 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+# https://www.jetbrains.com/help/clion/working-with-git-tutorial.html#ignore
+/.idea/
+/cmake-build-debug/
