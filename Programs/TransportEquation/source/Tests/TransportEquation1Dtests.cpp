@@ -30,17 +30,19 @@ void THINC1Dtests() {
     myfi.open(OUTPUT_PATH+"CalculationResults/error.txt");
     myfi << endl;
 
-    vector< function<function<double(double)>(double, double, double, int, double, double, double)> > PsyFunctions(4);
-    PsyFunctions[0] = [=](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
+    double b = 3.5;
+    double e = 1e-4;
+    vector< function<function<double(double)>(double, double, double, int, double)> > PsyFunctions(4);
+    PsyFunctions[0] = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
         return PsyGodunov(fi);
     };
-    PsyFunctions[1] = [=](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
+    PsyFunctions[1] = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
         return PsyMUSCL(fi, fiPrev, fiNext, i, h);
     };
-    PsyFunctions[2] = [=](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
+    PsyFunctions[2] = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
         return PsyTHINCandGodunov(fi, fiPrev, fiNext, i, b, h, e);
     };
-    PsyFunctions[3] = [=](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
+    PsyFunctions[3] = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
         return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);
     };
 
@@ -154,12 +156,12 @@ void test1DSolverWithFile(){
     // Scalar params
     params.area = 1;
     params.u = 0.1;
-    params.eps = 1e-4;
-    params.beta = 3.5;
 
     // Test specific params
-    params.PsyFunc = [=](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
-        return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);
+    double beta = 3.5;
+    double eps = 1e-4;
+    params.PsyFunc = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
+        return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, beta, h, eps);
     };
     params.PsyFuncName = "Psy THINC + MUSCL";
     params.CFL = 0.3;
@@ -193,7 +195,7 @@ void test1DSolverWithFile(){
          "Psy function: " << params.PsyFuncName << endl <<
          "cellCount: " << params.cellCount << " stepN: " << params.stepN << endl <<
          "CFL: " << params.CFL << " Area size: " << params.area << endl <<
-         "beta: " << params.beta << " eps: " << params.eps << " u: " << params.u << endl <<
+         "beta: " << beta << " eps: " << eps << " u: " << params.u << endl <<
          "------------------" << endl <<
          (testResult ? "TEST SUCCEEDED" : "TEST FAILED") << endl;
 }
@@ -227,10 +229,10 @@ void test1DSolverStandard(){
     Solver1DParams params;
     params.area = 1;
     params.u = 0.1;
-    params.eps = 1e-4;
-    params.beta = 3.5;
-    params.PsyFunc = [=](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
-        return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);
+    double beta = 3.5;
+    double eps = 1e-4;
+    params.PsyFunc = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
+        return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, beta, h, eps);
     };
     params.PsyFuncName = "Psy THINC + MUSCL";
     params.CFL = 0.3;
@@ -269,7 +271,7 @@ void test1DSolverStandard(){
          "Psy function: " << params.PsyFuncName << endl <<
          "cellCount: " << params.cellCount << " stepN: " << params.stepN << endl <<
          "CFL: " << params.CFL << " Area size: " << params.area << endl <<
-         "beta: " << params.beta << " eps: " << params.eps << " u: " << params.u << endl <<
+         "beta: " << beta << " eps: " << eps << " u: " << params.u << endl <<
          "------------------" << endl <<
          (testResult ? "TEST SUCCEEDED" : "TEST FAILED") << endl;
 }

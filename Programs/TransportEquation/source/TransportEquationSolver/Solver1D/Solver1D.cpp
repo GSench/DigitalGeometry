@@ -35,7 +35,7 @@ double fNext(Solver1DParams p,
              Cell1D c,
              function<double(double)> &PsyPrev){
     double timeStep = p.timeStep();
-    function<double(double)> Psy = p.PsyFunc(c.fi, c.fiPrev, c.fiNext, c.i, p.beta, c.h, p.eps);
+    function<double(double)> Psy = p.PsyFunc(c.fi, c.fiPrev, c.fiNext, c.i, c.h);
 
     double fiR = Psy(getXforInterpolation(c.xR, c.uR, timeStep / 2)); //flow on right cell side is from current cell (upwind)
     double fiL = PsyPrev(getXforInterpolation(c.xL, c.uL, timeStep / 2)); //flow on left cell side is from previous cell (upwind)
@@ -58,9 +58,7 @@ void SolverStep(Solver1DParams p,
                 f[p.cellCount - 2],
                 f[0],
                 p.cellCount - 1,
-                p.beta,
-                h,
-                p.eps); // this func is built on last cell, will give wrong value in first cell
+                h); // this func is built on last cell, will give wrong value in first cell
         PsyPrev = [=](double x)->double {
             return PsyPrevVirt(x+p.cellCount*h); // PsyPrev just shifts PsyPrevVirt
         };

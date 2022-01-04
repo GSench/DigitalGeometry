@@ -15,12 +15,10 @@ public:
     int stepN = 100;
     double CFL = 0.3;
     double u = 0.1;
-    double eps = 1e-4;
-    double beta = 3.5;
     bool periodicBoundaries = true;
-    function<function<double(double)>(double, double, double, int, double, double, double)> PsyFunc =
-            [&](double fi, double fiPrev, double fiNext, int i, double b, double h, double e)->function<double(double)> {
-                return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);
+    function<function<double(double)>(double, double, double, int, double)> PsyFunc =
+            [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
+                return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i,  3.5, h, 1e-4);
             };
     string PsyFuncName = "Psy THINC + MUSCL";
     double h() {
