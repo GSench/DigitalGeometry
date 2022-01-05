@@ -24,7 +24,7 @@ void THINC1Dtests() {
     int iNmin = 3;
     int jTmax = 6;
 
-    Solver1DParams params;
+    Area1D params;
 
     ofstream myfi;
     myfi.open(OUTPUT_PATH+"CalculationResults/error.txt");
@@ -51,7 +51,7 @@ void THINC1Dtests() {
     for (int psy = 0; psy < PsyFunctions.size(); psy++) {
         cout << titles[psy] << " scheme" << endl;
         myfi << titles[psy] << " scheme" << endl;
-        params.PsyFunc = PsyFunctions[psy];
+        params.FlowInterpolationFunction = PsyFunctions[psy];
 
         cout << " \t";
         for (int j = 0; j < jTmax; j++)
@@ -77,7 +77,7 @@ void THINC1Dtests() {
             };
 
             int T = (double)N / params.CFL;
-            params.stepN = T;
+            params.NTimeSteps = T;
 
             cout << "N" << N << "\t";
             myfi << "N" << N << "\t";
@@ -88,7 +88,7 @@ void THINC1Dtests() {
                         true,
                         OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt");
                 SolveTransportEquation1D(params, f, u, output);
-                double error = errorL2(f, fexact, params.area/params.cellCount);
+                double error = errorL2(f, fexact, params.areaLength / params.cellCount);
                 string errorLine = "error "+ to_string(error);
                 output.printLine(errorLine);
                 output.finish();
@@ -151,28 +151,28 @@ bool test1DSolutionWithFile(const vector<double>& f,
 
 void test1DSolverWithFile(){
     // Debug params
-    Solver1DParams params;
+    Area1D params;
 
     // Scalar params
-    params.area = 1;
-    params.u = 0.1;
+    params.areaLength = 1;
+    params.uMax = 0.1;
 
     // Test specific params
     double beta = 3.5;
     double eps = 1e-4;
-    params.PsyFunc = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
+    params.FlowInterpolationFunction = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
         return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, beta, h, eps);
     };
-    params.PsyFuncName = "Psy THINC + MUSCL";
+    params.FlowInterpolationFunctionName = "Psy THINC + MUSCL";
     params.CFL = 0.3;
     int i = 8;
     int N = params.CFL * 10.0 * pow(2, i);
     params.cellCount = N;
     int T = (double) N / params.CFL;
     int j = 6;
-    params.stepN = T * j;
+    params.NTimeSteps = T * j;
 
-    // f init
+    // scalarFunction init
     double L = N / 2;
     double R = N - 1;
     vector<double> f(N);
@@ -192,10 +192,10 @@ void test1DSolverWithFile(){
 
     cout << endl <<
          "------------------" << endl <<
-         "Psy function: " << params.PsyFuncName << endl <<
-         "cellCount: " << params.cellCount << " stepN: " << params.stepN << endl <<
-         "CFL: " << params.CFL << " Area size: " << params.area << endl <<
-         "beta: " << beta << " eps: " << eps << " u: " << params.u << endl <<
+         "Psy function: " << params.FlowInterpolationFunctionName << endl <<
+         "cellCount: " << params.cellCount << " NTimeSteps: " << params.NTimeSteps << endl <<
+         "CFL: " << params.CFL << " Area size: " << params.areaLength << endl <<
+         "beta: " << beta << " eps: " << eps << " uMax: " << params.uMax << endl <<
          "------------------" << endl <<
          (testResult ? "TEST SUCCEEDED" : "TEST FAILED") << endl;
 }
@@ -226,18 +226,18 @@ void test1DSolverStandard(){
     int time = T * j;
     paramsDebug.stepN = time;
 
-    Solver1DParams params;
-    params.area = 1;
-    params.u = 0.1;
+    Area1D params;
+    params.areaLength = 1;
+    params.uMax = 0.1;
     double beta = 3.5;
     double eps = 1e-4;
-    params.PsyFunc = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
+    params.FlowInterpolationFunction = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
         return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, beta, h, eps);
     };
-    params.PsyFuncName = "Psy THINC + MUSCL";
+    params.FlowInterpolationFunctionName = "Psy THINC + MUSCL";
     params.CFL = 0.3;
     params.cellCount = N;
-    params.stepN = time;
+    params.NTimeSteps = time;
     params.periodicBoundaries = true;
 
     vector<double> uStatic(params.cellCount+1, 0.1);
@@ -246,7 +246,7 @@ void test1DSolverStandard(){
     };
 
 
-    // f init
+    // scalarFunction init
     double L = N / 2;
     double R = N - 1;
     vector<double> f(N);
@@ -268,10 +268,10 @@ void test1DSolverStandard(){
 
     cout << endl <<
          "------------------" << endl <<
-         "Psy function: " << params.PsyFuncName << endl <<
-         "cellCount: " << params.cellCount << " stepN: " << params.stepN << endl <<
-         "CFL: " << params.CFL << " Area size: " << params.area << endl <<
-         "beta: " << beta << " eps: " << eps << " u: " << params.u << endl <<
+         "Psy function: " << params.FlowInterpolationFunctionName << endl <<
+         "cellCount: " << params.cellCount << " NTimeSteps: " << params.NTimeSteps << endl <<
+         "CFL: " << params.CFL << " Area size: " << params.areaLength << endl <<
+         "beta: " << beta << " eps: " << eps << " uMax: " << params.uMax << endl <<
          "------------------" << endl <<
          (testResult ? "TEST SUCCEEDED" : "TEST FAILED") << endl;
 }

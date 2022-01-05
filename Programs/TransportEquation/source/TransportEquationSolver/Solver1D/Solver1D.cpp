@@ -8,18 +8,6 @@
 
 using namespace std;
 
-struct Cell1D {
-    int i;
-    double h;
-    double fi;
-    double fiPrev;
-    double fiNext;
-    double xL;
-    double xR;
-    double uL;
-    double uR;
-};
-
 void initF(vector<double> &f, int L, int R) {
     for (int i = 0; i < L; i++)
         f[i] = 0;
@@ -31,11 +19,11 @@ void initF(vector<double> &f, int L, int R) {
         f[i] = 0;
 }
 
-double fNext(Solver1DParams p,
+double fNext(Area1D p,
              Cell1D c,
              function<double(double)> &PsyPrev){
     double timeStep = p.timeStep();
-    function<double(double)> Psy = p.PsyFunc(c.fi, c.fiPrev, c.fiNext, c.i, c.h);
+    function<double(double)> Psy = p.FlowInterpolationFunction(c.fi, c.fiPrev, c.fiNext, c.i, c.h);
 
     double fiR = Psy(getXforInterpolation(c.xR, c.uR, timeStep / 2)); //flow on right cell side is from current cell (upwind)
     double fiL = PsyPrev(getXforInterpolation(c.xL, c.uL, timeStep / 2)); //flow on left cell side is from previous cell (upwind)
@@ -43,7 +31,7 @@ double fNext(Solver1DParams p,
     return c.fi - 1.0 / c.h * (fiR*c.uR - fiL*c.uL) * timeStep;
 }
 
-void SolverStep(Solver1DParams p,
+void SolverStep(Area1D p,
                 vector<double> &f,
                 const vector<double>& u05t){
     double h = p.h();
@@ -53,7 +41,7 @@ void SolverStep(Solver1DParams p,
     };
     if(p.periodicBoundaries){
         //first previous Psy is from last cell (cycled space)
-        function<double(double)> PsyPrevVirt = p.PsyFunc(
+        function<double(double)> PsyPrevVirt = p.FlowInterpolationFunction(
                 f[p.cellCount - 1],
                 f[p.cellCount - 2],
                 f[0],
@@ -82,13 +70,13 @@ void SolverStep(Solver1DParams p,
     f[iLast] = fNext(p, cell1D, PsyPrev);
 }
 
-void SolveTransportEquation1D(Solver1DParams p,
+void SolveTransportEquation1D(Area1D p,
                               vector<double> &f,
-                              const function<vector<double>(int)> &u, // u(t): u(n + 1/2)[i +- 1/2]: velocity vector field at half of time steps: u(0) is at t=0, u(1) is at t=dt/2, u(2) is at t=dt, u(2*n) is at t=n*dt
-                              // velocity vector field on cells' bounds: u[0] is in x=0: left side of 0s cell, u[1] is in x=dx: right side of 0s cell, left side of 1st cell
+                              const function<vector<double>(int)> &u, // uMax(t): uMax(n + 1/2)[i +- 1/2]: velocity vector field at half of time steps: uMax(0) is at t=0, uMax(1) is at t=dt/2, uMax(2) is at t=dt, uMax(2*n) is at t=n*dt
+                              // velocity vector field on cells' bounds: uMax[0] is in x=0: left side of 0s cell, uMax[1] is in x=dx: right side of 0s cell, left side of 1st cell
                               Solver1DOutput& output) {
     output.print(f, 0, p.h());
-    for (int n = 0; n < p.stepN; n++) {
+    for (int n = 0; n < p.NTimeSteps; n++) {
         SolverStep(p, f, u(2*n));
         output.print(f, n+1, p.h());
     }

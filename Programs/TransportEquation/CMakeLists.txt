@@ -18,7 +18,7 @@ set(PROJECT_SOURCES
         source/stuff/CompilerDifferenceHighlighter.cpp
         source/Tests/TransportEquation1Dtests.cpp
         source/Tests/TransportEquation1Dtests.h
-        source/TransportEquationSolver/Solver1D/Solver1DParams.h
+        source/TransportEquationSolver/Solver1D/Area1D.h
         source/TransportEquationSolver/Solver2D/PsyScalar.h
         source/TransportEquationSolver/Solver2D/Solver2D.cpp
         source/TransportEquationSolver/Solver2D/Solver2D.h
