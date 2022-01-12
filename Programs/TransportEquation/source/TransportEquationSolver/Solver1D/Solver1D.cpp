@@ -33,15 +33,14 @@ double fNext(Area1D p,
     return c.fi - 1.0 / c.h * (fiR*c.uR - fiL*c.uL) * timeStep;
 }
 
-void SolverStep(Area1D p,
-                vector<double> &f,
-                const vector<double>& u05t){
-    double h = p.h();
+void SolverStep(const Area1D& f,
+                const VectorField1D& u,
+                const Solver1DParams& p){
 
     function<double(double)> PsyPrev = [=](double x)->double {
         return 0;
     };
-    if(p.periodicBoundaries){
+    if(f.hasPeriodicBoundaries()){
         //first previous Psy is from last cell (cycled space)
         function<double(double)> PsyPrevVirt = p.FlowInterpolationFunction(
                 f[p.cellCount - 1],
@@ -74,13 +73,12 @@ void SolverStep(Area1D p,
 
 void SolveTransportEquation1D(const Area1D& f,
                               const VectorField1D& u,
-                              const Solver1DParams& params, // uMax(t): uMax(n + 1/2)[i +- 1/2]: velocity vector field at half of time steps: uMax(0) is at t=0, uMax(1) is at t=dt/2, uMax(2) is at t=dt, uMax(2*n) is at t=n*dt
-                              // velocity vector field on cells' bounds: uMax[0] is in x=0: left side of 0s cell, uMax[1] is in x=dx: right side of 0s cell, left side of 1st cell
+                              const Solver1DParams& p, // velocity vector field on cells' bounds: uMax[0] is in x=0: left side of 0s cell, uMax[1] is in x=dx: right side of 0s cell, left side of 1st cell
                               Solver1DOutput& output) {
-    output.print(f, 0, p.h());
+    output.print(f, 0, p.dx);
     for (int n = 0; n < p.NTimeSteps; n++) {
-        SolverStep(p, f, u(2*n));
-        output.print(f, n+1, p.h());
+        SolverStep(f, u, p);
+        output.print(f, n+1, p.dx);
     }
 }
 

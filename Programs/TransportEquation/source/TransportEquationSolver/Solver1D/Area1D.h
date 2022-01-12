@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "../InterpolationFunctions.h"
+#include "Cell1D.h"
 
 using namespace std;
 
@@ -20,6 +21,7 @@ public:
     virtual void moveNext() = 0;
     virtual F1D getCurrent() = 0;
     virtual void setCurrent(double f) = 0;
+    virtual Cell1D getCurrentCell(double dx) = 0;
 };
 
 class Area1D: public LineInterface {
@@ -76,6 +78,10 @@ public:
 
     void setCurrent(double f) override {
         scalarFunction[currentCell] = f;
+    }
+
+    Cell1D getCurrentCell(double dx) override {
+        return {(currentCell+0.5)*dx, dx, currentCell*dx, (currentCell+1.0)*dx};
     }
 
 };

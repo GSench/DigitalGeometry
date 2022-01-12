@@ -25,6 +25,7 @@ public:
     virtual U1D getCurrent() = 0;
     virtual void setCurrent(double ui) = 0;
     virtual double getUPrimary() = 0;
+    virtual Cell1D getCurrentCell(double dx) = 0;
 };
 
 class VectorField1D : ULineInterface {
@@ -58,6 +59,9 @@ public:
     }
     double getUPrimary() override {
         return *max_element(u.begin(), u.end());
+    }
+    Cell1D getCurrentCell(double dx) override {
+        return {(currentCell+0.5)*dx, dx, currentCell*dx, (currentCell+1.0)*dx};
     }
 };
 

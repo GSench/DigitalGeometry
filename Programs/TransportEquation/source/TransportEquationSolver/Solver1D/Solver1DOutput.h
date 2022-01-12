@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include "Area1D.h"
 
 using namespace std;
 
@@ -31,15 +32,16 @@ public:
         }
     }
 
-    void print(const vector<double>& f, int t, double h){
+    void print(Area1D f, int t, double dx){
         if(!printToFile) return;
         if(printT)
             resultFile << "t " << t << endl;
         if(printXAxes)
-            for (int i = 0; i < f.size(); i++)
-                resultFile << (i + 0.5) * h << "\t" << f[i] << endl;
+            for (f.startIteration(); !f.isFinished(); f.moveNext())
+                resultFile << f.getCurrentCell(dx).x << "\t" << f.getCurrent().fi << endl;
         else
-            for (double fi : f) resultFile << fi << endl;
+            for (f.startIteration(); !f.isFinished(); f.moveNext())
+                resultFile << f.getCurrent().fi << endl;
     }
 
     void printLine(string& line){

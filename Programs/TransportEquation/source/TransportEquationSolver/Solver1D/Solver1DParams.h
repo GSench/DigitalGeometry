@@ -16,6 +16,7 @@ struct Solver1DParams {
     double dt = 0;
     double areaLength = 1.0;
     int cellCount = 20;
+    int NTimeSteps = 100;
     double dx = areaLength/cellCount;
     function<function<double(double)>(double, double, double, int, double)> FlowInterpolationFunction =
             [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
