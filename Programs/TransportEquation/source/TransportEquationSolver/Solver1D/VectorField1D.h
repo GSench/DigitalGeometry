@@ -1,0 +1,69 @@
+//
+// Created by grigoriy.senchenok on 12.01.2022.
+//
+
+#ifndef TRANSPORTEQUATION_VECTORFIELD1D_H
+#define TRANSPORTEQUATION_VECTORFIELD1D_H
+
+#include <vector>
+#include <functional>
+#include <algorithm>
+
+using namespace std;
+
+struct U1D {
+    double uL;
+    double uR;
+};
+
+class ULineInterface {
+public:
+    virtual ~ULineInterface() = default;
+    virtual void startIteration() = 0;
+    virtual bool isFinished() = 0;
+    virtual void moveNext() = 0;
+    virtual U1D getCurrent() = 0;
+    virtual void setCurrent(double ui) = 0;
+    virtual double getUPrimary() = 0;
+};
+
+class VectorField1D : ULineInterface {
+
+private:
+
+    double dx = 0;
+    int cellCount = 100;
+    vector<double> u;
+    int currentCell = 0;
+
+public:
+
+    VectorField1D(double dx,
+                  int cellCount,
+                  const vector<double> &u) :
+                  dx(dx),
+                  cellCount(cellCount),
+                  u(u) {}
+
+    void startIteration() override {
+        currentCell = 0;
+    }
+    bool isFinished() override {
+        return currentCell>=cellCount;
+    }
+    void moveNext() override {
+        currentCell++;
+    }
+    U1D getCurrent() override {
+        return {u[currentCell], u[currentCell+1]};
+    }
+    void setCurrent(double ui) override {
+        u[currentCell] = ui;
+    }
+    double getUPrimary() override {
+        return *max_element(u.begin(), u.end());
+    }
+};
+
+
+#endif //TRANSPORTEQUATION_VECTORFIELD1D_H

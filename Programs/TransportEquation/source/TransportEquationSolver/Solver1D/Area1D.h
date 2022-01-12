@@ -6,39 +6,33 @@
 
 using namespace std;
 
-struct Cell1D {
-    int i;
-    double h;
+struct F1D {
+    double dx;
     double fi;
     double fiPrev;
     double fiNext;
     double xL;
     double xR;
-    double uL;
-    double uR;
 };
 
-class Area1D {
+class LineInterface {
+public:
+    virtual ~LineInterface() = default;
+    virtual void startIteration() = 0;
+    virtual bool isFinished() = 0;
+    virtual void moveNext() = 0;
+    virtual F1D getCurrent() = 0;
+    virtual void setCurrent(double f) = 0;
+};
+
+class Area1D: public LineInterface {
 private:
     double dx = 0;
-
-    int cellCount = 20;
+    int cellCount = 100;
     bool periodicBoundaries = true;
-    double areaLength = 1;
-
-    function<function<double(double)>(double, double, double, int, double)> FlowInterpolationFunction =
-            [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
-                return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i,  3.5, h, 1e-4);
-            };
-    string FlowInterpolationFunctionName = "Psy THINC + MUSCL";
 
     vector<double> scalarFunction;
     int currentCell = 0;
-
-    double dt = 0;
-    double CFL = 0.3;
-
-    function<vector<double>()> vectorField;
 
 public:
 
@@ -48,12 +42,19 @@ public:
 
             cellCount(cellCount),
             periodicBoundaries(periodicBoundaries),
-            areaLength(areaLength),
             dx(areaLength/cellCount),
             scalarFunction(cellCount, 0.0),
-            currentCell(0)
+            currentCell(0) {}
 
-            {}
+    Area1D(int cellCount,
+           double dx,
+           bool periodicBoundaries) :
+
+            cellCount(cellCount),
+            periodicBoundaries(periodicBoundaries),
+            dx(dx),
+            scalarFunction(cellCount, 0.0),
+            currentCell(0) {}
 
     double getDX() const{
         return dx;
@@ -63,53 +64,38 @@ public:
         return cellCount;
     }
 
-    double getAreaLength() const {
-        return areaLength;
-    }
-
     bool hasPeriodicBoundaries() const {
         return periodicBoundaries;
     }
 
-    const function<function<double(double)>(double, double, double, int, double)> &getFlowInterpFunc() const {
-        return FlowInterpolationFunction;
-    }
-
-    const string &getFlowInterpFuncName() const {
-        return FlowInterpolationFunctionName;
-    }
-
-    void startIteration(){
+    void startIteration() override {
         currentCell = 0;
     }
 
-    bool isFinished() const {
+    bool isFinished() override  {
         return currentCell>=cellCount;
     }
 
-    void moveNext() {
+    void moveNext() override {
         currentCell++;
     }
 
-    Cell1D getCurrent(){
+    F1D getCurrent() override {
         if(currentCell==cellCount-1)
-            return {currentCell, dx,
+            return { dx,
                     scalarFunction[currentCell], scalarFunction[0] * periodicBoundaries, scalarFunction[currentCell+1],
                     currentCell*dx, (currentCell+1)*dx};
         if(currentCell==0)
-            return {currentCell, dx,
+            return { dx,
                     scalarFunction[currentCell], scalarFunction[currentCell-1], scalarFunction[cellCount-1] * periodicBoundaries,
                     currentCell*dx, (currentCell+1)*dx};
-        return {currentCell, dx,
+        return { dx,
                 scalarFunction[currentCell], scalarFunction[currentCell-1], scalarFunction[currentCell+1],
                 currentCell*dx, (currentCell+1)*dx};
     }
 
-    void setVectorField(const function<vector<double>()> &vf, double setCFL) {
-        vectorField = vf;
-        CFL = setCFL;
-        vector<double> vf0 = vf();
-        double uMax = *max_element(vf0.begin(), vf0.end());
-        dt = CFL / dx * uMax;
+    void setCurrent(double f) override {
+        scalarFunction[currentCell] = f;
     }
+
 };

@@ -20,7 +20,7 @@ void initF(vector<double> &f, int L, int R) {
 }
 
 double fNext(Area1D p,
-             Cell1D c,
+             F1D c,
              function<double(double)> &PsyPrev){
     double timeStep = p.timeStep();
     function<double(double)> Psy = p.FlowInterpolationFunction(c.fi, c.fiPrev, c.fiNext, c.i, c.h);
@@ -59,14 +59,14 @@ void SolverStep(Area1D p,
         fiAfterLast = f[0]; // saving old value of f0, to use it as fiNext in the last cell
     }
     for (int i = 0; i < p.cellCount-1; i++) { // calculating all cells except last
-        Cell1D cell1D{i, h, f[i], fiPrev, f[i+1], i*h, (i+1)*h, u05t[i], u05t[i+1]};
+        F1D cell1D{i, h, f[i], fiPrev, f[i + 1], i * h, (i + 1) * h, u05t[i], u05t[i + 1]};
         double saveFi = f[i]; // saving old value of each fi, to use it as fiPrev in the next cell
         f[i] = fNext(p, cell1D, PsyPrev);
         fiPrev = saveFi; // using saved fi as fiPrev in the next cell
     }
     // fiNext for last cell is old f0, so we calc this separately
     int iLast = p.cellCount-1;
-    Cell1D cell1D{iLast, h, f[iLast], fiPrev, fiAfterLast, iLast * h, (iLast + 1) * h, u05t[iLast], u05t[iLast + 1]};
+    F1D cell1D{iLast, h, f[iLast], fiPrev, fiAfterLast, iLast * h, (iLast + 1) * h, u05t[iLast], u05t[iLast + 1]};
     f[iLast] = fNext(p, cell1D, PsyPrev);
 }
 

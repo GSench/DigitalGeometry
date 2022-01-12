@@ -26,6 +26,6 @@ set(PROJECT_SOURCES
         source/TransportEquationSolver/Solver2D/PsyScalarUtils.cpp
         source/TransportEquationSolver/Solver2D/PsyScalarUtils.h
         source/Tests/StandardSolver.cpp source/Tests/StandardSolver.h
-        source/TransportEquationSolver/Solver1D/Solver1DOutput.h source/TransportEquationSolver/Solver1D/Solver1DOutput.cpp)
+        source/TransportEquationSolver/Solver1D/Solver1DOutput.h source/TransportEquationSolver/Solver1D/Solver1DOutput.cpp source/TransportEquationSolver/Solver1D/VectorField1D.h source/TransportEquationSolver/Solver1D/Solver1DParams.h source/TransportEquationSolver/Solver1D/Solver1DParams.cpp)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})
