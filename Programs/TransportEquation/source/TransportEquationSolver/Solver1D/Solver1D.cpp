@@ -5,6 +5,8 @@
 #include "Solver1D.h"
 #include "../InterpolationFunctions.h"
 #include "Solver1DOutput.h"
+#include "VectorField1D.h"
+#include "Solver1DParams.h"
 
 using namespace std;
 
@@ -70,9 +72,9 @@ void SolverStep(Area1D p,
     f[iLast] = fNext(p, cell1D, PsyPrev);
 }
 
-void SolveTransportEquation1D(Area1D p,
-                              vector<double> &f,
-                              const function<vector<double>(int)> &u, // uMax(t): uMax(n + 1/2)[i +- 1/2]: velocity vector field at half of time steps: uMax(0) is at t=0, uMax(1) is at t=dt/2, uMax(2) is at t=dt, uMax(2*n) is at t=n*dt
+void SolveTransportEquation1D(const Area1D& f,
+                              const VectorField1D& u,
+                              const Solver1DParams& params, // uMax(t): uMax(n + 1/2)[i +- 1/2]: velocity vector field at half of time steps: uMax(0) is at t=0, uMax(1) is at t=dt/2, uMax(2) is at t=dt, uMax(2*n) is at t=n*dt
                               // velocity vector field on cells' bounds: uMax[0] is in x=0: left side of 0s cell, uMax[1] is in x=dx: right side of 0s cell, left side of 1st cell
                               Solver1DOutput& output) {
     output.print(f, 0, p.h());

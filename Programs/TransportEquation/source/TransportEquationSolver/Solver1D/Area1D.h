@@ -7,12 +7,9 @@
 using namespace std;
 
 struct F1D {
-    double dx;
     double fi;
     double fiPrev;
     double fiNext;
-    double xL;
-    double xR;
 };
 
 class LineInterface {
@@ -27,10 +24,7 @@ public:
 
 class Area1D: public LineInterface {
 private:
-    double dx = 0;
-    int cellCount = 100;
     bool periodicBoundaries = true;
-
     vector<double> scalarFunction;
     int currentCell = 0;
 
@@ -39,30 +33,16 @@ public:
     Area1D(double areaLength,
            int cellCount,
            bool periodicBoundaries) :
-
-            cellCount(cellCount),
             periodicBoundaries(periodicBoundaries),
-            dx(areaLength/cellCount),
             scalarFunction(cellCount, 0.0),
             currentCell(0) {}
 
     Area1D(int cellCount,
            double dx,
            bool periodicBoundaries) :
-
-            cellCount(cellCount),
             periodicBoundaries(periodicBoundaries),
-            dx(dx),
             scalarFunction(cellCount, 0.0),
             currentCell(0) {}
-
-    double getDX() const{
-        return dx;
-    }
-
-    int getCellCount() const {
-        return cellCount;
-    }
 
     bool hasPeriodicBoundaries() const {
         return periodicBoundaries;
@@ -73,7 +53,7 @@ public:
     }
 
     bool isFinished() override  {
-        return currentCell>=cellCount;
+        return currentCell>=scalarFunction.size();
     }
 
     void moveNext() override {
@@ -81,17 +61,17 @@ public:
     }
 
     F1D getCurrent() override {
-        if(currentCell==cellCount-1)
-            return { dx,
-                    scalarFunction[currentCell], scalarFunction[0] * periodicBoundaries, scalarFunction[currentCell+1],
-                    currentCell*dx, (currentCell+1)*dx};
+        if(currentCell==scalarFunction.size()-1)
+            return {scalarFunction[currentCell],
+                    scalarFunction[0] * periodicBoundaries,
+                    scalarFunction[currentCell+1]};
         if(currentCell==0)
-            return { dx,
-                    scalarFunction[currentCell], scalarFunction[currentCell-1], scalarFunction[cellCount-1] * periodicBoundaries,
-                    currentCell*dx, (currentCell+1)*dx};
-        return { dx,
-                scalarFunction[currentCell], scalarFunction[currentCell-1], scalarFunction[currentCell+1],
-                currentCell*dx, (currentCell+1)*dx};
+            return {scalarFunction[currentCell],
+                    scalarFunction[currentCell-1],
+                    scalarFunction[scalarFunction.size()-1] * periodicBoundaries};
+        return {scalarFunction[currentCell],
+                scalarFunction[currentCell-1],
+                scalarFunction[currentCell+1]};
     }
 
     void setCurrent(double f) override {

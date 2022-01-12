@@ -31,8 +31,6 @@ class VectorField1D : ULineInterface {
 
 private:
 
-    double dx = 0;
-    int cellCount = 100;
     vector<double> u;
     int currentCell = 0;
 
@@ -41,15 +39,13 @@ public:
     VectorField1D(double dx,
                   int cellCount,
                   const vector<double> &u) :
-                  dx(dx),
-                  cellCount(cellCount),
                   u(u) {}
 
     void startIteration() override {
         currentCell = 0;
     }
     bool isFinished() override {
-        return currentCell>=cellCount;
+        return currentCell>=u.size();
     }
     void moveNext() override {
         currentCell++;
