@@ -37,9 +37,7 @@ private:
 
 public:
 
-    VectorField1D(double dx,
-                  int cellCount,
-                  const vector<double> &u) :
+    VectorField1D(const vector<double> &u) :
                   u(u) {}
 
     void startIteration() override {
