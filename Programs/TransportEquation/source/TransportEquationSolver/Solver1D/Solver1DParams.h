@@ -18,9 +18,9 @@ struct Solver1DParams {
     int cellCount = 20;
     int NTimeSteps = 100;
     double dx = areaLength/cellCount;
-    function<function<double(double)>(double, double, double, int, double)> FlowInterpolationFunction =
-            [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
-                return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i,  3.5, h, 1e-4);
+    function<function<double(double)>(F1D f, Cell1D c)> FlowInterpolationFunction =
+            [=](F1D f, Cell1D c)->function<double(double)> {
+                return PsyTHINCandMUSCL(f, c,  3.5, 1e-4);
             };
     string FlowInterpolationFunctionName = "Psy THINC + MUSCL";
 };
@@ -29,4 +29,4 @@ Solver1DParams getParamsFor(double CFL, double uPrimary, double areaLength, int 
                             const function<function<double(double)>(double, double, double, int, double)>& PsyFunc,
                             const string& PsyFuncName);
 
-#endif //TRANSPORTEQUATION_SOLVER1DPARAMS_H
+#endif TRANSPORTEQUATION_SOLVER1DPARAMS_H

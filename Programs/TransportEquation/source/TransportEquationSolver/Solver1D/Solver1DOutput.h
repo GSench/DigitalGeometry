@@ -32,7 +32,7 @@ public:
         }
     }
 
-    void print(Area1D f, int t, double dx){
+    void print(LineInterface &f, int t, double dx){
         if(!printToFile) return;
         if(printT)
             resultFile << "t " << t << endl;

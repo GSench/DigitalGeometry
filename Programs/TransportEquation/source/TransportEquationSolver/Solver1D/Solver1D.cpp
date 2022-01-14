@@ -21,8 +21,8 @@ void initF(vector<double> &f, int L, int R) {
         f[i] = 0;
 }
 
-double fNext(Area1D p,
-             F1D c,
+double fNext(F1D f,
+             U1D u,
              function<double(double)> &PsyPrev){
     double timeStep = p.timeStep();
     function<double(double)> Psy = p.FlowInterpolationFunction(c.fi, c.fiPrev, c.fiNext, c.i, c.h);
@@ -33,8 +33,8 @@ double fNext(Area1D p,
     return c.fi - 1.0 / c.h * (fiR*c.uR - fiL*c.uL) * timeStep;
 }
 
-void SolverStep(const Area1D& f,
-                const VectorField1D& u,
+void SolverStep(LineInterface& f,
+                VectorField1D& u,
                 const Solver1DParams& p){
 
     function<double(double)> PsyPrev = [=](double x)->double {
@@ -42,27 +42,19 @@ void SolverStep(const Area1D& f,
     };
     if(f.hasPeriodicBoundaries()){
         //first previous Psy is from last cell (cycled space)
-        function<double(double)> PsyPrevVirt = p.FlowInterpolationFunction(
-                f[p.cellCount - 1],
-                f[p.cellCount - 2],
-                f[0],
-                p.cellCount - 1,
-                h); // this func is built on last cell, will give wrong value in first cell
+        f.startIteration();
+        f.moveToLast();
+        function<double(double)> PsyPrevVirt = p.FlowInterpolationFunction(f.getCurrent(), f.getCurrentCell(p.dx));
+        // this func is built on last cell, will give wrong value in first cell
         PsyPrev = [=](double x)->double {
-            return PsyPrevVirt(x+p.cellCount*h); // PsyPrev just shifts PsyPrevVirt
+            return PsyPrevVirt(x+p.areaLength); // PsyPrev just shifts PsyPrevVirt
         };
     }
 
-    double fiPrev = 0;
-    double fiAfterLast = 0;
-    if(p.periodicBoundaries){
-        fiPrev = f[p.cellCount - 1]; // fiPrev for 1st cell is fi in the last cell
-        fiAfterLast = f[0]; // saving old value of f0, to use it as fiNext in the last cell
-    }
-    for (int i = 0; i < p.cellCount-1; i++) { // calculating all cells except last
-        F1D cell1D{i, h, f[i], fiPrev, f[i + 1], i * h, (i + 1) * h, u05t[i], u05t[i + 1]};
-        double saveFi = f[i]; // saving old value of each fi, to use it as fiPrev in the next cell
-        f[i] = fNext(p, cell1D, PsyPrev);
+    // PREV PROBLEM!!!
+    for (f.startIteration(), u.startIteration(); !f.isFinished(); f.moveNext(), u.moveNext()) {
+        F1D saveFi = f.getCurrent(); // saving old value of each fi, to use it as fiPrev in the next cell
+        f.setCurrent(fNext(f.getCurrent(), u.getCurrent(), PsyPrev));
         fiPrev = saveFi; // using saved fi as fiPrev in the next cell
     }
     // fiNext for last cell is old f0, so we calc this separately
@@ -71,7 +63,7 @@ void SolverStep(const Area1D& f,
     f[iLast] = fNext(p, cell1D, PsyPrev);
 }
 
-void SolveTransportEquation1D(const Area1D& f,
+void SolveTransportEquation1D(LineInterface& f,
                               const VectorField1D& u,
                               const Solver1DParams& p, // velocity vector field on cells' bounds: uMax[0] is in x=0: left side of 0s cell, uMax[1] is in x=dx: right side of 0s cell, left side of 1st cell
                               Solver1DOutput& output) {

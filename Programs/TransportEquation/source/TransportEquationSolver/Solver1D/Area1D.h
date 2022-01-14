@@ -16,9 +16,11 @@ struct F1D {
 class LineInterface {
 public:
     virtual ~LineInterface() = default;
+    virtual bool hasPeriodicBoundaries() const = 0;
     virtual void startIteration() = 0;
     virtual bool isFinished() = 0;
     virtual void moveNext() = 0;
+    virtual void moveToLast() = 0;
     virtual F1D getCurrent() = 0;
     virtual void setCurrent(double f) = 0;
     virtual Cell1D getCurrentCell(double dx) = 0;
@@ -46,7 +48,7 @@ public:
             scalarFunction(cellCount, 0.0),
             currentCell(0) {}
 
-    bool hasPeriodicBoundaries() const {
+    bool hasPeriodicBoundaries() const override {
         return periodicBoundaries;
     }
 
@@ -60,6 +62,10 @@ public:
 
     void moveNext() override {
         currentCell++;
+    }
+
+    void moveToLast() override {
+        currentCell = scalarFunction.size() - 1;
     }
 
     F1D getCurrent() override {
