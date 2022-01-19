@@ -7,6 +7,10 @@
 
 using namespace std;
 
+const int CURR = 0;
+const int PREV = 0;
+const int NEXT = 0;
+
 struct F1D {
     double fi;
     double fiPrev;
@@ -16,15 +20,14 @@ struct F1D {
 class LineInterface {
 public:
     virtual ~LineInterface() = default;
-    virtual bool hasPeriodicBoundaries() const = 0;
     virtual void startIteration() = 0;
     virtual bool isFinished() = 0;
     virtual void moveNext() = 0;
     virtual void movePrev() = 0;
-    virtual void moveToLast() = 0;
+    virtual double get(int offset) = 0;
     virtual F1D getCurrent() = 0;
     virtual void setCurrent(double f) = 0;
-    virtual Cell1D getCurrentCell(double dx) = 0;
+    virtual Cell1D getCurrCell(double dx) = 0;
 };
 
 class Area1D: public LineInterface {
@@ -49,10 +52,6 @@ public:
             scalarFunction(cellCount, 0.0),
             currentCell(0) {}
 
-    bool hasPeriodicBoundaries() const override {
-        return periodicBoundaries;
-    }
-
     void startIteration() override {
         currentCell = 0;
     }
@@ -69,29 +68,20 @@ public:
         currentCell--;
     }
 
-    void moveToLast() override {
-        currentCell = scalarFunction.size() - 1;
+    double get(int offset) override {
+        int i = currentCell+offset;
+        return scalarFunction[i%scalarFunction.size()] * (periodicBoundaries || (i>0 && i<scalarFunction.size()));
     }
 
     F1D getCurrent() override {
-        if(currentCell==scalarFunction.size()-1)
-            return {scalarFunction[currentCell],
-                    scalarFunction[currentCell-1],
-                    scalarFunction[0] * periodicBoundaries};
-        if(currentCell==0)
-            return {scalarFunction[currentCell],
-                    scalarFunction[scalarFunction.size()-1] * periodicBoundaries,
-                    scalarFunction[currentCell+1]};
-        return {scalarFunction[currentCell],
-                scalarFunction[currentCell-1],
-                scalarFunction[currentCell+1]};
+        return {get(CURR), get(PREV), get(NEXT)};
     }
 
     void setCurrent(double f) override {
         scalarFunction[currentCell] = f;
     }
 
-    Cell1D getCurrentCell(double dx) override {
+    Cell1D getCurrCell(double dx) override {
         return {(currentCell+0.5)*dx, dx, currentCell*dx, (currentCell+1.0)*dx};
     }
 

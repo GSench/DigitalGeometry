@@ -37,25 +37,24 @@ void SolverStep(LineInterface& f,
                 VectorField1D& u,
                 const Solver1DParams& p){
 
-    function<double(double)> PsyPrev = [=](double x)->double {
-        return 0;
-    };
-    if(f.hasPeriodicBoundaries()){
-        //first previous Psy is from last cell (cycled space)
-        f.startIteration();
-        f.moveToLast();
-        function<double(double)> PsyPrevVirt = p.FlowInterpolationFunction(f.getCurrent(), f.getCurrentCell(p.dx));
-        // this func is built on last cell, will give wrong value in first cell
-        PsyPrev = [=](double x)->double {
-            return PsyPrevVirt(x+p.areaLength); // PsyPrev just shifts PsyPrevVirt
-        };
-    }
+    f.startIteration();
+    u.startIteration();
 
-    // PREV PROBLEM!!!
-    for (f.startIteration(), u.startIteration(); !f.isFinished(); f.moveNext(), u.moveNext()) {
-        F1D saveFi = f.getCurrent(); // saving old value of each fi, to use it as fiPrev in the next cell
-        f.setCurrent(fNext(f.getCurrent(), u.getCurrent(), PsyPrev));
-        fiPrev = saveFi; // using saved fi as fiPrev in the next cell
+    f.movePrev();
+    F1D fPreFirst = f.getCurrent();
+    function<double(double)> PsyPrev = p.FlowInterpolationFunction(fPreFirst, f.getCurrCell(p.dx));
+    double fiPrev = fPreFirst.fi;
+    doub
+    f.moveNext();
+
+
+    while (!f.isFinished()){
+        F1D fi = f.getCurrent();
+        fi.fiPrev = fiPrev;
+        fiPrev = fi.fi;
+        f.setCurrent(fNext(fi, u.getCurrent(), PsyPrev));
+        f.moveNext();
+        u.moveNext();
     }
     // fiNext for last cell is old f0, so we calc this separately
     int iLast = p.cellCount-1;
