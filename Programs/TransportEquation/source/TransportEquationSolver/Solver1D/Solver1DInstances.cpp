@@ -25,7 +25,7 @@ Solver1DParams getParamsFor(double CFL, double uPrimary, double areaLength, int 
     params.areaLength = areaLength;
     params.NTimeSteps = NTimeSteps;
     params.dx = areaLength/cellCount;
-    params.dt = CFL / params.dx * uPrimary;
+    params.dt = CFL * params.dx / uPrimary;
     params.FlowInterpolationFunction = PsyFunc;
     params.FlowInterpolationFunctionName = PsyFuncName;
     return params;

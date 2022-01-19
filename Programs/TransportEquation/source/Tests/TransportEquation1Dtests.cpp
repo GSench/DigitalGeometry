@@ -221,7 +221,7 @@ void test1DSolverStandard(){
 
     paramsDebug.CFL = 0.3;
 
-    int i = 8;
+    int i = 3;
     int N = paramsDebug.CFL * 10.0 * pow(2, i);
     paramsDebug.cellCount = N;
 
@@ -263,7 +263,7 @@ void test1DSolverStandard(){
     /*for(int i=0; i<fStd.size(); i++)
         cout << i << "\t" << fStd[i] << endl;*/
     cout << "Comparing solutions" << endl;
-    bool testResult = compare1DSolutions(f, fStd, params.cellCount, 0.0);
+    bool testResult = compare1DSolutions(area1D.getF(), fStd, params.cellCount, 0.0);
 
     cout << endl <<
          "------------------" << endl <<

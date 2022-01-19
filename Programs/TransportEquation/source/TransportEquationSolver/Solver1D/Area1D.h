@@ -26,6 +26,10 @@ public:
     int size() override {
         return scalarFunction.size();
     }
+
+    vector<double> getF(){
+        return scalarFunction;
+    }
 };
 
 

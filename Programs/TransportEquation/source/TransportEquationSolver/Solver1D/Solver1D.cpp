@@ -37,6 +37,11 @@ void SolverStep(LineInterface &f,
                 Solver1DParams &p){
 
     function<double(double)> PsyPrev = p.FlowInterpolationFunction(getFi(f, -1), getCi(p, -1));
+    /* Like standard solver:
+    function<double(double)> PsyPrevVirt = p.FlowInterpolationFunction(getFi(f, p.cellCount-1), getCi(p, p.cellCount-1));
+    function<double(double)> PsyPrev = [=](double x) -> double {
+        return PsyPrevVirt(x+p.dx*p.cellCount);
+    };*/
 
     double fiPrev = f[-1];
     double fiAfterLast = f[p.cellCount];
