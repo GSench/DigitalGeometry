@@ -32,16 +32,16 @@ public:
         }
     }
 
-    void print(LineInterface &f, int t, double dx){
+    void print(LineInterface &f, int t, double h){
         if(!printToFile) return;
         if(printT)
             resultFile << "t " << t << endl;
         if(printXAxes)
-            for (f.startIteration(); !f.isFinished(); f.moveNext())
-                resultFile << f.getCurrentCell(dx).x << "\t" << f.getCurrent().fi << endl;
+            for (int i = 0; i < f.size(); i++)
+                resultFile << (i + 0.5) * h << "\t" << f[i] << endl;
         else
-            for (f.startIteration(); !f.isFinished(); f.moveNext())
-                resultFile << f.getCurrent().fi << endl;
+            for (int i = 0; i < f.size(); i++)
+                resultFile << f[i] << endl;
     }
 
     void printLine(string& line){
