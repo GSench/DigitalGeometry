@@ -8,7 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include "Area1D.h"
+#include "Solver1DInstances.h"
 
 using namespace std;
 

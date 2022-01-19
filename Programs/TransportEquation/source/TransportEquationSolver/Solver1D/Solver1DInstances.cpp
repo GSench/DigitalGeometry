@@ -17,7 +17,7 @@ U1D getUi(LineInterface& u, int i){
 }
 
 Solver1DParams getParamsFor(double CFL, double uPrimary, double areaLength, int cellCount,
-                            const function<function<double(double)>(double, double, double, int, double)>& PsyFunc,
+                            const function<function<double(double)>(F1D f, C1D c)>& PsyFunc,
                             const string& PsyFuncName){
     Solver1DParams params;
     params.CFL = CFL;
