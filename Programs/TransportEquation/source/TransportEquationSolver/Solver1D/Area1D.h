@@ -16,7 +16,7 @@ public:
             scalarFunction(scalarFunction) {}
 
     double operator[](int i) override {
-        return scalarFunction[i%scalarFunction.size()] * (periodicBoundaries || (i>=0 || i<scalarFunction.size()));
+        return scalarFunction[(i+scalarFunction.size())%scalarFunction.size()] * (periodicBoundaries || (i>=0 || i<scalarFunction.size()));
     }
 
     void set(int i, double val) override {

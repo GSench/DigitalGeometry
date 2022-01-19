@@ -29,6 +29,6 @@ set(PROJECT_SOURCES
         source/TransportEquationSolver/Solver1D/Solver1DOutput.h
         source/TransportEquationSolver/Solver1D/Solver1DOutput.cpp
         source/TransportEquationSolver/Solver1D/Solver1DInstances.h
-        source/TransportEquationSolver/Solver1D/Solver1DInstances.cpp)
+        source/TransportEquationSolver/Solver1D/Solver1DInstances.cpp source/TransportEquationSolver/Solver1D/VectorField1D.cpp source/TransportEquationSolver/Solver1D/VectorField1D.h)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})

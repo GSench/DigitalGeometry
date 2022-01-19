@@ -16,13 +16,14 @@ U1D getUi(LineInterface& u, int i){
     return {u[i], u[i+1]};
 }
 
-Solver1DParams getParamsFor(double CFL, double uPrimary, double areaLength, int cellCount,
+Solver1DParams getParamsFor(double CFL, double uPrimary, double areaLength, int cellCount, int NTimeSteps,
                             const function<function<double(double)>(F1D f, C1D c)>& PsyFunc,
                             const string& PsyFuncName){
     Solver1DParams params;
     params.CFL = CFL;
     params.cellCount = cellCount;
     params.areaLength = areaLength;
+    params.NTimeSteps = NTimeSteps;
     params.dx = areaLength/cellCount;
     params.dt = CFL / params.dx * uPrimary;
     params.FlowInterpolationFunction = PsyFunc;

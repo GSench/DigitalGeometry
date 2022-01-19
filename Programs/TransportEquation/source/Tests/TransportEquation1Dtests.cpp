@@ -13,11 +13,13 @@
 #include "../TransportEquationSolver/Solver1D/Solver1D.h"
 #include "StandardSolver.h"
 #include "../TransportEquationSolver/Solver1D/Solver1DOutput.h"
+#include "../TransportEquationSolver/Solver1D/Area1D.h"
+#include "../TransportEquationSolver/Solver1D/VectorField1D.h"
 
 using namespace std;
 
 const string OUTPUT_PATH = R"(C:\Programing\Projects\DigitalGeometry\Programs\Output\)";
-
+/*
 void THINC1Dtests() {
 
     int iNmax = 9;
@@ -104,7 +106,7 @@ void THINC1Dtests() {
     myfi.close();
 
 }
-
+*/
 bool compare1DSolutions(const vector<double>& f1, const vector<double>& f2, int cellCount, double acceptDiffer){
     bool FAIL = false;
     for(int i=0; i<cellCount; i++){
@@ -119,7 +121,7 @@ bool compare1DSolutions(const vector<double>& f1, const vector<double>& f2, int 
     }
     return !FAIL;
 }
-
+/*
 bool test1DSolutionWithFile(const vector<double>& f,
                             const string& debugFilePath,
                             double cellCount,
@@ -198,17 +200,19 @@ void test1DSolverWithFile(){
          "beta: " << beta << " eps: " << eps << " uMax: " << params.uMax << endl <<
          "------------------" << endl <<
          (testResult ? "TEST SUCCEEDED" : "TEST FAILED") << endl;
-}
+}*/
 
 void test1DSolverStandard(){
     // Debug params
     THINC1DparamsDebug paramsDebug;
 
     // Scalar params
+    double beta = 3.5;
+    double eps = 1e-4;
     paramsDebug.area = 1;
     paramsDebug.u = 0.1;
-    paramsDebug.eps = 1e-4;
-    paramsDebug.beta = 3.5;
+    paramsDebug.eps = eps;
+    paramsDebug.beta = beta;
 
     // Test specific params
     paramsDebug.PsyFunc = [=](const vector<double>& f, int i, double beta, double h, double eps)->function<double(double)> {
@@ -226,39 +230,34 @@ void test1DSolverStandard(){
     int time = T * j;
     paramsDebug.stepN = time;
 
-    Area1D params;
-    params.areaLength = 1;
-    params.uMax = 0.1;
-    double beta = 3.5;
-    double eps = 1e-4;
-    params.FlowInterpolationFunction = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
-        return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, beta, h, eps);
-    };
-    params.FlowInterpolationFunctionName = "Psy THINC + MUSCL";
-    params.CFL = 0.3;
-    params.cellCount = N;
-    params.NTimeSteps = time;
-    params.periodicBoundaries = true;
+    Solver1DParams params = getParamsFor(
+            0.3,
+            0.1,
+            1.0,
+            N,
+            time,
+            [=](F1D f1D, C1D c1D) -> function<double(double)> {
+                return PsyTHINCandMUSCL(f1D, c1D, 3.5, 1e-4);
+            },
+            "Psy THINC + MUSCL"
+            );
 
-    vector<double> uStatic(params.cellCount+1, 0.1);
-    function<vector<double>(int)> u = [=](int t05n)->vector<double>{
-        return uStatic;
-    };
-
+    VectorField1D u = getStaticVF1D(0.1, N+1);
 
     // scalarFunction init
     double L = N / 2;
     double R = N - 1;
     vector<double> f(N);
     initF(f, L, R);
+    Area1D area1D(true, f);
     vector<double> fexact = f;
 
     vector<double> fStd = f;
-    vector<double> fExStd = fexact;
+    const vector<double>& fExStd = fexact;
 
     cout << "Computing with current solver" << endl;
     Solver1DOutput nOut = noOutput();
-    SolveTransportEquation1D(params, f, u, nOut);
+    SolveTransportEquation1D(area1D, u, params, nOut);
     cout << "Computing with standard solver" << endl;
     THINC1DDebug(paramsDebug, fStd, fExStd);
     /*for(int i=0; i<fStd.size(); i++)
@@ -271,7 +270,7 @@ void test1DSolverStandard(){
          "Psy function: " << params.FlowInterpolationFunctionName << endl <<
          "cellCount: " << params.cellCount << " NTimeSteps: " << params.NTimeSteps << endl <<
          "CFL: " << params.CFL << " Area size: " << params.areaLength << endl <<
-         "beta: " << beta << " eps: " << eps << " uMax: " << params.uMax << endl <<
+         "beta: " << beta << " eps: " << eps << " uPrimary: " << 0.1 << endl <<
          "------------------" << endl <<
          (testResult ? "TEST SUCCEEDED" : "TEST FAILED") << endl;
 }
