@@ -20,6 +20,7 @@ public:
     virtual void startIteration() = 0;
     virtual bool isFinished() = 0;
     virtual void moveNext() = 0;
+    virtual void movePrev() = 0;
     virtual void moveToLast() = 0;
     virtual F1D getCurrent() = 0;
     virtual void setCurrent(double f) = 0;
@@ -64,6 +65,10 @@ public:
         currentCell++;
     }
 
+    void movePrev() override {
+        currentCell--;
+    }
+
     void moveToLast() override {
         currentCell = scalarFunction.size() - 1;
     }
@@ -71,12 +76,12 @@ public:
     F1D getCurrent() override {
         if(currentCell==scalarFunction.size()-1)
             return {scalarFunction[currentCell],
-                    scalarFunction[0] * periodicBoundaries,
-                    scalarFunction[currentCell+1]};
+                    scalarFunction[currentCell-1],
+                    scalarFunction[0] * periodicBoundaries};
         if(currentCell==0)
             return {scalarFunction[currentCell],
-                    scalarFunction[currentCell-1],
-                    scalarFunction[scalarFunction.size()-1] * periodicBoundaries};
+                    scalarFunction[scalarFunction.size()-1] * periodicBoundaries,
+                    scalarFunction[currentCell+1]};
         return {scalarFunction[currentCell],
                 scalarFunction[currentCell-1],
                 scalarFunction[currentCell+1]};
