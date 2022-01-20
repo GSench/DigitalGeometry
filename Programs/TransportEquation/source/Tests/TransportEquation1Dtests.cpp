@@ -221,7 +221,7 @@ void test1DSolverStandard(){
 
     paramsDebug.CFL = 0.3;
 
-    int i = 3;
+    int i = 8;
     int N = paramsDebug.CFL * 10.0 * pow(2, i);
     paramsDebug.cellCount = N;
 
