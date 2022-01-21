@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include "Solver1DInstances.h"
 
 using namespace std;
 
@@ -31,7 +32,7 @@ public:
         }
     }
 
-    void print(const vector<double>& f, int t, double h){
+    void print(LineInterface &f, int t, double h){
         if(!printToFile) return;
         if(printT)
             resultFile << "t " << t << endl;
@@ -39,7 +40,8 @@ public:
             for (int i = 0; i < f.size(); i++)
                 resultFile << (i + 0.5) * h << "\t" << f[i] << endl;
         else
-            for (double fi : f) resultFile << fi << endl;
+            for (int i = 0; i < f.size(); i++)
+                resultFile << f[i] << endl;
     }
 
     void printLine(string& line){

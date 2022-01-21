@@ -3,6 +3,7 @@
 
 #include "../math/MathUtils.h"
 #include "THINCUtils.h"
+#include "Solver1D/Solver1DInstances.h"
 
 using namespace std;
 
@@ -12,65 +13,37 @@ function<double(double)> PsyGodunov(double fi) {
     };
 }
 
-function<double(double)> PsyMUSCL(double fi, double fiPrev, double fiNext, int i, double h) {
-    double dfR = (fiNext - fi) / h;
-    double dfL = (fi - fiPrev) / h;
-
+function<double(double)> PsyMUSCL(F1D f, C1D c) {
+    double dfR = (f.fiNext - f.fi) / c.dx;
+    double dfL = (f.fi - f.fiPrev) / c.dx;
     double k = minmod(dfL, dfR);
-    double b = fi - k * (i + 0.5) * h;
-
+    double b = f.fi - k * c.x;
     return [=](double x)->double {
         return k * x + b;
     };
 }
 
-function<double(double)> PsyTHINCandGodunov(double fi, double fiPrev, double fiNext, int i, double beta, double h, double eps) {
-    double xL = i * h;
-    //double xR = (i + 1) * h;
-
-    double fiMin = min(fiPrev, fiNext);
-    double fiMax = max(fiPrev, fiNext);
+function<double(double)> PsyTHINC(F1D f, C1D c, double beta) {
+    double fiMin = min(f.fiPrev, f.fiNext);
+    double fiMax = max(f.fiPrev, f.fiNext);
     double deltaFi = fiMax - fiMin;
-
-    if (!calcCondition(fiPrev, fi, fiNext, eps))
-        return [=](double x)->double {
-        return fi; //Godunov
-    };
-
-    double gamma = getGamma(fiNext, fiPrev);
-    double xiavg = getXiavg(beta, gamma, fi);
-
+    double gamma = getGamma(f.fiNext, f.fiPrev);
+    double xiavg = getXiavg(beta, gamma,f. fi);
     return [=](double x)->double {
-        return fiMin + (Fi)(beta, gamma, xL, h, xiavg)(x) * deltaFi;
+        return fiMin + (Fi)(beta, gamma, c.xL, c.dx, xiavg)(x) * deltaFi;
     };
 }
 
-function<double(double)> PsyTHINCandMUSCL(double fi, double fiPrev, double fiNext, int i, double beta, double h, double eps) {
-    double xL = i * h;
-    //double xR = (i + 1) * h;
+function<double(double)> PsyTHINCandGodunov(F1D f, C1D c, double beta, double eps) {
+    if (!calcCondition(f.fiPrev, f.fi, f.fiNext, eps))
+        return PsyGodunov(f.fi);
+    else return PsyTHINC(f, c, beta);
+}
 
-    double fiMin = min(fiPrev, fiNext);
-    double fiMax = max(fiPrev, fiNext);
-    double deltaFi = fiMax - fiMin;
-
-    if (!calcCondition(fiPrev, fi, fiNext, eps)) {
-        double dfR = (fiNext - fi) / h;
-        double dfL = (fi - fiPrev) / h;
-
-        double k = minmod(dfL, dfR);
-        double b = fi - k * (i + 0.5) * h;
-
-        return [=](double x)->double {
-            return k * x + b;
-        };
-    }
-
-    double gamma = getGamma(fiNext, fiPrev);
-    double xiavg = getXiavg(beta, gamma, fi);
-
-    return [=](double x)->double {
-        return fiMin + (Fi)(beta, gamma, xL, h, xiavg)(x) * deltaFi;
-    };
+function<double(double)> PsyTHINCandMUSCL(F1D f, C1D c, double beta, double eps) {
+    if (!calcCondition(f.fiPrev, f.fi, f.fiNext, eps))
+        return PsyMUSCL(f, c);
+    else return PsyTHINC(f, c, beta);
 }
 
 double getXforInterpolation(double x, double u, double t){

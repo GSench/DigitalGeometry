@@ -52,9 +52,9 @@ function<double(double)> PsyMUSCLDebug(const vector<double>& f, int i, double be
     int iPrev = i != 0 ? i - 1 : f.size() - 1;
     int iNext = i != f.size() - 1 ? i + 1 : 0;
 
-    double fi = f[i];
-    double fiPrev = f[iPrev];
-    double fiNext = f[iNext];
+    double fi = f[(i+f.size()) % f.size()];
+    double fiPrev = f[(i-1+f.size()) % f.size()];
+    double fiNext = f[(i+1+f.size()) % f.size()];
 
     double dfR = (fiNext - fi) / h;
     double dfL = (fi - fiPrev) / h;
@@ -74,9 +74,9 @@ function<double(double)> PsyTHINCandGodunovDebug(const vector<double>& f, int i,
     double xL = i * h;
     double xR = (i + 1) * h;
 
-    double fi = f[i];
-    double fiPrev = f[iPrev];
-    double fiNext = f[iNext];
+    double fi = f[(i+f.size()) % f.size()];
+    double fiPrev = f[(i-1+f.size()) % f.size()];
+    double fiNext = f[(i+1+f.size()) % f.size()];
 
     double fiMin = min(fiPrev, fiNext);
     double fiMax = max(fiPrev, fiNext);
@@ -102,9 +102,9 @@ function<double(double)> PsyTHINCandMUSCLDebug(const vector<double>& f, int i, d
     double xL = i * h;
     double xR = (i + 1) * h;
 
-    double fi = f[i];
-    double fiPrev = f[iPrev];
-    double fiNext = f[iNext];
+    double fi = f[(i+f.size()) % f.size()];
+    double fiPrev = f[(i-1+f.size()) % f.size()];
+    double fiNext = f[(i+1+f.size()) % f.size()];
 
     double fiMin = min(fiPrev, fiNext);
     double fiMax = max(fiPrev, fiNext);
@@ -115,7 +115,8 @@ function<double(double)> PsyTHINCandMUSCLDebug(const vector<double>& f, int i, d
         double dfL = (fi - fiPrev) / h;
 
         double k = minmodDebug(dfL, dfR);
-        double b = fi - k * (i + 0.5) * h;
+        double cx = (i + 0.5) * h;
+        double b = fi - k * cx;
 
         return [=](double x)->double {
             return k * x + b;
@@ -140,10 +141,7 @@ double THINC1DDebug(const THINC1DparamsDebug& p, vector<double> &f, const vector
     for (int n = 0; n < p.stepN; n++) {
 
         //first previous Psy is from last cell (cycled space)
-        function<double(double)> PsyPrevVirt = p.PsyFunc(f, p.cellCount - 1, p.beta, h, p.eps);
-        function<double(double)> PsyPrev = [=](double x)->double {
-            return PsyPrevVirt(x+p.cellCount*h);
-        };
+        function<double(double)> PsyPrev = p.PsyFunc(f, -1, p.beta, h, p.eps);
 
         for (int i = 0; i < p.cellCount; i++) {
             int iPrev = i != 0 ? i - 1 : p.cellCount - 1;
