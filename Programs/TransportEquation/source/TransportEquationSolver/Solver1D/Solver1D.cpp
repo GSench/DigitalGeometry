@@ -64,7 +64,7 @@ void SolveTransportEquation1D(LineInterface &f,
     }
 }
 
-double errorL2(vector<double> &f, const vector<double>& fexact, double h){
+double errorL2(vector<double> f, const vector<double>& fexact, double h){
     double error = 0;
     for (int i = 0; i < f.size(); i++) {
         error += pow(f[i]*h - fexact[i] * h, 2);

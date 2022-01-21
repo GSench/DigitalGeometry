@@ -18,15 +18,15 @@
 
 using namespace std;
 
-const string OUTPUT_PATH = R"(C:\Programing\Projects\DigitalGeometry\Programs\Output\)";
-/*
+const string OUTPUT_PATH = R"(D:\Programing\C++\DigitalGeometry\Programs\Output\)";
+
 void THINC1Dtests() {
 
     int iNmax = 9;
     int iNmin = 3;
     int jTmax = 6;
 
-    Area1D params;
+    Solver1DParams params;
 
     ofstream myfi;
     myfi.open(OUTPUT_PATH+"CalculationResults/error.txt");
@@ -34,21 +34,25 @@ void THINC1Dtests() {
 
     double b = 3.5;
     double e = 1e-4;
-    vector< function<function<double(double)>(double, double, double, int, double)> > PsyFunctions(4);
-    PsyFunctions[0] = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
-        return PsyGodunov(fi);
+    vector< function<function<double(double)>(F1D f1D, C1D c1D)> > PsyFunctions(4);
+    PsyFunctions[0] = [=](F1D f1D, C1D c1D) -> function<double(double)> {
+        return PsyGodunov(f1D.fi);
     };
-    PsyFunctions[1] = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
-        return PsyMUSCL(fi, fiPrev, fiNext, i, h);
+    PsyFunctions[1] = [=](F1D f1D, C1D c1D) -> function<double(double)> {
+        return PsyMUSCL(f1D, c1D);
     };
-    PsyFunctions[2] = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
-        return PsyTHINCandGodunov(fi, fiPrev, fiNext, i, b, h, e);
+    PsyFunctions[2] = [=](F1D f1D, C1D c1D) -> function<double(double)> {
+        return PsyTHINCandGodunov(f1D, c1D, b, e);
     };
-    PsyFunctions[3] = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
-        return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, b, h, e);
+    PsyFunctions[3] = [=](F1D f1D, C1D c1D) -> function<double(double)> {
+        return PsyTHINCandMUSCL(f1D, c1D, b, e);
     };
 
     vector<string> titles{ "Godunov", "MUSCL", "THINC_Godunov", "THINC_MUSCL" };
+
+    params.CFL = 0.3;
+    params.areaLength = 1.0;
+    double uPrimary = 0.1;
 
     for (int psy = 0; psy < PsyFunctions.size(); psy++) {
         cout << titles[psy] << " scheme" << endl;
@@ -67,19 +71,19 @@ void THINC1Dtests() {
         for (int i = iNmin; i < iNmax; i++) {
             int N = params.CFL * 10.0 * pow(2, i); //params.CFL*10 чтобы N был кратен CFL
             params.cellCount = N;
+            params.dx = params.areaLength / params.cellCount;
             double L = N / 2;
             double R = N - 1;
             vector<double> f(N);
             initF(f, L, R);
             vector<double> fexact = f;
+            Area1D fArea(true, f);
 
-            vector<double> uStatic(params.cellCount+1, 0.1);
-            function<vector<double>(int)> u = [=](int t05n)->vector<double>{
-                return uStatic;
-            };
+            VectorField1D u = getStaticVF1D(0.1, N+1);
 
             int T = (double)N / params.CFL;
             params.NTimeSteps = T;
+            params.dt = params.CFL * params.dx / uPrimary;
 
             cout << "N" << N << "\t";
             myfi << "N" << N << "\t";
@@ -89,8 +93,8 @@ void THINC1Dtests() {
                         true,
                         true,
                         OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt");
-                SolveTransportEquation1D(params, f, u, output);
-                double error = errorL2(f, fexact, params.areaLength / params.cellCount);
+                SolveTransportEquation1D(fArea, u, params, output);
+                double error = errorL2(fArea.getF(), fexact, params.dx);
                 string errorLine = "error "+ to_string(error);
                 output.printLine(errorLine);
                 output.finish();
@@ -106,7 +110,7 @@ void THINC1Dtests() {
     myfi.close();
 
 }
-*/
+
 bool compare1DSolutions(const vector<double>& f1, const vector<double>& f2, int cellCount, double acceptDiffer){
     bool FAIL = false;
     for(int i=0; i<cellCount; i++){
@@ -121,86 +125,6 @@ bool compare1DSolutions(const vector<double>& f1, const vector<double>& f2, int 
     }
     return !FAIL;
 }
-/*
-bool test1DSolutionWithFile(const vector<double>& f,
-                            const string& debugFilePath,
-                            double cellCount,
-                            double acceptDiffer) {
-    ifstream debugFile(debugFilePath);
-    double xiDebug, fiDebug;
-    string s;
-    double v, error = 0;
-    vector<double> fDebug(cellCount, 0.0);
-    cout << "READING FILE: " << debugFilePath << endl;
-    while(true){
-        debugFile >> s >> v;
-        if(s=="error"){
-            //cout << "error = "<< v << endl;
-            error = v;
-            break;
-        } else if(s=="t") {
-            //cout << "t = " << v << endl;
-            for(int i=0; i<cellCount; i++){
-                debugFile >> xiDebug >> fiDebug;
-                fDebug[i] = fiDebug;
-            }
-        }
-    }
-
-
-    return compare1DSolutions(f, fDebug, cellCount, acceptDiffer);
-}
-
-void test1DSolverWithFile(){
-    // Debug params
-    Area1D params;
-
-    // Scalar params
-    params.areaLength = 1;
-    params.uMax = 0.1;
-
-    // Test specific params
-    double beta = 3.5;
-    double eps = 1e-4;
-    params.FlowInterpolationFunction = [=](double fi, double fiPrev, double fiNext, int i, double h)->function<double(double)> {
-        return PsyTHINCandMUSCL(fi, fiPrev, fiNext, i, beta, h, eps);
-    };
-    params.FlowInterpolationFunctionName = "Psy THINC + MUSCL";
-    params.CFL = 0.3;
-    int i = 8;
-    int N = params.CFL * 10.0 * pow(2, i);
-    params.cellCount = N;
-    int T = (double) N / params.CFL;
-    int j = 6;
-    params.NTimeSteps = T * j;
-
-    // scalarFunction init
-    double L = N / 2;
-    double R = N - 1;
-    vector<double> f(N);
-    initF(f, L, R);
-
-    vector<double> uStatic(params.cellCount+1, 0.1);
-    function<vector<double>(int)> u = [=](int t05n)->vector<double>{
-        return uStatic;
-    };
-
-    Solver1DOutput nOut = noOutput();
-    SolveTransportEquation1D(params, f, u, nOut);
-
-    string debugFilePath =
-            "C:\\Programing\\Projects\\DigitalGeometry\\Programs\\Output\\StandardResults\\THINC_MUSCL\\N768_T6.txt";
-    bool testResult = test1DSolutionWithFile(f, debugFilePath, params.cellCount, 1e-6);
-
-    cout << endl <<
-         "------------------" << endl <<
-         "Psy function: " << params.FlowInterpolationFunctionName << endl <<
-         "cellCount: " << params.cellCount << " NTimeSteps: " << params.NTimeSteps << endl <<
-         "CFL: " << params.CFL << " Area size: " << params.areaLength << endl <<
-         "beta: " << beta << " eps: " << eps << " uMax: " << params.uMax << endl <<
-         "------------------" << endl <<
-         (testResult ? "TEST SUCCEEDED" : "TEST FAILED") << endl;
-}*/
 
 void test1DSolverStandard(){
     // Debug params
