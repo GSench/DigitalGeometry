@@ -17,16 +17,37 @@ private:
     bool printToFile = false;
     bool printXAxes = true;
     bool printT = true;
+    bool printHorizontally = false;
+    bool printXAxesOnes = false;
     ofstream resultFile;
+    bool barePrint = false;
+    int NTimeSteps = 100;
+    double printNStep = 1;
+    double printedN = 0;
+    bool allowPrintError = true;
 public:
     Solver1DOutput(
             bool printToFile,
             bool printXAxes,
             bool printT,
-            const string& resultFilePath) :
+            bool printHorizontally,
+            bool printXAxesOnes,
+            const string& resultFilePath,
+            bool barePrint,
+            int NTimeSteps,
+            int maxFrames,
+            bool allowPrintError
+            ) :
             printToFile(printToFile),
             printXAxes(printXAxes),
-            printT(printT) {
+            printT(printT),
+            printHorizontally(printHorizontally),
+            printXAxesOnes(printXAxesOnes),
+            barePrint(barePrint),
+            NTimeSteps(NTimeSteps),
+            printNStep( (double)NTimeSteps / min(maxFrames, NTimeSteps)),
+            allowPrintError(allowPrintError)
+            {
         if(printToFile){
             resultFile.open(resultFilePath);
         }
@@ -34,14 +55,44 @@ public:
 
     void print(LineInterface &f, int t, double h){
         if(!printToFile) return;
+
+        if(barePrint)
+        if(t!=NTimeSteps-1){
+            if(printedN > t)
+                return;
+            printedN += printNStep;
+        }
+
+        if(t==0 && printHorizontally && printXAxes && printXAxesOnes){
+            for (int i = 0; i < f.size(); i++)
+                resultFile << (i + 0.5) * h << "\t";
+            resultFile  << endl;
+        }
+
         if(printT)
             resultFile << "t " << t << endl;
-        if(printXAxes)
+        if(printHorizontally) {
+            if(printXAxes && !printXAxesOnes) {
+                for (int i = 0; i < f.size(); i++)
+                    resultFile << (i + 0.5) * h << "\t";
+                resultFile << endl;
+            }
             for (int i = 0; i < f.size(); i++)
-                resultFile << (i + 0.5) * h << "\t" << f[i] << endl;
-        else
-            for (int i = 0; i < f.size(); i++)
-                resultFile << f[i] << endl;
+                resultFile << f[i] << "\t";
+            resultFile  << endl;
+        } else {
+            if(printXAxes)
+                for (int i = 0; i < f.size(); i++)
+                    resultFile << (i + 0.5) * h << "\t" << f[i] << endl;
+            else
+                for (int i = 0; i < f.size(); i++)
+                    resultFile << f[i] << endl;
+        }
+    }
+
+    void printError(double error){
+        if(!allowPrintError) return;
+        resultFile << "error " << error << endl;
     }
 
     void printLine(string& line){
@@ -56,5 +107,7 @@ public:
 };
 
 Solver1DOutput noOutput();
+Solver1DOutput minimal1DOutput(const string& filePath, int NTimeSteps);
+Solver1DOutput normal1DOutput(const string& filePath, int NTimeSteps);
 
 #endif //TRANSPORTEQUATION_SOLVER1DOUTPUT_H

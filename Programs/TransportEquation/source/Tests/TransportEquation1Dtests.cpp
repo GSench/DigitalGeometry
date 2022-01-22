@@ -20,7 +20,7 @@ using namespace std;
 
 const string OUTPUT_PATH = R"(D:\Programing\C++\DigitalGeometry\Programs\Output\)";
 
-void THINC1Dtests() {
+void Solver1Dtests() {
 
     int iNmax = 9;
     int iNmin = 3;
@@ -88,15 +88,12 @@ void THINC1Dtests() {
             cout << "N" << N << "\t";
             myfi << "N" << N << "\t";
             for (int j = 0; j < jTmax; j++) {
-                Solver1DOutput output(
-                        true,
-                        true,
-                        true,
-                        OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt");
+                Solver1DOutput output = normal1DOutput(
+                        OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt",
+                        T);
                 SolveTransportEquation1D(fArea, u, params, output);
                 double error = errorL2(fArea.getF(), fexact, params.dx);
-                string errorLine = "error "+ to_string(error);
-                output.printLine(errorLine);
+                output.printError(error);
                 output.finish();
                 printf("%.4f\t", error);
                 myfi << error << "\t";
