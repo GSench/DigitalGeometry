@@ -18,6 +18,7 @@ private:
     bool printXAxes = true;
     bool printT = true;
     bool printHorizontally = false;
+    bool printXAxesOnes = false;
     ofstream resultFile;
     bool barePrint = false;
     int NTimeSteps = 100;
@@ -29,6 +30,7 @@ public:
             bool printXAxes,
             bool printT,
             bool printHorizontally,
+            bool printXAxesOnes,
             const string& resultFilePath,
             bool barePrint,
             int NTimeSteps,
@@ -38,6 +40,7 @@ public:
             printXAxes(printXAxes),
             printT(printT),
             printHorizontally(printHorizontally),
+            printXAxesOnes(printXAxesOnes),
             barePrint(barePrint),
             NTimeSteps(NTimeSteps),
             printNStep( (double)NTimeSteps / min(maxFrames, NTimeSteps))
@@ -57,10 +60,16 @@ public:
             printedN += printNStep;
         }
 
+        if(t==0 && printHorizontally && printXAxes && printXAxesOnes){
+            for (int i = 0; i < f.size(); i++)
+                resultFile << (i + 0.5) * h << "\t";
+            resultFile  << endl;
+        }
+
         if(printT)
             resultFile << "t " << t << endl;
         if(printHorizontally) {
-            if(printXAxes) {
+            if(printXAxes && !printXAxesOnes) {
                 for (int i = 0; i < f.size(); i++)
                     resultFile << (i + 0.5) * h << "\t";
                 resultFile << endl;

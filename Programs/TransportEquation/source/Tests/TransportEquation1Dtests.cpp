@@ -93,6 +93,7 @@ void Solver1Dtests() {
                         true,
                         true,
                         true,
+                        true,
                         OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt",
                         true,
                         T,
