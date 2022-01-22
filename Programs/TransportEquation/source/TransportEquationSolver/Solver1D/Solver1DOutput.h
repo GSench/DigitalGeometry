@@ -19,17 +19,29 @@ private:
     bool printT = true;
     bool printHorizontally = false;
     ofstream resultFile;
+    bool barePrint = false;
+    int NTimeSteps = 100;
+    double printNStep = 1;
+    double printedN = 0;
 public:
     Solver1DOutput(
             bool printToFile,
             bool printXAxes,
             bool printT,
             bool printHorizontally,
-            const string& resultFilePath) :
+            const string& resultFilePath,
+            bool barePrint,
+            int NTimeSteps,
+            int maxFrames
+            ) :
             printToFile(printToFile),
             printXAxes(printXAxes),
             printT(printT),
-            printHorizontally(printHorizontally){
+            printHorizontally(printHorizontally),
+            barePrint(barePrint),
+            NTimeSteps(NTimeSteps),
+            printNStep( (double)NTimeSteps / min(maxFrames, NTimeSteps))
+            {
         if(printToFile){
             resultFile.open(resultFilePath);
         }
@@ -37,6 +49,14 @@ public:
 
     void print(LineInterface &f, int t, double h){
         if(!printToFile) return;
+
+        if(barePrint)
+        if(t!=NTimeSteps-1){
+            if(printedN > t)
+                return;
+            printedN += printNStep;
+        }
+
         if(printT)
             resultFile << "t " << t << endl;
         if(printHorizontally) {
