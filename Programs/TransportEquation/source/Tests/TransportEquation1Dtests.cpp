@@ -88,20 +88,12 @@ void Solver1Dtests() {
             cout << "N" << N << "\t";
             myfi << "N" << N << "\t";
             for (int j = 0; j < jTmax; j++) {
-                Solver1DOutput output(
-                        true,
-                        true,
-                        true,
-                        true,
-                        true,
+                Solver1DOutput output = normal1DOutput(
                         OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt",
-                        true,
-                        T,
-                        50);
+                        T);
                 SolveTransportEquation1D(fArea, u, params, output);
                 double error = errorL2(fArea.getF(), fexact, params.dx);
-                string errorLine = "error "+ to_string(error);
-                output.printLine(errorLine);
+                output.printError(error);
                 output.finish();
                 printf("%.4f\t", error);
                 myfi << error << "\t";

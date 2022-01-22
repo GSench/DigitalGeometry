@@ -24,6 +24,7 @@ private:
     int NTimeSteps = 100;
     double printNStep = 1;
     double printedN = 0;
+    bool allowPrintError = true;
 public:
     Solver1DOutput(
             bool printToFile,
@@ -34,7 +35,8 @@ public:
             const string& resultFilePath,
             bool barePrint,
             int NTimeSteps,
-            int maxFrames
+            int maxFrames,
+            bool allowPrintError
             ) :
             printToFile(printToFile),
             printXAxes(printXAxes),
@@ -43,7 +45,8 @@ public:
             printXAxesOnes(printXAxesOnes),
             barePrint(barePrint),
             NTimeSteps(NTimeSteps),
-            printNStep( (double)NTimeSteps / min(maxFrames, NTimeSteps))
+            printNStep( (double)NTimeSteps / min(maxFrames, NTimeSteps)),
+            allowPrintError(allowPrintError)
             {
         if(printToFile){
             resultFile.open(resultFilePath);
@@ -87,6 +90,11 @@ public:
         }
     }
 
+    void printError(double error){
+        if(!allowPrintError) return;
+        resultFile << "error " << error << endl;
+    }
+
     void printLine(string& line){
         if(printToFile)
             resultFile << line << endl;
@@ -99,5 +107,7 @@ public:
 };
 
 Solver1DOutput noOutput();
+Solver1DOutput minimal1DOutput(const string& filePath, int NTimeSteps);
+Solver1DOutput normal1DOutput(const string& filePath, int NTimeSteps);
 
 #endif //TRANSPORTEQUATION_SOLVER1DOUTPUT_H
