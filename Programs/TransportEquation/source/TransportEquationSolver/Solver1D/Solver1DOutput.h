@@ -17,16 +17,19 @@ private:
     bool printToFile = false;
     bool printXAxes = true;
     bool printT = true;
+    bool printHorizontally = false;
     ofstream resultFile;
 public:
     Solver1DOutput(
             bool printToFile,
             bool printXAxes,
             bool printT,
+            bool printHorizontally,
             const string& resultFilePath) :
             printToFile(printToFile),
             printXAxes(printXAxes),
-            printT(printT) {
+            printT(printT),
+            printHorizontally(printHorizontally){
         if(printToFile){
             resultFile.open(resultFilePath);
         }
@@ -36,12 +39,23 @@ public:
         if(!printToFile) return;
         if(printT)
             resultFile << "t " << t << endl;
-        if(printXAxes)
+        if(printHorizontally) {
+            if(printXAxes) {
+                for (int i = 0; i < f.size(); i++)
+                    resultFile << (i + 0.5) * h << "\t";
+                resultFile << endl;
+            }
             for (int i = 0; i < f.size(); i++)
-                resultFile << (i + 0.5) * h << "\t" << f[i] << endl;
-        else
-            for (int i = 0; i < f.size(); i++)
-                resultFile << f[i] << endl;
+                resultFile << f[i] << "\t";
+            resultFile  << endl;
+        } else {
+            if(printXAxes)
+                for (int i = 0; i < f.size(); i++)
+                    resultFile << (i + 0.5) * h << "\t" << f[i] << endl;
+            else
+                for (int i = 0; i < f.size(); i++)
+                    resultFile << f[i] << endl;
+        }
     }
 
     void printLine(string& line){

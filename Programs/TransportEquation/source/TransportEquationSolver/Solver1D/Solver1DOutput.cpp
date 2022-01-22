@@ -5,5 +5,5 @@
 #include "Solver1DOutput.h"
 
 Solver1DOutput noOutput(){
-    return {false, false, false, ""};
+    return {false, false, false, false, ""};
 }

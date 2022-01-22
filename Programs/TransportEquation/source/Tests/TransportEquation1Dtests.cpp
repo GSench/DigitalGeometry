@@ -20,7 +20,7 @@ using namespace std;
 
 const string OUTPUT_PATH = R"(D:\Programing\C++\DigitalGeometry\Programs\Output\)";
 
-void THINC1Dtests() {
+void Solver1Dtests() {
 
     int iNmax = 9;
     int iNmin = 3;
@@ -89,6 +89,7 @@ void THINC1Dtests() {
             myfi << "N" << N << "\t";
             for (int j = 0; j < jTmax; j++) {
                 Solver1DOutput output(
+                        true,
                         true,
                         true,
                         true,
