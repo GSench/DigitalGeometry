@@ -23,7 +23,6 @@ private:
     bool barePrint = false;
     int NTimeSteps = 100;
     double printNStep = 1;
-    double printedN = 0;
     bool allowPrintError = true;
 public:
     Solver1DOutput(
@@ -58,9 +57,9 @@ public:
 
         if(barePrint)
         if(t!=NTimeSteps-1){
-            if(printedN > t)
+            double printedSteps = t/printNStep;
+            if((int)(t/printNStep) == (int)((t+1)/printNStep))
                 return;
-            printedN += printNStep;
         }
 
         if(t==0 && printHorizontally && printXAxes && printXAxesOnes){
