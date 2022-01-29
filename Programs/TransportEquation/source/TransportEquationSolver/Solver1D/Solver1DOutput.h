@@ -56,11 +56,9 @@ public:
         if(!printToFile) return;
 
         if(barePrint)
-        if(t!=NTimeSteps-1){
-            double printedSteps = t/printNStep;
+        if(t!=NTimeSteps-1)
             if((int)(t/printNStep) == (int)((t+1)/printNStep))
                 return;
-        }
 
         if(t==0 && printHorizontally && printXAxes && printXAxesOnes){
             for (int i = 0; i < f.size(); i++)
