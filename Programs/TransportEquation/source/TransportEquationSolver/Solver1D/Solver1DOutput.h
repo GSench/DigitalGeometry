@@ -63,8 +63,8 @@ public:
         if(!printToFile) return;
 
         if(barePrint)
-        if(t!=NTimeSteps-1)
-            if((int)(t/printNStep) == (int)((t+1)/printNStep))
+        if(t!=0)
+            if((int)(t/printNStep) == (int)((t-1)/printNStep))
                 return;
 
         if(t==0 && printHorizontally && printXAxes && printXAxesOnes){
