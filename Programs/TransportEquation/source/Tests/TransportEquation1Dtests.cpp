@@ -91,6 +91,7 @@ void Solver1Dtests() {
                 Solver1DOutput output = normal1DOutput(
                         OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt",
                         T);
+                output.printHeader(params);
                 SolveTransportEquation1D(fArea, u, params, output);
                 double error = errorL2(fArea.getF(), fexact, params.dx);
                 output.printError(error);
