@@ -22,6 +22,7 @@ private:
     ofstream resultFile;
     bool barePrint = false;
     int NTimeSteps = 100;
+    int realNTimeSteps = 50;
     double printNStep = 1;
     bool allowPrintError = true;
 public:
@@ -42,14 +43,20 @@ public:
             printT(printT),
             printHorizontally(printHorizontally),
             printXAxesOnes(printXAxesOnes),
-            barePrint(barePrint),
+            barePrint(barePrint && (maxFrames < NTimeSteps)),
             NTimeSteps(NTimeSteps),
+            realNTimeSteps(barePrint ? min(maxFrames, NTimeSteps) : NTimeSteps),
             printNStep( (double)NTimeSteps / min(maxFrames, NTimeSteps)),
             allowPrintError(allowPrintError)
             {
         if(printToFile){
             resultFile.open(resultFilePath);
         }
+    }
+
+    void printHeader(const Solver1DParams &params){
+        resultFile << params.areaLength << " " << params.cellCount << " " << params.dx << endl;
+        resultFile << params.NTimeSteps << " " << params.dt << " " << realNTimeSteps << endl;
     }
 
     void print(LineInterface &f, int t, double h){
