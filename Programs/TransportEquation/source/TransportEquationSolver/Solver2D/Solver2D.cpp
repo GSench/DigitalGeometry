@@ -3,7 +3,6 @@
 //
 
 #include "Solver2D.h"
-#include "PsyScalar.h"
 #include "../Solver1D/Solver1D.h"
 #include <functional>
 #include <fstream>

@@ -53,8 +53,8 @@ void SolverStep(LineInterface &f,
     f.set(iLast, fNext(fiLast, getUi(u, iLast), getCi(p, iLast), p, PsyPrev));
 }
 
-void SolveTransportEquation1D(LineInterface &f,
-                              LineInterface &u,
+void SolveTransportEquation1D(Area1D &f,
+                              VectorField1D &u,
                               Solver1DParams &p,
                               Solver1DOutput &output) {
     output.print(f, 0, p.dx);
