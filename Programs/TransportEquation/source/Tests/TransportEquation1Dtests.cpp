@@ -18,7 +18,7 @@
 
 using namespace std;
 
-const string OUTPUT_PATH = R"(D:\Programing\C++\DigitalGeometry\Programs\Output\)";
+const string OUTPUT_PATH = R"(C:\Programing\Projects\DigitalGeometry\Programs\Output\)";
 
 void Solver1Dtests() {
 
