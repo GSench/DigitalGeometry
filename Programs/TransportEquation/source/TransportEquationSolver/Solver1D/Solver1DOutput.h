@@ -55,15 +55,15 @@ public:
     }
 
     void printHeader(const Solver1DParams &params){
-        resultFile << params.areaLength << " " << params.cellCount << " " << params.dx << endl;
-        resultFile << params.NTimeSteps << " " << params.dt << " " << realNTimeSteps << endl;
+        resultFile << params.cellCount << "\t" << params.dx << endl;
+        resultFile << params.NTimeSteps << "\t" << realNTimeSteps << "\t" << params.dt << endl;
     }
 
     void print(LineInterface &f, int t, double h){
         if(!printToFile) return;
 
         if(barePrint)
-        if(t!=0)
+        if(t!=0 && t!=NTimeSteps)
             if((int)(t/printNStep) == (int)((t-1)/printNStep))
                 return;
 
@@ -113,5 +113,6 @@ public:
 Solver1DOutput noOutput();
 Solver1DOutput minimal1DOutput(const string& filePath, int NTimeSteps);
 Solver1DOutput normal1DOutput(const string& filePath, int NTimeSteps);
+Solver1DOutput jupyter1DOutput(const string& filePath, int NTimeSteps);
 
 #endif //TRANSPORTEQUATION_SOLVER1DOUTPUT_H

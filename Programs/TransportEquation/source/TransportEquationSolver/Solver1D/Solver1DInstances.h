@@ -2,6 +2,7 @@
 #define TRANSPORTEQUATION_SOLVER1DINSTANCES_H
 
 #include <functional>
+#include <string>
 
 using namespace std;
 
