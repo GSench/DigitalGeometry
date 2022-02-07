@@ -88,7 +88,7 @@ void Solver1Dtests() {
             cout << "N" << N << "\t";
             myfi << "N" << N << "\t";
             for (int j = 0; j < jTmax; j++) {
-                Solver1DOutput output = jupyter1DOutput(
+                Solver1DOutput output = minimal1DOutput(
                         OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt",
                         T);
                 output.printHeader(params);

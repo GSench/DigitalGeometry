@@ -55,8 +55,8 @@ public:
     }
 
     void printHeader(const Solver1DParams &params){
-        resultFile << params.areaLength << "\t" << params.cellCount << "\t" << params.dx << endl;
-        resultFile << params.NTimeSteps << "\t" << params.dt << "\t" << realNTimeSteps << endl;
+        resultFile << params.cellCount << "\t" << params.dx << endl;
+        resultFile << params.NTimeSteps << "\t" << realNTimeSteps << "\t" << params.dt << endl;
     }
 
     void print(LineInterface &f, int t, double h){
