@@ -30,6 +30,10 @@ public:
     vector<double> getF(){
         return scalarFunction;
     }
+
+    //TODO void drawStruct(double val, int start, int count){}
+    //TODO void drawStruct(double val, int start, int end){}
+
 };
 
 Area1D rightHalfFilled(int cellCount, bool periodicBoundaries);
