@@ -56,6 +56,6 @@ public:
     }
 };
 
-VectorField2D getStaticVF2D(double ux, double uy, int width, int height);
+VectorField2D getStaticVF2D(const Vector2D &v2D, int width, int height);
 
 #endif //TRANSPORTEQUATION_VECTORFIELD2D_H
