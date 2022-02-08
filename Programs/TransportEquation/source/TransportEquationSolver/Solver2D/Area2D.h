@@ -7,11 +7,9 @@
 
 #include <vector>
 #include "../Solver1D/Solver1DInstances.h"
+#include "../../math/Vector2D.h"
 
 using namespace std;
-
-const int X = 0;
-const int Y = 1;
 
 class Area2D : public LineInterface {
 private:
@@ -22,10 +20,9 @@ private:
     int width;
     int height;
 public:
-    Area2D(const vector<double> &scalarFunction,
-           int width,
+    Area2D(int width,
            int height):
-            scalarFunction(scalarFunction),
+            scalarFunction(vector<double>(width*height, 0)),
             width(width),
             height(height)
             {}
@@ -58,6 +55,14 @@ public:
         currentXi = xy * (dir!=X);
         currentYi = xy * (dir!=Y);
     }
+
+    void drawRect(double val, int startX, int startY, int sizeX, int sizeY){
+        for(int y=min(startY, height); y<min(startY+sizeY, height); y++)
+            for(int x=min(startX, width); x<min(startX+sizeX, width); x++)
+                scalarFunction[y*width + x] = val;
+    }
+
+    // TODO drawStruct(vector<double> struct, int startX, int startY, int sizeX, int sizeY){}
 };
 
 
