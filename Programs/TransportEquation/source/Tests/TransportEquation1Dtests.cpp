@@ -74,7 +74,8 @@ void Solver1Dtests() {
             params.dx = params.areaLength / params.cellCount;
             double L = N / 2;
             double R = N - 1;
-            Area1D fArea = rightHalfFilled(N, true);
+            Area1D fArea(N, true);
+            fArea.fillRightHalfWith(1);
             vector<double> fexact = fArea.getF();
 
             VectorField1D u = getStaticVF1D(0.1, N+1);
@@ -167,7 +168,8 @@ void test1DSolverStandard(){
     // scalarFunction init
     double L = N / 2;
     double R = N - 1;
-    Area1D area1D = rightHalfFilled(N, true);
+    Area1D area1D(N, true);
+    area1D.fillRightHalfWith(1);
     vector<double> fexact = area1D.getF();
 
     vector<double> fStd = area1D.getF();
