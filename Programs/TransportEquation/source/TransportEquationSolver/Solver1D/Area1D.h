@@ -32,5 +32,6 @@ public:
     }
 };
 
+Area1D rightHalfFilled(int cellCount, bool periodicBoundaries);
 
 #endif //TRANSPORTEQUATION_AREA1D_H

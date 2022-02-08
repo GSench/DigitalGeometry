@@ -74,10 +74,8 @@ void Solver1Dtests() {
             params.dx = params.areaLength / params.cellCount;
             double L = N / 2;
             double R = N - 1;
-            vector<double> f(N);
-            initF(f, L, R);
-            vector<double> fexact = f;
-            Area1D fArea(true, f);
+            Area1D fArea = rightHalfFilled(N, true);
+            vector<double> fexact = fArea.getF();
 
             VectorField1D u = getStaticVF1D(0.1, N+1);
 
@@ -169,12 +167,10 @@ void test1DSolverStandard(){
     // scalarFunction init
     double L = N / 2;
     double R = N - 1;
-    vector<double> f(N);
-    initF(f, L, R);
-    Area1D area1D(true, f);
-    vector<double> fexact = f;
+    Area1D area1D = rightHalfFilled(N, true);
+    vector<double> fexact = area1D.getF();
 
-    vector<double> fStd = f;
+    vector<double> fStd = area1D.getF();
     const vector<double>& fExStd = fexact;
 
     cout << "Computing with current solver" << endl;

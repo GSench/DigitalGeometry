@@ -13,4 +13,3 @@ void SolveTransportEquation1D(Area1D &f,
                               Solver1DParams &p,
                               Solver1DOutput &output);
 double errorL2(vector<double>, const vector<double>&, double);
-void initF(vector<double>&f,int L,int R);
