@@ -21,11 +21,11 @@ set(PROJECT_SOURCES
         source/TransportEquationSolver/Solver1D/Area1D.h
         source/TransportEquationSolver/Solver2D/Solver2D.cpp
         source/TransportEquationSolver/Solver2D/Solver2D.h
-        source/math/VectorField2D.h source/math/Vector2D.h
+        source/math/Vector2D.h
         source/Tests/StandardSolver.cpp source/Tests/StandardSolver.h
         source/TransportEquationSolver/Solver1D/Solver1DOutput.h
         source/TransportEquationSolver/Solver1D/Solver1DOutput.cpp
         source/TransportEquationSolver/Solver1D/Solver1DInstances.h
-        source/TransportEquationSolver/Solver1D/Solver1DInstances.cpp source/TransportEquationSolver/Solver1D/VectorField1D.cpp source/TransportEquationSolver/Solver1D/VectorField1D.h source/TransportEquationSolver/Solver2D/Area2D.h source/TransportEquationSolver/Solver2D/Solver2DInstances.cpp source/TransportEquationSolver/Solver2D/Solver2DInstances.h source/TransportEquationSolver/Solver1D/Area1D.cpp)
+        source/TransportEquationSolver/Solver1D/Solver1DInstances.cpp source/TransportEquationSolver/Solver1D/VectorField1D.cpp source/TransportEquationSolver/Solver1D/VectorField1D.h source/TransportEquationSolver/Solver2D/Area2D.h source/TransportEquationSolver/Solver2D/Solver2DInstances.cpp source/TransportEquationSolver/Solver2D/Solver2DInstances.h source/TransportEquationSolver/Solver1D/Area1D.cpp source/TransportEquationSolver/Solver2D/VectorField2D.cpp source/TransportEquationSolver/Solver2D/VectorField2D.h)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})

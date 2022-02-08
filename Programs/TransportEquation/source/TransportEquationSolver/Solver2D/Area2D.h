@@ -50,10 +50,16 @@ public:
         return direction==X ? width : height;
     }
 
-    void lineOver(int dir, int xy){
-        direction = dir;
-        currentXi = xy * (dir!=X);
-        currentYi = xy * (dir!=Y);
+    void projectX(int y){
+        direction = X;
+        currentXi = 0;
+        currentYi = y;
+    }
+
+    void projectY(int x){
+        direction = Y;
+        currentXi = x;
+        currentYi = 0;
     }
 
     void drawRect(double val, int startX, int startY, int sizeX, int sizeY){

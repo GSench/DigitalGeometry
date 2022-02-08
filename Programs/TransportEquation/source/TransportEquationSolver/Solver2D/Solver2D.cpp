@@ -6,7 +6,6 @@
 #include "../Solver1D/Solver1D.h"
 #include <functional>
 #include <fstream>
-#include "../../math/VectorField2D.h"
 
 using namespace std;
 /*

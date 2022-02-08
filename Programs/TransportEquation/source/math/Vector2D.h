@@ -12,6 +12,9 @@ class Vector2D {
 public:
     double x = 0;
     double y = 0;
+
+    Vector2D(double x, double y) : x(x), y(y) {}
+
     double operator [](int xy) const {
         return xy==X ? x : y;
     }
