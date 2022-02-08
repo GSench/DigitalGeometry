@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include "Solver1DInstances.h"
+#include "Area1D.h"
 
 using namespace std;
 
@@ -59,7 +60,7 @@ public:
         resultFile << params.NTimeSteps << "\t" << realNTimeSteps << "\t" << params.dt << endl;
     }
 
-    void print(LineInterface &f, int t, double h){
+    void print(Area1D &f, int t, double h){
         if(!printToFile) return;
 
         if(barePrint)

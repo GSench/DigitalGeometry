@@ -39,6 +39,18 @@ public:
         return 0;
     }
 
+    double get(int x, int y) {
+        return scalarFunction[y*width + x];
+    }
+
+    int getWidth() const {
+        return width;
+    }
+
+    int getHeight() const {
+        return height;
+    }
+
     void set(int i, double val) override {
         if(direction == X)
             scalarFunction[currentYi * width + i] = val;
