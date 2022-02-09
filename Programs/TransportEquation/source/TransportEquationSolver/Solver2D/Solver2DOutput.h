@@ -45,7 +45,7 @@ public:
     }
 
     void printHeader(const Solver2DParams &params){
-        resultFile << params.areaWidth << "\t" << params.areaHeight << "\t" << params.dx << endl;
+        resultFile << params.cellCountX << "\t" << params.cellCountY << "\t" << params.dx << endl;
         resultFile << params.NTimeSteps << "\t" << realNTimeSteps << "\t" << params.dt << endl;
     }
 

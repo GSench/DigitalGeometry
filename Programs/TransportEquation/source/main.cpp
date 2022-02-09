@@ -3,5 +3,6 @@
 
 int main() {
     Solve2DRectMovementTest();
+    Solve2DWhiteBearMovementTest();
     return 0;
 }

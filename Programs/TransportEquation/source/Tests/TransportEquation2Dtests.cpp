@@ -18,7 +18,7 @@ void Solve2DRectMovementTest(){
             1.0,
             1.0,
             128,
-            200,
+            400,
             [=](F1D f1D, C1D c1D) -> function<double(double)> {
                 return PsyTHINCandGodunov(f1D, c1D, 3.5, 1e-4);
             },
@@ -27,9 +27,39 @@ void Solve2DRectMovementTest(){
 
     Solver2DOutput out = minimal2DOutput(OUTPUT_PATH + "CalculationResults/Solve2DRectMovementTest.txt",
                                             params.NTimeSteps);
+    out.printHeader(params);
 
     Area2D f(params.cellCountX, params.cellCountY);
-    f.drawRect(1, 10, 10, 10, 10);
+    f.drawRect(1, 10, 10, 30, 30);
+
+    VectorField2D u = getStaticVF2D({0.1, 0.1}, params.cellCountX+1, params.cellCountY+1);
+
+    SolveTransportEquation2D(f, u, params, out);
+
+}
+
+void Solve2DWhiteBearMovementTest(){
+    Solver2DParams params = get2DParamsFor(
+            0.3,
+            0.15,
+            1.0,
+            1.0,
+            128,
+            400,
+            [=](F1D f1D, C1D c1D) -> function<double(double)> {
+                return PsyTHINCandGodunov(f1D, c1D, 3.5, 1e-4);
+            },
+            "Psy THINC + Godunov"
+    );
+
+    Solver2DOutput out = minimal2DOutput(OUTPUT_PATH + "CalculationResults/Solve2DWhiteBearMovementTest.txt",
+                                         params.NTimeSteps);
+    out.printHeader(params);
+
+    Area2D f(params.cellCountX, params.cellCountY);
+    f.drawRect(1, 10, 10, 10, 20);
+    f.drawRect(1, 20, 20, 10, 20);
+    f.drawRect(1, 30, 10, 10, 20);
 
     VectorField2D u = getStaticVF2D({0.1, 0.1}, params.cellCountX+1, params.cellCountY+1);
 
