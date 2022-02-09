@@ -8,10 +8,11 @@
 #include "../TransportEquationSolver/Solver2D/Solver2DOutput.h"
 #include "../TransportEquationSolver/Solver2D/VectorField2D.h"
 #include "../TransportEquationSolver/Solver2D/Solver2D.h"
-
-const string OUTPUT_PATH = R"(../../Output/)";
+#include "../configs.h"
 
 void Solve2DRectMovementTest(){
+    const string testDir = CALCULATION_2D_OUTPUT_PATH;
+
     Solver2DParams params = get2DParamsFor(
             0.3,
             0.15,
@@ -25,7 +26,7 @@ void Solve2DRectMovementTest(){
             "Psy THINC + Godunov"
     );
 
-    Solver2DOutput out = minimal2DOutput(OUTPUT_PATH + "CalculationResults/Solve2DRectMovementTest.txt",
+    Solver2DOutput out = minimal2DOutput(   downDir(testDir, "Solve2DRectMovementTest.txt"),
                                             params.NTimeSteps);
     out.printHeader(params);
 
@@ -39,6 +40,8 @@ void Solve2DRectMovementTest(){
 }
 
 void Solve2DWhiteBearMovementTest(){
+    const string testDir = CALCULATION_2D_OUTPUT_PATH;
+
     Solver2DParams params = get2DParamsFor(
             0.3,
             0.15,
@@ -52,7 +55,7 @@ void Solve2DWhiteBearMovementTest(){
             "Psy THINC + Godunov"
     );
 
-    Solver2DOutput out = minimal2DOutput(OUTPUT_PATH + "CalculationResults/Solve2DWhiteBearMovementTest.txt",
+    Solver2DOutput out = minimal2DOutput(downDir(testDir, "Solve2DWhiteBearMovementTest.txt"),
                                          params.NTimeSteps);
     out.printHeader(params);
 

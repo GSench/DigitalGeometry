@@ -15,12 +15,13 @@
 #include "../TransportEquationSolver/Solver1D/Solver1DOutput.h"
 #include "../TransportEquationSolver/Solver1D/Area1D.h"
 #include "../TransportEquationSolver/Solver1D/VectorField1D.h"
+#include "../configs.h"
 
 using namespace std;
 
-const string OUTPUT_PATH = R"(../../Output/)";
-
 void Solver1Dtests() {
+
+    const string testFolder = downDir(CALCULATION_1D_OUTPUT_PATH, "Solver1Dtests");
 
     int iNmax = 9;
     int iNmin = 3;
@@ -29,7 +30,7 @@ void Solver1Dtests() {
     Solver1DParams params;
 
     ofstream myfi;
-    myfi.open(OUTPUT_PATH+"CalculationResults/error.txt");
+    myfi.open(downDir(testFolder, "error.txt"));
     myfi << endl;
 
     double b = 3.5;
@@ -88,7 +89,10 @@ void Solver1Dtests() {
             myfi << "N" << N << "\t";
             for (int j = 0; j < jTmax; j++) {
                 Solver1DOutput output = minimal1DOutput(
-                        OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt",
+                        downDir(
+                                downDir(
+                                        testFolder,  titles[psy]),
+                                        "N" + to_string(N) + "_T" + to_string(j + 1) + ".txt"),
                         T);
                 output.printHeader(params);
                 SolveTransportEquation1D(fArea, u, params, output);
