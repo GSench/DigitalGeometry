@@ -3,6 +3,7 @@
 
 void launchTests(){
     if(!test1DSolverStandard()) return;
+    Solver1DStripMovementTest();
     Solver1Dtests();
     Solve2DRectMovementTest();
     Solve2DWhiteBearMovementTest();
