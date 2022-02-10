@@ -6,21 +6,52 @@
 #include <iostream>
 #include <vector>
 #include <functional>
-#include <iterator>
 
 #include "TransportEquation1Dtests.h"
 #include "../TransportEquationSolver/InterpolationFunctions.h"
 #include "../TransportEquationSolver/Solver1D/Solver1D.h"
 #include "StandardSolver.h"
-#include "../TransportEquationSolver/Solver1D/Solver1DOutput.h"
-#include "../TransportEquationSolver/Solver1D/Area1D.h"
-#include "../TransportEquationSolver/Solver1D/VectorField1D.h"
+#include "../configs.h"
+#include "Tests.h"
+#include "../Utils/FileUtils.h"
 
 using namespace std;
 
-const string OUTPUT_PATH = R"(../../Output/)";
+void Solver1DStripMovementTest(){
+    const string TEST_TITLE = "Solver1DStripMovementTest";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
+
+    Solver1DParams params = getParamsFor(
+            0.3,
+            0.1,
+            1.0,
+            64,
+            200,
+            [=](F1D f1D, C1D c1D) -> function<double(double)> {
+                return PsyTHINCandGodunov(f1D, c1D, 3.5, 1e-4);
+            },
+            "Psy THINC + Godunov"
+    );
+
+    Solver1DOutput out = minimal1DOutput(
+            downDir(
+                    testDir,
+                    "area_" + to_string(params.cellCount) + "_t_" + to_string(params.NTimeSteps) + ".txt"),
+            params.NTimeSteps);
+    out.printHeader(params);
+
+    Area1D f(params.cellCount, true);
+    f.fillRightHalfWith(1);
+
+    VectorField1D u = getStaticVF1D(0.1, params.cellCount+1);
+
+    SolveTransportEquation1D(f, u, params, out);
+
+}
 
 void Solver1Dtests() {
+    const string TEST_TITLE = "Solver1Dtests";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
 
     int iNmax = 9;
     int iNmin = 3;
@@ -29,7 +60,7 @@ void Solver1Dtests() {
     Solver1DParams params;
 
     ofstream myfi;
-    myfi.open(OUTPUT_PATH+"CalculationResults/error.txt");
+    myfi.open(downDir(testDir, "error.txt"));
     myfi << endl;
 
     double b = 3.5;
@@ -74,10 +105,9 @@ void Solver1Dtests() {
             params.dx = params.areaLength / params.cellCount;
             double L = N / 2;
             double R = N - 1;
-            vector<double> f(N);
-            initF(f, L, R);
-            vector<double> fexact = f;
-            Area1D fArea(true, f);
+            Area1D fArea(N, true);
+            fArea.fillRightHalfWith(1);
+            vector<double> fexact = fArea.getF();
 
             VectorField1D u = getStaticVF1D(0.1, N+1);
 
@@ -89,7 +119,10 @@ void Solver1Dtests() {
             myfi << "N" << N << "\t";
             for (int j = 0; j < jTmax; j++) {
                 Solver1DOutput output = minimal1DOutput(
-                        OUTPUT_PATH+"CalculationResults/" + titles[psy] + "/N" + std::to_string(N) + "_T" + std::to_string(j + 1) + ".txt",
+                        downDir(
+                                downDir(
+                                        testDir,  titles[psy]),
+                                        "N" + to_string(N) + "_T" + to_string(j + 1) + ".txt"),
                         T);
                 output.printHeader(params);
                 SolveTransportEquation1D(fArea, u, params, output);
@@ -124,7 +157,10 @@ bool compare1DSolutions(const vector<double>& f1, const vector<double>& f2, int 
     return !FAIL;
 }
 
-void test1DSolverStandard(){
+bool test1DSolverStandard(){
+    const string TEST_TITLE = "test1DSolverStandard";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
+
     // Debug params
     THINC1DparamsDebug paramsDebug;
 
@@ -169,12 +205,11 @@ void test1DSolverStandard(){
     // scalarFunction init
     double L = N / 2;
     double R = N - 1;
-    vector<double> f(N);
-    initF(f, L, R);
-    Area1D area1D(true, f);
-    vector<double> fexact = f;
+    Area1D area1D(N, true);
+    area1D.fillRightHalfWith(1);
+    vector<double> fexact = area1D.getF();
 
-    vector<double> fStd = f;
+    vector<double> fStd = area1D.getF();
     const vector<double>& fExStd = fexact;
 
     cout << "Computing with current solver" << endl;
@@ -195,4 +230,5 @@ void test1DSolverStandard(){
          "beta: " << beta << " eps: " << eps << " uPrimary: " << 0.1 << endl <<
          "------------------" << endl <<
          (testResult ? "TEST SUCCEEDED" : "TEST FAILED") << endl;
+    return testResult;
 }

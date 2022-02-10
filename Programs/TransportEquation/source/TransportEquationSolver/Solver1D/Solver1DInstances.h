@@ -24,7 +24,9 @@ struct U1D {
     double uR;
 };
 
-struct Solver1DParams {
+// TODO refactor class Solver1DParams
+class Solver1DParams {
+public:
     double CFL;
     double dt;
     double areaLength;

@@ -7,17 +7,6 @@
 
 using namespace std;
 
-void initF(vector<double> &f, int L, int R) {
-    for (int i = 0; i < L; i++)
-        f[i] = 0;
-    f[L] = 1;
-    for (int i = L + 1; i < R; i++)
-        f[i] = 1;
-    f[R] = 1;
-    for (int i = R + 1; i < f.size(); i++)
-        f[i] = 0;
-}
-
 double fNext(F1D fi,
              U1D ui,
              C1D ci,
@@ -53,8 +42,8 @@ void SolverStep(LineInterface &f,
     f.set(iLast, fNext(fiLast, getUi(u, iLast), getCi(p, iLast), p, PsyPrev));
 }
 
-void SolveTransportEquation1D(LineInterface &f,
-                              LineInterface &u,
+void SolveTransportEquation1D(Area1D &f,
+                              VectorField1D &u,
                               Solver1DParams &p,
                               Solver1DOutput &output) {
     output.print(f, 0, p.dx);

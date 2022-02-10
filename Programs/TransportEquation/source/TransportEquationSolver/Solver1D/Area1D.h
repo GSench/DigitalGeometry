@@ -11,9 +11,9 @@ private:
     bool periodicBoundaries = true;
     vector<double> scalarFunction;
 public:
-    Area1D(bool periodicBoundaries, const vector<double> &scalarFunction):
+    Area1D(int cellCount, bool periodicBoundaries):
             periodicBoundaries(periodicBoundaries),
-            scalarFunction(scalarFunction) {}
+            scalarFunction(vector<double>(cellCount, 0)) {}
 
     double operator[](int i) override {
         return scalarFunction[(i+scalarFunction.size())%scalarFunction.size()] * (periodicBoundaries || (i>=0 || i<scalarFunction.size()));
@@ -30,7 +30,14 @@ public:
     vector<double> getF(){
         return scalarFunction;
     }
-};
 
+    void fillRightHalfWith(double val){
+        for(int i=scalarFunction.size()/2; i<scalarFunction.size(); i++)
+            scalarFunction[i] = val;
+    }
+    //TODO void drawStruct(double val, int start, int count){}
+    //TODO void drawStruct(double val, int start, int end){}
+
+};
 
 #endif //TRANSPORTEQUATION_AREA1D_H
