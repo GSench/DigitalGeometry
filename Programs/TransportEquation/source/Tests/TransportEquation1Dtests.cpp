@@ -6,22 +6,20 @@
 #include <iostream>
 #include <vector>
 #include <functional>
-#include <iterator>
 
 #include "TransportEquation1Dtests.h"
 #include "../TransportEquationSolver/InterpolationFunctions.h"
 #include "../TransportEquationSolver/Solver1D/Solver1D.h"
 #include "StandardSolver.h"
-#include "../TransportEquationSolver/Solver1D/Solver1DOutput.h"
-#include "../TransportEquationSolver/Solver1D/Area1D.h"
-#include "../TransportEquationSolver/Solver1D/VectorField1D.h"
 #include "../configs.h"
+#include "Tests.h"
+#include "../Utils/FileUtils.h"
 
 using namespace std;
 
 void Solver1Dtests() {
-
-    const string testFolder = downDir(CALCULATION_1D_OUTPUT_PATH, "Solver1Dtests");
+    const string TEST_TITLE = "Solver1Dtests";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
 
     int iNmax = 9;
     int iNmin = 3;
@@ -30,7 +28,7 @@ void Solver1Dtests() {
     Solver1DParams params;
 
     ofstream myfi;
-    myfi.open(downDir(testFolder, "error.txt"));
+    myfi.open(downDir(testDir, "error.txt"));
     myfi << endl;
 
     double b = 3.5;
@@ -91,7 +89,7 @@ void Solver1Dtests() {
                 Solver1DOutput output = minimal1DOutput(
                         downDir(
                                 downDir(
-                                        testFolder,  titles[psy]),
+                                        testDir,  titles[psy]),
                                         "N" + to_string(N) + "_T" + to_string(j + 1) + ".txt"),
                         T);
                 output.printHeader(params);
@@ -127,7 +125,10 @@ bool compare1DSolutions(const vector<double>& f1, const vector<double>& f2, int 
     return !FAIL;
 }
 
-void test1DSolverStandard(){
+bool test1DSolverStandard(){
+    const string TEST_TITLE = "test1DSolverStandard";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
+
     // Debug params
     THINC1DparamsDebug paramsDebug;
 
@@ -197,4 +198,5 @@ void test1DSolverStandard(){
          "beta: " << beta << " eps: " << eps << " uPrimary: " << 0.1 << endl <<
          "------------------" << endl <<
          (testResult ? "TEST SUCCEEDED" : "TEST FAILED") << endl;
+    return testResult;
 }

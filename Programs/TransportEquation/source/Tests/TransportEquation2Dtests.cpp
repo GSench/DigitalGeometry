@@ -9,9 +9,12 @@
 #include "../TransportEquationSolver/Solver2D/VectorField2D.h"
 #include "../TransportEquationSolver/Solver2D/Solver2D.h"
 #include "../configs.h"
+#include "Tests.h"
+#include "../Utils/FileUtils.h"
 
-void Solve2DRectMovementTest(){
-    const string testDir = CALCULATION_2D_OUTPUT_PATH;
+void Solve2DRectMovementTest() {
+    const string TEST_TITLE = "Solve2DRectMovementTest";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_2D_OUTPUT_PATH);
 
     Solver2DParams params = get2DParamsFor(
             0.3,
@@ -26,8 +29,12 @@ void Solve2DRectMovementTest(){
             "Psy THINC + Godunov"
     );
 
-    Solver2DOutput out = minimal2DOutput(   downDir(testDir, "Solve2DRectMovementTest.txt"),
-                                            params.NTimeSteps);
+    Solver2DOutput out = minimal2DOutput(downDir(
+                                                 testDir,
+                                                 "area_"
+                                                 +to_string(params.cellCountX)+"x"+to_string(params.cellCountY)
+                                                 +"_t_" + to_string(params.NTimeSteps)+".txt"),
+                                         params.NTimeSteps);
     out.printHeader(params);
 
     Area2D f(params.cellCountX, params.cellCountY);
@@ -40,7 +47,8 @@ void Solve2DRectMovementTest(){
 }
 
 void Solve2DWhiteBearMovementTest(){
-    const string testDir = CALCULATION_2D_OUTPUT_PATH;
+    const string TEST_TITLE = "Solve2DWhiteBearMovementTest";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_2D_OUTPUT_PATH);
 
     Solver2DParams params = get2DParamsFor(
             0.3,
@@ -55,7 +63,11 @@ void Solve2DWhiteBearMovementTest(){
             "Psy THINC + Godunov"
     );
 
-    Solver2DOutput out = minimal2DOutput(downDir(testDir, "Solve2DWhiteBearMovementTest.txt"),
+    Solver2DOutput out = minimal2DOutput(downDir(
+                                                 testDir,
+                                                 "area_"
+                                                 +to_string(params.cellCountX)+"x"+to_string(params.cellCountY)
+                                                 +"_t_" + to_string(params.NTimeSteps)+".txt"),
                                          params.NTimeSteps);
     out.printHeader(params);
 
@@ -67,5 +79,4 @@ void Solve2DWhiteBearMovementTest(){
     VectorField2D u = getStaticVF2D({0.1, 0.1}, params.cellCountX+1, params.cellCountY+1);
 
     SolveTransportEquation2D(f, u, params, out);
-
 }

@@ -3,7 +3,3 @@
 //
 
 #include "configs.h"
-
-string downDir(const string &dir, const string &sub){
-    return dir + "/" + sub;
-}
