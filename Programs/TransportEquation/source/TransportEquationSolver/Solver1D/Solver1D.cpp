@@ -36,9 +36,6 @@ void SolverStep(LineInterface &f,
     double fiAfterLast = f[p.cellCount];
 
     for (int i = 0; i < p.cellCount-1; i++) { // calculating all cells except last
-        if(i==766){
-            int debug = 1;
-        }
         F1D fi = getFi(f, i);
         fi.fiPrev = fiPrev; // using saved fi as fiPrev in the next cell
         fiPrev = fi.fi;
@@ -57,9 +54,6 @@ void SolveTransportEquation1D(Area1D &f,
                               Solver1DOutput &output) {
     output.print(f, 0, p.dx);
     for (int n = 0; n < p.NTimeSteps; n++) {
-        if(n==1099){
-            int debug = 1;
-        }
         SolverStep(f, u, p);
         output.print(f, n+1, p.dx);
     }
