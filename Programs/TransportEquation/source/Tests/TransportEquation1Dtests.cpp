@@ -73,7 +73,7 @@ void Solver1DStripBackMovementTest(){
     out.printHeader(params);
 
     Area1D f(params.cellCount, true);
-    f.fillRightHalfWith(1);
+    f.fillLeftHalfWith(1);
 
     VectorField1D u = getStaticVF1D(-0.1, params.cellCount+1);
 
