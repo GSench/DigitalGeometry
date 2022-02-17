@@ -4,6 +4,7 @@
 
 #include "Solver1D.h"
 #include "../InterpolationFunctions.h"
+#include "../../math/MathUtils.h"
 
 using namespace std;
 
@@ -29,8 +30,28 @@ void SolverStep(LineInterface &f,
                 LineInterface &u,
                 Solver1DParams &p){
     vector<function<double(double)>> Psy(p.cellCount+2);
-    for(int i=-1; i<p.cellCount+1; i++)
-        Psy[i+1] = p.FlowInterpolationFunction(getFi(f, i), getCi(p, i));
+    for(int i=-1; i<p.cellCount+1; i++){
+        int sgnUi = 0;
+        if(i==-1) //TODO extend u outside area like f
+            sgnUi = sgn(u[0]);
+        else if(i==p.cellCount)
+            sgnUi = sgn(u[i]);
+        else
+            sgnUi = sgn((u[i]+u[i+1])/2.);
+        F1D fi = getFi(f, i);
+        C1D ci = getCi(p, i);
+        if(sgnUi<0){
+            F1D invFi = inverse(fi);
+            C1D invCi = inverse(ci);
+            function<double(double)> invertedPsyI = p.FlowInterpolationFunction(invFi, invCi);
+            Psy[i+1] = [=](double x)->double {
+                return invertedPsyI(-x);
+            };
+        } else {
+            Psy[i+1] = p.FlowInterpolationFunction(fi, ci);
+        }
+    }
+
 
     double fiPrev = f[-1];
     double fiAfterLast = f[p.cellCount];

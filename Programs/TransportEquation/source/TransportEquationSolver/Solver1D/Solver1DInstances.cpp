@@ -8,8 +8,16 @@ C1D getCi(const Solver1DParams& p, int i){
     return {(i+0.5)*p.dx, p.dx,i*p.dx,(i+1)*p.dx};
 }
 
+C1D inverse(const C1D &c){
+    return {-c.x, c.dx, -c.xR, -c.xL};
+}
+
 F1D getFi(LineInterface& f, int i){
     return {f[i], f[i-1], f[i+1]};
+}
+
+F1D inverse(const F1D &f){
+    return {f.fi, f.fiNext, f.fiPrev};
 }
 
 U1D getUi(LineInterface& u, int i){
