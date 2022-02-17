@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <functional>
+#include <algorithm>
 
 #include "TransportEquation1Dtests.h"
 #include "../TransportEquationSolver/InterpolationFunctions.h"
@@ -253,6 +254,84 @@ bool test1DSolverStandard(){
         cout << i << "\t" << fStd[i] << endl;*/
     cout << "Comparing solutions" << endl;
     bool testResult = compare1DSolutions(area1D.getF(), fStd, params.cellCount, 0.0);
+
+    cout << endl <<
+         "------------------" << endl <<
+         "Psy function: " << params.FlowInterpolationFunctionName << endl <<
+         "cellCount: " << params.cellCount << " NTimeSteps: " << params.NTimeSteps << endl <<
+         "CFL: " << params.CFL << " Area size: " << params.areaLength << endl <<
+         "beta: " << beta << " eps: " << eps << " uPrimary: " << 0.1 << endl <<
+         "------------------" << endl <<
+         (testResult ? "TEST SUCCEEDED" : "TEST FAILED") << endl;
+    return testResult;
+}
+
+bool test1DSolverBackStandard(){ //TODO Accurate 1D Standard Solver for back movement
+    const string TEST_TITLE = "test1DSolverBackStandard";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
+
+    // Debug params
+    THINC1DparamsDebug paramsDebug;
+
+    // Scalar params
+    double beta = 3.5;
+    double eps = 1e-4;
+    paramsDebug.area = 1;
+    paramsDebug.u = 0.1;
+    paramsDebug.eps = eps;
+    paramsDebug.beta = beta;
+
+    // Test specific params
+    paramsDebug.PsyFunc = [=](const vector<double>& f, int i, double beta, double h, double eps)->function<double(double)> {
+        return PsyTHINCandMUSCLDebug(f, i, beta, h, eps);
+    };
+
+    paramsDebug.CFL = 0.3;
+
+    int i = 8;
+    int N = paramsDebug.CFL * 10.0 * pow(2, i);
+    paramsDebug.cellCount = N;
+
+    int T = (double) N / paramsDebug.CFL;
+    int j = 6;
+    int time = T * j;
+    paramsDebug.stepN = time;
+
+    Solver1DParams params = getParamsFor(
+            0.3,
+            0.1,
+            1.0,
+            N,
+            time,
+            [=](F1D f1D, C1D c1D) -> function<double(double)> {
+                return PsyTHINCandMUSCL(f1D, c1D, 3.5, 1e-4);
+            },
+            "Psy THINC + MUSCL"
+    );
+
+    VectorField1D u = getStaticVF1D(-0.1, N+1);
+
+    // scalarFunction init
+    Area1D area1D(N, true);
+    area1D.fillLeftHalfWith(1);
+    vector<double> fexact = area1D.getF();
+
+    vector<double> fStd = area1D.getF();
+    reverse(fStd.begin(), fStd.end());
+
+    const vector<double>& fExStd = fexact;
+
+    cout << "Computing with current solver" << endl;
+    Solver1DOutput nOut = noOutput();
+    SolveTransportEquation1D(area1D, u, params, nOut);
+    cout << "Computing with standard solver" << endl;
+    THINC1DDebug(paramsDebug, fStd, fExStd);
+    /*for(int i=0; i<fStd.size(); i++)
+        cout << i << "\t" << fStd[i] << endl;*/
+    cout << "Comparing solutions" << endl;
+    vector<double> currentSolverResult = area1D.getF();
+    reverse(currentSolverResult.begin(), currentSolverResult.end());
+    bool testResult = compare1DSolutions(currentSolverResult, fStd, params.cellCount, 0.001);
 
     cout << endl <<
          "------------------" << endl <<

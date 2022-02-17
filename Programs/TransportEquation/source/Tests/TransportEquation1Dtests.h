@@ -6,3 +6,4 @@ void Solver1DStripMovementTest();
 void Solver1DStripBackMovementTest();
 void Solver1Dtests();
 bool test1DSolverStandard();
+bool test1DSolverBackStandard();

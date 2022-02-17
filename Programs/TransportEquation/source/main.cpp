@@ -2,7 +2,8 @@
 #include "Tests/TransportEquation2Dtests.h"
 
 void launchTests(){
-    if(!test1DSolverStandard()) return;
+    //if(!test1DSolverStandard()) return;
+    if(!test1DSolverBackStandard()) return;
     Solver1DStripMovementTest();
     Solver1DStripBackMovementTest();
     return;
