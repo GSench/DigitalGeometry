@@ -43,10 +43,7 @@ void SolverStep(LineInterface &f,
         if(sgnUi<0){
             F1D invFi = inverse(fi);
             C1D invCi = inverse(ci);
-            function<double(double)> invertedPsyI = p.FlowInterpolationFunction(invFi, invCi);
-            Psy[i+1] = [=](double x)->double {
-                return invertedPsyI(-x);
-            };
+            Psy[i+1] = fInverseX(p.FlowInterpolationFunction(invFi, invCi));
         } else {
             Psy[i+1] = p.FlowInterpolationFunction(fi, ci);
         }
