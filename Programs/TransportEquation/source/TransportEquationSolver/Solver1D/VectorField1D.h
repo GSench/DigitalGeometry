@@ -6,21 +6,24 @@
 #define TRANSPORTEQUATION_VECTORFIELD1D_H
 
 
+#include <utility>
+
 #include "Solver1DInstances.h"
 
 class VectorField1D: public LineInterface {
 private:
-    function<double(int)> u;
+    vector<double> u;
     int areaLength;
 public:
-    VectorField1D(const function<double(int)> &u, int areaLength): u(u), areaLength(areaLength) {}
+    explicit VectorField1D(int areaLength): u(areaLength, 0), areaLength(areaLength) {}
+    VectorField1D(const vector<double> &u, int areaLength): u(u), areaLength(areaLength) {}
 
     double operator[](int i) override {
-        return u(i);
+        return u[i];
     }
 
     void set(int i, double val) override {
-
+        u[i] = val;
     }
 
     int size() override {

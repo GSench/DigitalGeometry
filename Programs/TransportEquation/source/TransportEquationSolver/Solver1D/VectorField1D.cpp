@@ -8,9 +8,6 @@
 using namespace std;
 
 VectorField1D getStaticVF1D(double uStatic, int size){
-    return {
-            [=](int xi)->double{
-                return uStatic;
-            }, size
-    };
+    vector<double> uStat(size, uStatic);
+    return {uStat, size};
 }

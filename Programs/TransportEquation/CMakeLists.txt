@@ -46,6 +46,24 @@ set(PROJECT_SOURCES
         source/Utils/FileUtils.cpp
         source/Utils/FileUtils.h
         source/Utils/ArrayUtils.cpp
-        source/Utils/ArrayUtils.h)
+        source/Utils/ArrayUtils.h
+        source/EulerEquationProblem/EESolver1D/EESolver1D.cpp
+        source/EulerEquationProblem/EESolver1D/EESolver1D.h
+        source/EulerEquationProblem/EESolver2D/EESolver2D.cpp
+        source/EulerEquationProblem/EESolver2D/EESolver2D.h
+        source/Tests/EulerEquation1Dtests.cpp
+        source/Tests/EulerEquation1Dtests.h
+        source/Tests/EulerEquation2Dtests.cpp
+        source/Tests/EulerEquation2Dtests.h
+        source/DGProblem/DGSolver1D/DGSolver1D.cpp
+        source/DGProblem/DGSolver1D/DGSolver1D.h
+        source/DGProblem/DGSolver2D/DGSolver2D.cpp
+        source/DGProblem/DGSolver2D/DGSolver2D.h
+        source/Tests/DigitalGeometryTests1D.cpp
+        source/Tests/DigitalGeometryTests1D.h
+        source/Tests/DigitalGeometryTests2D.cpp
+        source/Tests/DigitalGeometryTests2D.h
+        source/EulerEquationProblem/EESolver1D/EESolver1DInstances.cpp
+        source/EulerEquationProblem/EESolver1D/EESolver1DInstances.h)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})

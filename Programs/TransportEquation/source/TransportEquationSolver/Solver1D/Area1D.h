@@ -40,8 +40,18 @@ public:
         for(int i=0; i<scalarFunction.size()/2; i++)
             scalarFunction[i] = val;
     }
-    //TODO void drawStruct(double val, int start, int count){}
-    //TODO void drawStruct(double val, int start, int end){}
+
+    void drawStructCount(double val, int start, int count){
+        for(int i=0; i<count; i++)
+            scalarFunction[start+i] = val;
+        //TODO fix for periodic and out of bounds
+    }
+
+    void drawStructInterval(double val, int start, int end){
+        for(int i=start; i<end; i++)
+            scalarFunction[i] = val;
+        //TODO fix for periodic and out of bounds
+    }
 
 };
 
