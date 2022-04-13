@@ -13,11 +13,15 @@ struct C1D {
     double xR;
 };
 
+C1D inverse(const C1D &c);
+
 struct F1D {
     double fi;
     double fiPrev;
     double fiNext;
 };
+
+F1D inverse(const F1D &f);
 
 struct U1D {
     double uL;

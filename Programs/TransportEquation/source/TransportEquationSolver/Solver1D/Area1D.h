@@ -35,6 +35,11 @@ public:
         for(int i=scalarFunction.size()/2; i<scalarFunction.size(); i++)
             scalarFunction[i] = val;
     }
+
+    void fillLeftHalfWith(double val){
+        for(int i=0; i<scalarFunction.size()/2; i++)
+            scalarFunction[i] = val;
+    }
     //TODO void drawStruct(double val, int start, int count){}
     //TODO void drawStruct(double val, int start, int end){}
 

@@ -16,3 +16,9 @@ double minmod(double x, double y) {
 double clamp(double x, double lower, double upper) {
     return min(upper, max(x, lower));
 }
+
+function<double(double)> fInverseX(const function<double(double)> &f){
+    return [=](double x)->double {
+        return f(-x);
+    };
+}

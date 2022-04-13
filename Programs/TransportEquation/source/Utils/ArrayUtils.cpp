@@ -5,7 +5,6 @@
 #include "ArrayUtils.h"
 
 #include <cstdlib>
-#include <functional>
 
 template <typename T>
 T** define2DArray(int n, int m, T val){
@@ -26,4 +25,13 @@ T** define2DArray(int n, int m, std::function<T()> initializer){
             array2D[j][i]=initializer();
     }
     return array2D;
+}
+
+template<typename T>
+std::vector<T> slice(std::vector<T> const &v, int iStart, int n) {
+    auto first = v.cbegin() + iStart;
+    auto last = v.cbegin() + iStart + n;
+
+    std::vector<T> vec(first, last);
+    return vec;
 }
