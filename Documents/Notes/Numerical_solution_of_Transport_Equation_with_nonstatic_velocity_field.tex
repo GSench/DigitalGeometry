@@ -1,0 +1,46 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\author{GSench}
+\title{Численное решение Уравнения Переноса в одномерном случае при переменном поле скоростей}
+\begin{document}
+\section{Уравнение Переноса}
+Уравнение переноса в общем случае имеет следующий вид:
+\begin{equation}
+\frac{\partial f}{\partial t}+\nabla\cdot(f\overrightarrow{u})=0
+\end{equation}
+Где u – векторное поле скоростей, f - переносимая скалярная величина, $ \nabla $ – оператор дивергенции. Определим f как функцию Хевисайда, принимающую значения 0 и 1:
+\begin{equation}
+f(x,t)=\begin{cases}1 & {\bf x}\in liquid \\0 & {\bf x}\not\in liquid\end{cases}
+\end{equation}
+В одномерном случае уравнение сводится к виду:
+\begin{equation}
+\label{eqn:TE1D}
+\frac{\text{d}f_{x}}{\text{d}t} + \frac{\text{d}(f_{x}u_{x})}{\text{d}x}=0
+\end{equation}
+В дальнейшем будем обозначать $f_x$ $u_x$ просто как $f$ и $u$, подразумевая значения, взятые вдоль направлений соответствующих осей.
+
+\section{Численное решение}
+Для численного решения проводится дискретизация:
+
+Отрезок $[0;X]$, на котором рассматривается данное уравнение, разбивается на $cellCount$ последовательных подотрезков, длиной $\Delta x_i$ каждый – ячейки сетки. i=1..cellCount. Положения $x_{i-\frac{1}{2}}$, $x_{i+\frac{1}{2}}$ являются узлами данной сетки (ребрами ячеек). $\Delta x_i=x_{i+\frac{1}{2}}-x_{i-\frac{1}{2}}$. Для реализации программы была выбрана равномерная сетка с ячейками равной длины $\Delta x$. Зададим длину временного шага $\Delta t$ и построим схему для вычисления средних значений функции $f(x,t)$ в каждой ячейке.
+\begin{equation}
+\overline{f}_i^n=\frac{1}{\Delta x_i}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}f(x,t_n)dx 
+\end{equation}
+- среднее по ячейке значение функции $f(x,t)$ на i-ом отрезке $\Delta x_i$ на n-ом временном шаге.
+
+Проинтегрируем уравнение переноса в одномерном случае (\ref{eqn:TE1D}) по времени на шаге $[t_n; t_{n+1}]$:
+\[
+(f^{n+1}-f^n)+\int_{t_n}^{t_{n+1}}\frac{\text{d}(f u)}{\text{d}x}d\tau=0
+\]
+Для численного дифференцирования используем явную разностную схему 2 порядка:
+\[
+\frac{\text{d}(f u)}{\text{d}x}=\frac{f_{i+\frac{1}{2}}u_{i+\frac{1}{2}}-f_{i-\frac{1}{2}}u_{i-\frac{1}{2}}}{\Delta x_i}
+\]
+
+\end{document}
