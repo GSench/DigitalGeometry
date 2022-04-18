@@ -32,7 +32,7 @@ f(x,t)=\begin{cases}1 & {\bf x}\in liquid \\0 & {\bf x}\not\in liquid\end{cases}
 \begin{equation}
 \overline{f}_i^n=\frac{1}{\Delta x_i}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}f(x,t_n)dx 
 \end{equation}
-- среднее по ячейке значение функции $f(x,t)$ на i-ом отрезке $\Delta x_i$ на n-ом временном шаге.
+- среднее по ячейке значение функции $f(x,t)$ на i-ом отрезке $\Delta x_i$ на n-ом временном шаге. В дальнейшем будем обозначать его как просто $f_i^n$.
 
 Проинтегрируем уравнение переноса в одномерном случае (\ref{eqn:TE1D}) по времени на шаге $[t_n; t_{n+1}]$:
 \[
@@ -42,5 +42,59 @@ f(x,t)=\begin{cases}1 & {\bf x}\in liquid \\0 & {\bf x}\not\in liquid\end{cases}
 \[
 \frac{\text{d}(f u)}{\text{d}x}=\frac{f_{i+\frac{1}{2}}u_{i+\frac{1}{2}}-f_{i-\frac{1}{2}}u_{i-\frac{1}{2}}}{\Delta x_i}
 \]
+В результате уравнение переноса преобразуется к виду:
+\begin{equation}
+(f_i^{n+1}-f_i^n)
++
+\frac{1}{\Delta x_i}
+\int_{t_n}^{t_{n+1}}
+f_{i+\frac{1}{2}}u_{i+\frac{1}{2}}d\tau
+-
+\frac{1}{\Delta x_i}
+\int_{t_n}^{t_{n+1}}
+f_{i-\frac{1}{2}}u_{i-\frac{1}{2}} d\tau
+=0
+\end{equation}
+
+\section{Поле скоростей твердого тела}
+Поле скоростей твердого тела связано по формуле Эйлера:
+\[
+\overrightarrow{u}(\overrightarrow{r},t)=\overrightarrow{v_c}(t)+[\overrightarrow{\omega}(t)\times \overrightarrow{r}(t)]
+\]
+А значит, для любой его компоненты (по направлению соответствующей оси) $u(x,t)$ - линейная функция по координате x.Зафиксируем шаг по времени $t_n$ и найдем функцию $u(x)$:\\
+Исходя из численного решения уравнения Эйлера интегрированием методом квадратур, нам известны значения $u_{i\pm\frac{1}{2}}$ на границах ячеек. Обозначим значения скорости и координаты на границах ячейки $\Delta x_i$:
+\[ u_{i-\frac{1}{2}}=u_L \]
+\[ u_{i+\frac{1}{2}}=u_R \]
+А сами границы ячейки:
+\[ x_{i-\frac{1}{2}}=x_L \]
+\[ x_{i+\frac{1}{2}}=x_R \]
+Тогда согласно тому, что u(x) - линейная функция:
+\[
+\frac{u-u_L}{u_R-u_L}=\frac{x-x_L}{x_R-x_L}
+\]
+Функция скорости на ячейке $\Delta x_i$ задается как:
+\begin{equation}
+u(x)=kx+b
+\end{equation}
+где
+\[ k=\frac{u_R-u_L}{\Delta x} \]
+\[ b=u_L-\frac{u_R-u_L}{\Delta x}x_L \]
+
+\section{Метод характеристик}
+Рассмотрим решение уравнения переноса с помощью метода характеристик.
+\begin{equation}
+\frac{\text{d}f}{\text{d}t} + \frac{\text{d}(f u)}{\text{d}x}=0
+\end{equation}
+Нам бы хотелось свести это дифференциальное уравнение в частных производных первого порядка к обыкновенному дифференциальному уравнению вдоль соответствующей кривой, то есть получить уравнение вида:
+\[
+\frac{\text{d}}{\text{d}s}f(x(s),t(s))=F(f,x(s),t(s))
+\]
+где кривая $(x(s),t(s))$ — характеристика.\\
+Установим, что
+\[
+\frac{\text{d}}{\text{d}s}u(x(s),t(s))=\frac{\partial u}{\partial x}\frac{\text{d}x}{\text{d}s}+\frac{\partial u}{\partial t}\frac{\text{d}t}{\text{d}s}
+\]
+
+
 
 \end{document}
