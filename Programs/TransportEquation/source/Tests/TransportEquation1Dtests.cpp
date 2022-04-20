@@ -22,7 +22,7 @@ void Solver1DStripMovementTest(){
     const string TEST_TITLE = "Solver1DStripMovementTest";
     const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
 
-    Solver1DParams params = getParamsFor(
+    TESolver1DParams params (
             0.3,
             0.1,
             1.0,
@@ -30,21 +30,21 @@ void Solver1DStripMovementTest(){
             200,
             [=](F1D f1D, C1D c1D) -> function<double(double)> {
                 return PsyTHINCandGodunov(f1D, c1D, 3.5, 1e-4);
-            },
-            "Psy THINC + Godunov"
+            }
     );
+    cout << "Psy THINC + Godunov" << endl;
 
     Solver1DOutput out = minimal1DOutput(
             downDir(
                     testDir,
-                    "area_" + to_string(params.cellCount) + "_t_" + to_string(params.NTimeSteps) + ".txt"),
-            params.NTimeSteps);
+                    "area_" + to_string(params.getCellCount()) + "_t_" + to_string(params.getNTimeSteps()) + ".txt"),
+            params.getNTimeSteps());
     out.printHeader(params);
 
-    Area1D f(params.cellCount, true);
+    Area1D f(params.getCellCount(), true);
     f.fillRightHalfWith(1);
 
-    VectorField1D u = getStaticVF1D(0.1, params.cellCount+1);
+    VectorField1D u = getStaticVF1D(0.1, params.getCellCount()+1);
 
     SolveTransportEquation1D(f, u, params, out);
 
@@ -54,7 +54,7 @@ void Solver1DStripBackMovementTest(){
     const string TEST_TITLE = "Solver1DStripBackMovementTest";
     const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
 
-    Solver1DParams params = getParamsFor(
+    TESolver1DParams params (
             0.3,
             0.1,
             1.0,
@@ -62,21 +62,21 @@ void Solver1DStripBackMovementTest(){
             200,
             [=](F1D f1D, C1D c1D) -> function<double(double)> {
                 return PsyTHINCandGodunov(f1D, c1D, 3.5, 1e-4);
-            },
-            "Psy THINC + Godunov"
+            }
     );
+    cout << "Psy THINC + Godunov" << endl;
 
     Solver1DOutput out = minimal1DOutput(
             downDir(
                     testDir,
-                    "area_" + to_string(params.cellCount) + "_t_" + to_string(params.NTimeSteps) + ".txt"),
-            params.NTimeSteps);
+                    "area_" + to_string(params.getCellCount()) + "_t_" + to_string(params.getNTimeSteps()) + ".txt"),
+            params.getNTimeSteps());
     out.printHeader(params);
 
-    Area1D f(params.cellCount, true);
+    Area1D f(params.getCellCount(), true);
     f.fillLeftHalfWith(1);
 
-    VectorField1D u = getStaticVF1D(-0.1, params.cellCount+1);
+    VectorField1D u = getStaticVF1D(-0.1, params.getCellCount()+1);
 
     SolveTransportEquation1D(f, u, params, out);
 
@@ -90,7 +90,7 @@ void Solver1Dtests() {
     int iNmin = 3;
     int jTmax = 6;
 
-    Solver1DParams params;
+    TESolver1DParams params;
 
     ofstream myfi;
     myfi.open(downDir(testDir, "error.txt"));
@@ -221,7 +221,7 @@ bool test1DSolverStandard(){
     int time = T * j;
     paramsDebug.stepN = time;
 
-    Solver1DParams params = getParamsFor(
+    TESolver1DParams params (
             0.3,
             0.1,
             1.0,
@@ -229,9 +229,9 @@ bool test1DSolverStandard(){
             time,
             [=](F1D f1D, C1D c1D) -> function<double(double)> {
                 return PsyTHINCandMUSCL(f1D, c1D, 3.5, 1e-4);
-            },
-            "Psy THINC + MUSCL"
+            }
             );
+    cout << "Psy THINC + MUSCL" << endl;
 
     VectorField1D u = getStaticVF1D(0.1, N+1);
 
@@ -253,12 +253,12 @@ bool test1DSolverStandard(){
     /*for(int i=0; i<fStd.size(); i++)
         cout << i << "\t" << fStd[i] << endl;*/
     cout << "Comparing solutions" << endl;
-    bool testResult = compare1DSolutions(area1D.getF(), fStd, params.cellCount, 0.0);
+    bool testResult = compare1DSolutions(area1D.getF(), fStd, params.getCellCount(), 0.0);
 
     cout << endl <<
          "------------------" << endl <<
-         "Psy function: " << params.FlowInterpolationFunctionName << endl <<
-         "cellCount: " << params.cellCount << " NTimeSteps: " << params.NTimeSteps << endl <<
+         "Psy function: " << "Psy THINC + MUSCL" << endl <<
+         "cellCount: " << params.getCellCount() << " NTimeSteps: " << params.getNTimeSteps() << endl <<
          "CFL: " << params.CFL << " Area size: " << params.areaLength << endl <<
          "beta: " << beta << " eps: " << eps << " uPrimary: " << 0.1 << endl <<
          "------------------" << endl <<
@@ -297,7 +297,7 @@ bool test1DSolverBackStandard(){ //TODO Accurate 1D Standard Solver for back mov
     int time = T * j;
     paramsDebug.stepN = time;
 
-    Solver1DParams params = getParamsFor(
+    TESolver1DParams params (
             0.3,
             0.1,
             1.0,
@@ -305,9 +305,9 @@ bool test1DSolverBackStandard(){ //TODO Accurate 1D Standard Solver for back mov
             time,
             [=](F1D f1D, C1D c1D) -> function<double(double)> {
                 return PsyTHINCandMUSCL(f1D, c1D, 3.5, 1e-4);
-            },
-            "Psy THINC + MUSCL"
+            }
     );
+    cout << "Psy THINC + MUSCL" << endl;
 
     VectorField1D u = getStaticVF1D(-0.1, N+1);
 
@@ -331,12 +331,12 @@ bool test1DSolverBackStandard(){ //TODO Accurate 1D Standard Solver for back mov
     cout << "Comparing solutions" << endl;
     vector<double> currentSolverResult = area1D.getF();
     reverse(currentSolverResult.begin(), currentSolverResult.end());
-    bool testResult = compare1DSolutions(currentSolverResult, fStd, params.cellCount, 0.001);
+    bool testResult = compare1DSolutions(currentSolverResult, fStd, params.getCellCount(), 0.001);
 
     cout << endl <<
          "------------------" << endl <<
-         "Psy function: " << params.FlowInterpolationFunctionName << endl <<
-         "cellCount: " << params.cellCount << " NTimeSteps: " << params.NTimeSteps << endl <<
+         "Psy function: " << "Psy THINC + MUSCL" << endl <<
+         "cellCount: " << params.getCellCount() << " NTimeSteps: " << params.getNTimeSteps() << endl <<
          "CFL: " << params.CFL << " Area size: " << params.areaLength << endl <<
          "beta: " << beta << " eps: " << eps << " uPrimary: " << 0.1 << endl <<
          "------------------" << endl <<

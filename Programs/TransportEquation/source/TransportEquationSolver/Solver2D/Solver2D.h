@@ -10,7 +10,7 @@
 
 void SolveTransportEquation2D(Area2D &f,
                               VectorField2D &u,
-                              Solver2DParams &p,
+                              TESolver2DParams &p,
                               Solver2DOutput &output);
 
 #endif //TRANSPORTEQUATION_SOLVER2D_H

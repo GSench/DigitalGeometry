@@ -30,8 +30,8 @@ set(PROJECT_SOURCES
         source/TransportEquationSolver/Solver1D/VectorField1D.cpp
         source/TransportEquationSolver/Solver1D/VectorField1D.h
         source/TransportEquationSolver/Solver2D/Area2D.h
-        source/TransportEquationSolver/Solver2D/Solver2DInstances.cpp
-        source/TransportEquationSolver/Solver2D/Solver2DInstances.h
+        source/TransportEquationSolver/Solver2D/TESolver2DParams.cpp
+        source/TransportEquationSolver/Solver2D/TESolver2DParams.h
         source/TransportEquationSolver/Solver1D/Area1D.cpp
         source/TransportEquationSolver/Solver2D/VectorField2D.cpp
         source/TransportEquationSolver/Solver2D/VectorField2D.h
@@ -64,6 +64,6 @@ set(PROJECT_SOURCES
         source/Tests/DigitalGeometryTests2D.cpp
         source/Tests/DigitalGeometryTests2D.h
         source/EulerEquationProblem/EESolver1D/EESolver1DInstances.cpp
-        source/EulerEquationProblem/EESolver1D/EESolver1DInstances.h)
+        source/EulerEquationProblem/EESolver1D/EESolver1DInstances.h source/TransportEquationSolver/Solver1D/TESolver1DParams.h)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})

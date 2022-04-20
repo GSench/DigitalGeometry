@@ -8,8 +8,8 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include "Solver1DInstances.h"
 #include "Area1D.h"
+#include "TESolver1DParams.h"
 
 using namespace std;
 
@@ -55,9 +55,9 @@ public:
         }
     }
 
-    void printHeader(const Solver1DParams &params){
-        resultFile << params.cellCount << "\t" << params.dx << endl;
-        resultFile << params.NTimeSteps << "\t" << realNTimeSteps << "\t" << params.dt << endl;
+    void printHeader(const TESolver1DParams &params){
+        resultFile << params.getCellCount() << "\t" << params.getDx() << endl;
+        resultFile << params.getNTimeSteps() << "\t" << realNTimeSteps << "\t" << params.getDt() << endl;
     }
 
     void print(Area1D &f, int t, double h){

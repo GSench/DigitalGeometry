@@ -17,7 +17,7 @@ void StripSinMoveTest(){
     const string TEST_TITLE = "StripSinMoveTest";
     const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
 
-    Solver1DParams params = getParamsFor(
+    TESolver1DParams params (
             0.3,
             0.1,
             1.0,
@@ -25,31 +25,31 @@ void StripSinMoveTest(){
             200,
             [=](F1D f1D, C1D c1D) -> function<double(double)> {
                 return PsyTHINCandGodunov(f1D, c1D, 3.5, 1e-4);
-            },
-            "Psy THINC + Godunov"
+            }
     );
+    cout << "Psy THINC + Godunov" << endl;
     EESolver1DParams uParams = {
-            params.dt,
-            params.areaLength,
-            params.cellCount,
-            params.NTimeSteps,
-            params.dx
+            params.getDt(),
+            1.0,
+            params.getCellCount(),
+            params.getNTimeSteps(),
+            params.getDx()
     };
 
     Solver1DOutput out = minimal1DOutput(
             downDir(
                     testDir,
-                    "area_" + to_string(params.cellCount) + "_t_" + to_string(params.NTimeSteps) + ".txt"),
-            params.NTimeSteps);
+                    "area_" + to_string(params.getCellCount()) + "_t_" + to_string(params.getNTimeSteps()) + ".txt"),
+            params.getNTimeSteps());
     out.printHeader(params);
 
-    Area1D f(params.cellCount, false);
+    Area1D f(params.getCellCount(), false);
     f.drawStructCount(1, 24, 16);
 
     function<double(double)> vc = [=](double t) -> double {
         return cos(t) * 0.1;
     };
-    VectorField1D u(params.cellCount+1);
+    VectorField1D u(params.getCellCount()+1);
 
     SolveDG1D(f, params, u,  uParams, vc, out);
 

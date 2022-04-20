@@ -8,20 +8,20 @@
 #include "../../math/MathUtils.h"
 
 
-void SolverStep(Area1D &f, Solver1DParams pf,
+void SolverStep(Area1D &f, TESolver1DParams pf,
                 VectorField1D &u, const EESolver1DParams &pu,
                 const function<double(double)>& vc, int t){
     SolverStep(u, fMoveX(vc, pu.dt/2), pu, t);
     SolverStep(f, u, pf);
 }
 
-void SolveDG1D(Area1D &f, const Solver1DParams& pf,
+void SolveDG1D(Area1D &f, const TESolver1DParams& pf,
                VectorField1D& u, const EESolver1DParams &pu,
                const function<double(double)>& vc,
                Solver1DOutput &out){
-    out.print(f, 0, pf.dx);
-    for (int n = 0; n < pf.NTimeSteps; n++) {
+    out.print(f, 0, pf.getDx());
+    for (int n = 0; n < pf.getNTimeSteps(); n++) {
         SolverStep(f, pf, u, pu, vc, n);
-        out.print(f, n+1, pf.dx);
+        out.print(f, n+1, pf.getDx());
     }
 }

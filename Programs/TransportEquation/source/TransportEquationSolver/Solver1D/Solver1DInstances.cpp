@@ -4,8 +4,8 @@
 
 #include "Solver1DInstances.h"
 
-C1D getCi(const Solver1DParams& p, int i){
-    return {(i+0.5)*p.dx, p.dx,i*p.dx,(i+1)*p.dx};
+C1D getCi(double dx, int i){
+    return {(i+0.5)*dx, dx,i*dx,(i+1)*dx};
 }
 
 C1D inverse(const C1D &c){
@@ -22,19 +22,4 @@ F1D inverse(const F1D &f){
 
 U1D getUi(LineInterface& u, int i){
     return {u[i], u[i+1]};
-}
-
-Solver1DParams getParamsFor(double CFL, double uPrimary, double areaLength, int cellCount, int NTimeSteps,
-                            const function<function<double(double)>(F1D f, C1D c)>& PsyFunc,
-                            const string& PsyFuncName){
-    Solver1DParams params;
-    params.CFL = CFL;
-    params.cellCount = cellCount;
-    params.areaLength = areaLength;
-    params.NTimeSteps = NTimeSteps;
-    params.dx = areaLength/cellCount;
-    params.dt = CFL * params.dx / uPrimary;
-    params.FlowInterpolationFunction = PsyFunc;
-    params.FlowInterpolationFunctionName = PsyFuncName;
-    return params;
 }

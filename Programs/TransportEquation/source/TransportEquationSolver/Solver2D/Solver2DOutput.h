@@ -9,7 +9,7 @@
 #include <iostream>
 #include <vector>
 #include "Area2D.h"
-#include "Solver2DInstances.h"
+#include "TESolver2DParams.h"
 
 using namespace std;
 
@@ -44,9 +44,9 @@ public:
         }
     }
 
-    void printHeader(const Solver2DParams &params){
-        resultFile << params.cellCountX << "\t" << params.cellCountY << "\t" << params.dx << endl;
-        resultFile << params.NTimeSteps << "\t" << realNTimeSteps << "\t" << params.dt << endl;
+    void printHeader(const TESolver2DParams &params){
+        resultFile << params.getCellCountX() << "\t" << params.getCellCountY() << "\t" << params.getDx() << endl;
+        resultFile << params.getNTimeSteps() << "\t" << realNTimeSteps << "\t" << params.getDt() << endl;
     }
 
     void print(Area2D &f, int t){

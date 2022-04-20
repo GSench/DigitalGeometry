@@ -19,61 +19,61 @@ double flow(const function<double(double)>& PsyL,
 double fNext(F1D fi,
              U1D ui,
              C1D ci,
-             const Solver1DParams& p,
+             const TESolver1DParams& p,
              const vector<function<double(double)>> &Psy){ // 3 functions: {Psy|i-1 , Psy|i , Psy|i+1}
-    double fiR = flow(Psy[1], Psy[2], ci.xR, ui.uR, p.dt);
-    double fiL = flow(Psy[0], Psy[1], ci.xL, ui.uL, p.dt);
-    return fi.fi - 1.0 / p.dx * (fiR*ui.uR - fiL*ui.uL) * p.dt;
+    double fiR = flow(Psy[1], Psy[2], ci.xR, ui.uR, p.getDt());
+    double fiL = flow(Psy[0], Psy[1], ci.xL, ui.uL, p.getDt());
+    return fi.fi - 1.0 / p.getDt() * (fiR*ui.uR - fiL*ui.uL) * p.getDt();
 }
 
 void SolverStep(LineInterface &f,
                 LineInterface &u,
-                Solver1DParams &p){
-    vector<function<double(double)>> Psy(p.cellCount+2);
-    for(int i=-1; i<p.cellCount+1; i++){
+                TESolver1DParams &p){
+    vector<function<double(double)>> Psy(p.getCellCount()+2);
+    for(int i=-1; i<p.getCellCount()+1; i++){
         int sgnUi = 0;
         if(i==-1) //TODO extend u outside area like f
             sgnUi = sgn(u[0]);
-        else if(i==p.cellCount)
+        else if(i==p.getCellCount())
             sgnUi = sgn(u[i]);
         else
             sgnUi = sgn((u[i]+u[i+1])/2.);
         F1D fi = getFi(f, i);
-        C1D ci = getCi(p, i);
+        C1D ci = getCi(p.getDx(), i);
         if(sgnUi<0){
             F1D invFi = inverse(fi);
             C1D invCi = inverse(ci);
-            Psy[i+1] = fInverseX(p.FlowInterpolationFunction(invFi, invCi));
+            Psy[i+1] = fInverseX(p.getFlowInterpolationFunctionFabric()(invFi, invCi));
         } else {
-            Psy[i+1] = p.FlowInterpolationFunction(fi, ci);
+            Psy[i+1] = p.getFlowInterpolationFunctionFabric()(fi, ci);
         }
     }
 
 
     double fiPrev = f[-1];
-    double fiAfterLast = f[p.cellCount];
+    double fiAfterLast = f[p.getCellCount()];
 
-    for (int i = 0; i < p.cellCount-1; i++) { // calculating all cells except last
+    for (int i = 0; i < p.getCellCount()-1; i++) { // calculating all cells except last
         F1D fi = getFi(f, i);
         fi.fiPrev = fiPrev; // using saved fi as fiPrev in the next cell
         fiPrev = fi.fi;
-        f.set(i, fNext(fi, getUi(u, i), getCi(p, i), p,
+        f.set(i, fNext(fi, getUi(u, i), getCi(p.getDx(), i), p,
                        {Psy[i], Psy[i+1], Psy[i+2]}));
     }
     // fiNext for last cell is old f0, so we calc this separately
-    int iLast = p.cellCount-1;
+    int iLast = p.getCellCount()-1;
     F1D fiLast = {f[iLast], fiPrev, fiAfterLast};
-    f.set(iLast, fNext(fiLast, getUi(u, iLast), getCi(p, iLast), p, {Psy[iLast], Psy[iLast+1], Psy[iLast+2]}));
+    f.set(iLast, fNext(fiLast, getUi(u, iLast), getCi(p.getDx(), iLast), p, {Psy[iLast], Psy[iLast+1], Psy[iLast+2]}));
 }
 
 void SolveTransportEquation1D(Area1D &f,
                               VectorField1D &u,
-                              Solver1DParams &p,
+                              TESolver1DParams &p,
                               Solver1DOutput &output) {
-    output.print(f, 0, p.dx);
-    for (int n = 0; n < p.NTimeSteps; n++) {
+    output.print(f, 0, p.getDx());
+    for (int n = 0; n < p.getNTimeSteps(); n++) {
         SolverStep(f, u, p);
-        output.print(f, n+1, p.dx);
+        output.print(f, n+1, p.getDx());
     }
 }
 

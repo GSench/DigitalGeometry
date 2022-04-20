@@ -10,11 +10,11 @@
 #include "../../EulerEquationProblem/EESolver1D/EESolver1DInstances.h"
 #include "../../TransportEquationSolver/Solver1D/Solver1DOutput.h"
 
-void SolverStep(Area1D &f, Solver1DParams pf,
+void SolverStep(Area1D &f, TESolver1DParams pf,
                 VectorField1D &u, const EESolver1DParams &pu,
                 const function<double(double)>& vc, int t);
 
-void SolveDG1D(Area1D &f, const Solver1DParams& pf,
+void SolveDG1D(Area1D &f, const TESolver1DParams& pf,
                VectorField1D& u, const EESolver1DParams &pu,
                const function<double(double)>& vc,
                Solver1DOutput &out);

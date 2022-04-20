@@ -29,19 +29,6 @@ struct U1D {
     double uR;
 };
 
-// TODO refactor class Solver1DParams
-class Solver1DParams {
-public:
-    double CFL;
-    double dt;
-    double areaLength;
-    int cellCount;
-    int NTimeSteps;
-    double dx;
-    function<function<double(double)>(F1D f, C1D c)> FlowInterpolationFunction;
-    string FlowInterpolationFunctionName;
-};
-
 class LineInterface {
 public:
     virtual ~LineInterface() = default;
@@ -50,14 +37,10 @@ public:
     virtual int size() = 0;
 };
 
-C1D getCi(const Solver1DParams& p, int i);
+C1D getCi(double dx, int i);
 
 F1D getFi(LineInterface& f, int i);
 
 U1D getUi(LineInterface& u, int i);
-
-Solver1DParams getParamsFor(double CFL, double uPrimary, double areaLength, int cellCount, int NTimeSteps,
-                            const function<function<double(double)>(F1D f, C1D c)>& PsyFunc,
-                            const string& PsyFuncName);
 
 #endif //TRANSPORTEQUATION_SOLVER1DINSTANCES_H
