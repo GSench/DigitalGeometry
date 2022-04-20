@@ -11,7 +11,6 @@
 
 using namespace std;
 
-// TODO refactor class TESolver2DParams
 class TESolver2DParams : public TESolver1DParams {
 private:
     int cellCountX;
