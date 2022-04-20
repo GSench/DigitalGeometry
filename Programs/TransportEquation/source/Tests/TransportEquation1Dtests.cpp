@@ -90,8 +90,6 @@ void Solver1Dtests() {
     int iNmin = 3;
     int jTmax = 6;
 
-    TESolver1DParams params;
-
     ofstream myfi;
     myfi.open(downDir(testDir, "error.txt"));
     myfi << endl;
@@ -114,14 +112,13 @@ void Solver1Dtests() {
 
     vector<string> titles{ "Godunov", "MUSCL", "THINC_Godunov", "THINC_MUSCL" };
 
-    params.CFL = 0.3;
-    params.areaLength = 1.0;
+    double CFL = 0.3;
+    double areaLength = 1.0;
     double uPrimary = 0.1;
 
     for (int psy = 0; psy < PsyFunctions.size(); psy++) {
         cout << titles[psy] << " scheme" << endl;
         myfi << titles[psy] << " scheme" << endl;
-        params.FlowInterpolationFunction = PsyFunctions[psy];
 
         cout << " \t";
         for (int j = 0; j < jTmax; j++)
@@ -133,9 +130,7 @@ void Solver1Dtests() {
         myfi << endl;
 
         for (int i = iNmin; i < iNmax; i++) {
-            int N = params.CFL * 10.0 * pow(2, i); //params.CFL*10 чтобы N был кратен CFL
-            params.cellCount = N;
-            params.dx = params.areaLength / params.cellCount;
+            int N = CFL * 10.0 * pow(2, i); //CFL*10 чтобы N был кратен CFL
             double L = N / 2;
             double R = N - 1;
             Area1D fArea(N, true);
@@ -144,9 +139,16 @@ void Solver1Dtests() {
 
             VectorField1D u = getStaticVF1D(0.1, N+1);
 
-            int T = (double)N / params.CFL;
-            params.NTimeSteps = T;
-            params.dt = params.CFL * params.dx / uPrimary;
+            int T = (double)N / CFL;
+
+            TESolver1DParams params(
+                    CFL,
+                    uPrimary,
+                    areaLength,
+                    N,
+                    T,
+                    PsyFunctions[psy]
+                    );
 
             cout << "N" << N << "\t";
             myfi << "N" << N << "\t";
@@ -159,7 +161,7 @@ void Solver1Dtests() {
                         T);
                 output.printHeader(params);
                 SolveTransportEquation1D(fArea, u, params, output);
-                double error = errorL2(fArea.getF(), fexact, params.dx);
+                double error = errorL2(fArea.getF(), fexact, params.getDx());
                 output.printError(error);
                 output.finish();
                 printf("%.4f\t", error);
@@ -194,13 +196,16 @@ bool test1DSolverStandard(){
     const string TEST_TITLE = "test1DSolverStandard";
     const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
 
+    double CFL = 0.3;
+    double areaLength = 1.0;
+
     // Debug params
     THINC1DparamsDebug paramsDebug;
 
     // Scalar params
     double beta = 3.5;
     double eps = 1e-4;
-    paramsDebug.area = 1;
+    paramsDebug.area = areaLength;
     paramsDebug.u = 0.1;
     paramsDebug.eps = eps;
     paramsDebug.beta = beta;
@@ -210,7 +215,7 @@ bool test1DSolverStandard(){
         return PsyTHINCandMUSCLDebug(f, i, beta, h, eps);
     };
 
-    paramsDebug.CFL = 0.3;
+    paramsDebug.CFL = CFL;
 
     int i = 8;
     int N = paramsDebug.CFL * 10.0 * pow(2, i);
@@ -222,9 +227,9 @@ bool test1DSolverStandard(){
     paramsDebug.stepN = time;
 
     TESolver1DParams params (
-            0.3,
+            CFL,
             0.1,
-            1.0,
+            areaLength,
             N,
             time,
             [=](F1D f1D, C1D c1D) -> function<double(double)> {
@@ -236,8 +241,6 @@ bool test1DSolverStandard(){
     VectorField1D u = getStaticVF1D(0.1, N+1);
 
     // scalarFunction init
-    double L = N / 2;
-    double R = N - 1;
     Area1D area1D(N, true);
     area1D.fillRightHalfWith(1);
     vector<double> fexact = area1D.getF();
@@ -259,7 +262,7 @@ bool test1DSolverStandard(){
          "------------------" << endl <<
          "Psy function: " << "Psy THINC + MUSCL" << endl <<
          "cellCount: " << params.getCellCount() << " NTimeSteps: " << params.getNTimeSteps() << endl <<
-         "CFL: " << params.CFL << " Area size: " << params.areaLength << endl <<
+         "CFL: " << CFL << " Area size: " << areaLength << endl <<
          "beta: " << beta << " eps: " << eps << " uPrimary: " << 0.1 << endl <<
          "------------------" << endl <<
          (testResult ? "TEST SUCCEEDED" : "TEST FAILED") << endl;
@@ -270,13 +273,16 @@ bool test1DSolverBackStandard(){ //TODO Accurate 1D Standard Solver for back mov
     const string TEST_TITLE = "test1DSolverBackStandard";
     const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
 
+    double CFL = 0.3;
+    double areaLength = 1.0;
+
     // Debug params
     THINC1DparamsDebug paramsDebug;
 
     // Scalar params
     double beta = 3.5;
     double eps = 1e-4;
-    paramsDebug.area = 1;
+    paramsDebug.area = areaLength;
     paramsDebug.u = 0.1;
     paramsDebug.eps = eps;
     paramsDebug.beta = beta;
@@ -286,7 +292,7 @@ bool test1DSolverBackStandard(){ //TODO Accurate 1D Standard Solver for back mov
         return PsyTHINCandMUSCLDebug(f, i, beta, h, eps);
     };
 
-    paramsDebug.CFL = 0.3;
+    paramsDebug.CFL = CFL;
 
     int i = 8;
     int N = paramsDebug.CFL * 10.0 * pow(2, i);
@@ -298,9 +304,9 @@ bool test1DSolverBackStandard(){ //TODO Accurate 1D Standard Solver for back mov
     paramsDebug.stepN = time;
 
     TESolver1DParams params (
-            0.3,
+            CFL,
             0.1,
-            1.0,
+            areaLength,
             N,
             time,
             [=](F1D f1D, C1D c1D) -> function<double(double)> {
@@ -337,7 +343,7 @@ bool test1DSolverBackStandard(){ //TODO Accurate 1D Standard Solver for back mov
          "------------------" << endl <<
          "Psy function: " << "Psy THINC + MUSCL" << endl <<
          "cellCount: " << params.getCellCount() << " NTimeSteps: " << params.getNTimeSteps() << endl <<
-         "CFL: " << params.CFL << " Area size: " << params.areaLength << endl <<
+         "CFL: " << CFL << " Area size: " << areaLength << endl <<
          "beta: " << beta << " eps: " << eps << " uPrimary: " << 0.1 << endl <<
          "------------------" << endl <<
          (testResult ? "TEST SUCCEEDED" : "TEST FAILED") << endl;
