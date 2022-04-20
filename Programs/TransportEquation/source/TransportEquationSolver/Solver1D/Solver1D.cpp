@@ -23,7 +23,7 @@ double fNext(F1D fi,
              const vector<function<double(double)>> &Psy){ // 3 functions: {Psy|i-1 , Psy|i , Psy|i+1}
     double fiR = flow(Psy[1], Psy[2], ci.xR, ui.uR, p.getDt());
     double fiL = flow(Psy[0], Psy[1], ci.xL, ui.uL, p.getDt());
-    return fi.fi - 1.0 / p.getDt() * (fiR*ui.uR - fiL*ui.uL) * p.getDt();
+    return fi.fi - 1.0 / p.getDx() * (fiR*ui.uR - fiL*ui.uL) * p.getDt();
 }
 
 void SolverStep(LineInterface &f,
