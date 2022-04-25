@@ -63,7 +63,7 @@ set(PROJECT_SOURCES
         source/Tests/DigitalGeometryTests1D.h
         source/Tests/DigitalGeometryTests2D.cpp
         source/Tests/DigitalGeometryTests2D.h
-        source/EulerEquationProblem/EESolver1D/EESolver1DInstances.cpp
-        source/EulerEquationProblem/EESolver1D/EESolver1DInstances.h source/TransportEquationSolver/Solver1D/TESolver1DParams.h)
+        source/EulerEquationProblem/EESolver1D/EESolver1DParams.cpp
+        source/EulerEquationProblem/EESolver1D/EESolver1DParams.h source/TransportEquationSolver/Solver1D/TESolver1DParams.h)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})

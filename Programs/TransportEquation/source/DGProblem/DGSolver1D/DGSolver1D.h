@@ -7,7 +7,7 @@
 
 #include "../../TransportEquationSolver/Solver1D/Area1D.h"
 #include "../../TransportEquationSolver/Solver1D/VectorField1D.h"
-#include "../../EulerEquationProblem/EESolver1D/EESolver1DInstances.h"
+#include "../../EulerEquationProblem/EESolver1D/EESolver1DParams.h"
 #include "../../TransportEquationSolver/Solver1D/Solver1DOutput.h"
 
 void SolverStep(Area1D &f, TESolver1DParams pf,
