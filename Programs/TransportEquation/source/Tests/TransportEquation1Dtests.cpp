@@ -9,8 +9,8 @@
 #include <algorithm>
 
 #include "TransportEquation1Dtests.h"
-#include "../TransportEquationSolver/InterpolationFunctions.h"
-#include "../TransportEquationSolver/Solver1D/Solver1D.h"
+#include "../TransportEquationSolver/Tools/InterpolationFunctions.h"
+#include "../TransportEquationSolver/Solver1D/TESolver1D.h"
 #include "StandardSolver.h"
 #include "../configs.h"
 #include "Tests.h"
@@ -34,7 +34,7 @@ void Solver1DStripMovementTest(){
     );
     cout << "Psy THINC + Godunov" << endl;
 
-    Solver1DOutput out = minimal1DOutput(
+    TESolver1DOutput out = minimal1DOutput(
             downDir(
                     testDir,
                     "area_" + to_string(params.getCellCount()) + "_t_" + to_string(params.getNTimeSteps()) + ".txt"),
@@ -66,7 +66,7 @@ void Solver1DStripBackMovementTest(){
     );
     cout << "Psy THINC + Godunov" << endl;
 
-    Solver1DOutput out = minimal1DOutput(
+    TESolver1DOutput out = minimal1DOutput(
             downDir(
                     testDir,
                     "area_" + to_string(params.getCellCount()) + "_t_" + to_string(params.getNTimeSteps()) + ".txt"),
@@ -153,7 +153,7 @@ void Solver1Dtests() {
             cout << "N" << N << "\t";
             myfi << "N" << N << "\t";
             for (int j = 0; j < jTmax; j++) {
-                Solver1DOutput output = minimal1DOutput(
+                TESolver1DOutput output = minimal1DOutput(
                         downDir(
                                 downDir(
                                         testDir,  titles[psy]),
@@ -249,7 +249,7 @@ bool test1DSolverStandard(){
     const vector<double>& fExStd = fexact;
 
     cout << "Computing with current solver" << endl;
-    Solver1DOutput nOut = noOutput();
+    TESolver1DOutput nOut = noOutput();
     SolveTransportEquation1D(area1D, u, params, nOut);
     cout << "Computing with standard solver" << endl;
     THINC1DDebug(paramsDebug, fStd, fExStd);
@@ -328,7 +328,7 @@ bool test1DSolverBackStandard(){ //TODO Accurate 1D Standard Solver for back mov
     const vector<double>& fExStd = fexact;
 
     cout << "Computing with current solver" << endl;
-    Solver1DOutput nOut = noOutput();
+    TESolver1DOutput nOut = noOutput();
     SolveTransportEquation1D(area1D, u, params, nOut);
     cout << "Computing with standard solver" << endl;
     THINC1DDebug(paramsDebug, fStd, fExStd);

@@ -2,7 +2,7 @@
 // Created by GSench on 19.01.2022.
 //
 
-#include "Solver1DInstances.h"
+#include "TESolver1DInstances.h"
 
 C1D getCi(double dx, int i){
     return {(i+0.5)*dx, dx,i*dx,(i+1)*dx};

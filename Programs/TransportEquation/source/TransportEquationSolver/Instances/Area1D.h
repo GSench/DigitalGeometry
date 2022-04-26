@@ -2,7 +2,7 @@
 #define TRANSPORTEQUATION_AREA1D_H
 
 #include <vector>
-#include "Solver1DInstances.h"
+#include "TESolver1DInstances.h"
 
 using namespace std;
 

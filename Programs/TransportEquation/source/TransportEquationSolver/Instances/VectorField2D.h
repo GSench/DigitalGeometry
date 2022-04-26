@@ -6,7 +6,7 @@
 #define TRANSPORTEQUATION_VECTORFIELD2D_H
 
 #include "../../math/Vector2D.h"
-#include "../Solver1D/Solver1DInstances.h"
+#include "TESolver1DInstances.h"
 
 class VectorField2D : public LineInterface{
 private:

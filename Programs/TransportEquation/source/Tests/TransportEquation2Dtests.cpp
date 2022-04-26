@@ -4,10 +4,10 @@
 
 #include "TransportEquation2Dtests.h"
 #include "../TransportEquationSolver/Solver2D/TESolver2DParams.h"
-#include "../TransportEquationSolver/InterpolationFunctions.h"
-#include "../TransportEquationSolver/Solver2D/Solver2DOutput.h"
-#include "../TransportEquationSolver/Solver2D/VectorField2D.h"
-#include "../TransportEquationSolver/Solver2D/Solver2D.h"
+#include "../TransportEquationSolver/Tools/InterpolationFunctions.h"
+#include "../TransportEquationSolver/Solver2D/TESolver2DOutput.h"
+#include "../TransportEquationSolver/Instances/VectorField2D.h"
+#include "../TransportEquationSolver/Solver2D/TESolver2D.h"
 #include "../configs.h"
 #include "Tests.h"
 #include "../Utils/FileUtils.h"
@@ -29,12 +29,12 @@ void Solve2DRectMovementTest() {
     );
     cout << "Using Psy THINC + Godunov" << endl;
 
-    Solver2DOutput out = minimal2DOutput(downDir(
+    TESolver2DOutput out = minimal2DOutput(downDir(
                                                  testDir,
                                                  "area_"
                                                  +to_string(params.getCellCountX())+"x"+to_string(params.getCellCountY())
                                                  +"_t_" + to_string(params.getNTimeSteps())+".txt"),
-                                         params.getNTimeSteps());
+                                           params.getNTimeSteps());
     out.printHeader(params);
 
     Area2D f(params.getCellCountX(), params.getCellCountY());
@@ -63,12 +63,12 @@ void Solve2DWhiteBearMovementTest(){
     );
     cout << "Using Psy THINC + Godunov" << endl;
 
-    Solver2DOutput out = minimal2DOutput(downDir(
+    TESolver2DOutput out = minimal2DOutput(downDir(
                                                  testDir,
                                                  "area_"
                                                  +to_string(params.getCellCountX())+"x"+to_string(params.getCellCountY())
                                                  +"_t_" + to_string(params.getNTimeSteps())+".txt"),
-                                         params.getNTimeSteps());
+                                           params.getNTimeSteps());
     out.printHeader(params);
 
     Area2D f(params.getCellCountX(), params.getCellCountY());

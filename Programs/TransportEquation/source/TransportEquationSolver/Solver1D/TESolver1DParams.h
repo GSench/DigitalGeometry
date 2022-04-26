@@ -5,7 +5,7 @@
 #ifndef TRANSPORTEQUATION_TESOLVER1DPARAMS_H
 #define TRANSPORTEQUATION_TESOLVER1DPARAMS_H
 
-#include "Solver1DInstances.h"
+#include "../Instances/TESolver1DInstances.h"
 
 class TESolver1DParams {
 private:

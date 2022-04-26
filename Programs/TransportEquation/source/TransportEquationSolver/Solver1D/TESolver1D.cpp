@@ -2,8 +2,8 @@
 #include <vector>
 #include <functional>
 
-#include "Solver1D.h"
-#include "../InterpolationFunctions.h"
+#include "TESolver1D.h"
+#include "../Tools/InterpolationFunctions.h"
 #include "../../math/MathUtils.h"
 
 using namespace std;
@@ -26,9 +26,9 @@ double fNext(F1D fi,
     return fi.fi - 1.0 / p.getDx() * (fiR*ui.uR - fiL*ui.uL) * p.getDt();
 }
 
-void SolverStep(LineInterface &f,
-                LineInterface &u,
-                TESolver1DParams &p){
+void TESolverStep(LineInterface &f,
+                  LineInterface &u,
+                  TESolver1DParams &p){
     vector<function<double(double)>> Psy(p.getCellCount()+2);
     for(int i=-1; i<p.getCellCount()+1; i++){
         int sgnUi = 0;
@@ -69,10 +69,10 @@ void SolverStep(LineInterface &f,
 void SolveTransportEquation1D(Area1D &f,
                               VectorField1D &u,
                               TESolver1DParams &p,
-                              Solver1DOutput &output) {
+                              TESolver1DOutput &output) {
     output.print(f, 0, p.getDx());
     for (int n = 0; n < p.getNTimeSteps(); n++) {
-        SolverStep(f, u, p);
+        TESolverStep(f, u, p);
         output.print(f, n+1, p.getDx());
     }
 }

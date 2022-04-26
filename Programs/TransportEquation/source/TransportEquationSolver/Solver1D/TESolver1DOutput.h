@@ -2,18 +2,18 @@
 // Created by grigoriy.senchenok on 21.12.2021.
 //
 
-#ifndef TRANSPORTEQUATION_SOLVER1DOUTPUT_H
-#define TRANSPORTEQUATION_SOLVER1DOUTPUT_H
+#ifndef TRANSPORTEQUATION_TESOLVER1DOUTPUT_H
+#define TRANSPORTEQUATION_TESOLVER1DOUTPUT_H
 
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include "Area1D.h"
+#include "../Instances/Area1D.h"
 #include "TESolver1DParams.h"
 
 using namespace std;
 
-class Solver1DOutput {
+class TESolver1DOutput {
 private:
     bool printToFile = false;
     bool printXAxes = true;
@@ -27,7 +27,7 @@ private:
     double printNStep = 1;
     bool allowPrintError = true;
 public:
-    Solver1DOutput(
+    TESolver1DOutput(
             bool printToFile,
             bool printXAxes,
             bool printT,
@@ -111,9 +111,9 @@ public:
     }
 };
 
-Solver1DOutput noOutput();
-Solver1DOutput minimal1DOutput(const string& filePath, int NTimeSteps);
-Solver1DOutput normal1DOutput(const string& filePath, int NTimeSteps);
-Solver1DOutput jupyter1DOutput(const string& filePath, int NTimeSteps);
+TESolver1DOutput noOutput();
+TESolver1DOutput minimal1DOutput(const string& filePath, int NTimeSteps);
+TESolver1DOutput normal1DOutput(const string& filePath, int NTimeSteps);
+TESolver1DOutput jupyter1DOutput(const string& filePath, int NTimeSteps);
 
-#endif //TRANSPORTEQUATION_SOLVER1DOUTPUT_H
+#endif //TRANSPORTEQUATION_TESOLVER1DOUTPUT_H

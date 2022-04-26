@@ -2,18 +2,18 @@
 // Created by grigoriy.senchenok on 08.02.2022.
 //
 
-#ifndef TRANSPORTEQUATION_SOLVER2DOUTPUT_H
-#define TRANSPORTEQUATION_SOLVER2DOUTPUT_H
+#ifndef TRANSPORTEQUATION_TESOLVER2DOUTPUT_H
+#define TRANSPORTEQUATION_TESOLVER2DOUTPUT_H
 
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include "Area2D.h"
+#include "../Instances/Area2D.h"
 #include "TESolver2DParams.h"
 
 using namespace std;
 
-class Solver2DOutput {
+class TESolver2DOutput {
 private:
     bool printToFile = false;
     bool printT = true;
@@ -24,7 +24,7 @@ private:
     double printNStep = 1;
 
 public:
-    Solver2DOutput(
+    TESolver2DOutput(
             bool printToFile,
             bool printT,
             const string& resultFilePath,
@@ -73,7 +73,7 @@ public:
     }
 };
 
-Solver2DOutput no2DOutput();
-Solver2DOutput minimal2DOutput(const string& filePath, int NTimeSteps);
+TESolver2DOutput no2DOutput();
+TESolver2DOutput minimal2DOutput(const string& filePath, int NTimeSteps);
 
-#endif //TRANSPORTEQUATION_SOLVER2DOUTPUT_H
+#endif //TRANSPORTEQUATION_TESOLVER2DOUTPUT_H

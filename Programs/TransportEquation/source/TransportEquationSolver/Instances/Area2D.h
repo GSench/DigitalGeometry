@@ -6,7 +6,7 @@
 #define TRANSPORTEQUATION_AREA2D_H
 
 #include <vector>
-#include "../Solver1D/Solver1DInstances.h"
+#include "TESolver1DInstances.h"
 #include "../../math/Vector2D.h"
 
 using namespace std;

@@ -2,13 +2,13 @@
 // Created by grigoriy.senchenok on 21.02.2022.
 //
 
-#include "../TransportEquationSolver/Solver1D/Solver1DInstances.h"
-#include "../TransportEquationSolver/InterpolationFunctions.h"
+#include "../TransportEquationSolver/Instances/TESolver1DInstances.h"
+#include "../TransportEquationSolver/Tools/InterpolationFunctions.h"
 #include "../configs.h"
 #include "Tests.h"
-#include "../TransportEquationSolver/Solver1D/Solver1DOutput.h"
+#include "../TransportEquationSolver/Solver1D/TESolver1DOutput.h"
 #include "../Utils/FileUtils.h"
-#include "../TransportEquationSolver/Solver1D/VectorField1D.h"
+#include "../TransportEquationSolver/Instances/VectorField1D.h"
 #include "../DGProblem/DGSolver1D/DGSolver1D.h"
 #include <cmath>
 
@@ -30,13 +30,12 @@ void StripSinMoveTest(){
     cout << "Psy THINC + Godunov" << endl;
     EESolver1DParams uParams = {
             params.getDt(),
-            1.0,
-            params.getCellCount(),
             params.getNTimeSteps(),
-            params.getDx()
+            params.getDx(),
+            params.getCellCount()
     };
 
-    Solver1DOutput out = minimal1DOutput(
+    TESolver1DOutput out = minimal1DOutput(
             downDir(
                     testDir,
                     "area_" + to_string(params.getCellCount()) + "_t_" + to_string(params.getNTimeSteps()) + ".txt"),

@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "Solver1DInstances.h"
+#include "TESolver1DInstances.h"
 
 class VectorField1D: public LineInterface {
 private:

@@ -4,7 +4,7 @@
 #define TRANSPORTEQUATION_INTERPOLATION_FUNCTIONS
 
 #include <functional>
-#include "Solver1D/Solver1DInstances.h"
+#include "../Instances/TESolver1DInstances.h"
 
 using namespace std;
 

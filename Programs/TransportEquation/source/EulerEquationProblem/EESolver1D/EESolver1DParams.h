@@ -8,10 +8,9 @@
 class EESolver1DParams {
 public:
     double dt;
-    double areaLength;
-    int cellCount;
     int NTimeSteps;
     double dx;
+    int cellCount;
 };
 
 #endif //TRANSPORTEQUATION_EESOLVER1DPARAMS_H

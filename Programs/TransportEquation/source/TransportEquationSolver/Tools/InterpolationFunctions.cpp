@@ -1,9 +1,9 @@
 #include <vector>
 #include <functional>
 
-#include "../math/MathUtils.h"
+#include "../../math/MathUtils.h"
 #include "THINCUtils.h"
-#include "Solver1D/Solver1DInstances.h"
+#include "../Instances/TESolver1DInstances.h"
 
 using namespace std;
 
