@@ -77,6 +77,7 @@ void SolveTransportEquation1D(Area1D &f,
     }
 }
 
+//TODO remove from here errorL2
 double errorL2(vector<double> f, const vector<double>& fexact, double h){
     double error = 0;
     for (int i = 0; i < f.size(); i++) {
