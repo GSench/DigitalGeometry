@@ -1,0 +1,14 @@
+//
+// Created by grigoriy.senchenok on 26.04.2022.
+//
+
+#ifndef TRANSPORTEQUATION_DGSOLVER2DPARAMS_H
+#define TRANSPORTEQUATION_DGSOLVER2DPARAMS_H
+
+
+class DGSolver2DParams {
+
+};
+
+
+#endif //TRANSPORTEQUATION_DGSOLVER2DPARAMS_H
