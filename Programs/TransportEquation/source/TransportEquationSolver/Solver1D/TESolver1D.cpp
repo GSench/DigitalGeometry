@@ -19,11 +19,11 @@ double flow(const function<double(double)>& PsyL,
 double fNext(F1D fi,
              U1D ui,
              C1D ci,
-             const TESolver1DParams& p,
+             double dt,
              const vector<function<double(double)>> &Psy){ // 3 functions: {Psy|i-1 , Psy|i , Psy|i+1}
-    double fiR = flow(Psy[1], Psy[2], ci.xR, ui.uR, p.getDt());
-    double fiL = flow(Psy[0], Psy[1], ci.xL, ui.uL, p.getDt());
-    return fi.fi - 1.0 / p.getDx() * (fiR*ui.uR - fiL*ui.uL) * p.getDt();
+    double fiR = flow(Psy[1], Psy[2], ci.xR, ui.uR, dt);
+    double fiL = flow(Psy[0], Psy[1], ci.xL, ui.uL, dt);
+    return fi.fi - 1.0 / ci.dx * (fiR*ui.uR - fiL*ui.uL) * dt;
 }
 
 void TESolverStep(LineInterface &f,
@@ -57,13 +57,13 @@ void TESolverStep(LineInterface &f,
         F1D fi = getFi(f, i);
         fi.fiPrev = fiPrev; // using saved fi as fiPrev in the next cell
         fiPrev = fi.fi;
-        f.set(i, fNext(fi, getUi(u, i), getCi(p.getDx(), i), p,
+        f.set(i, fNext(fi, getUi(u, i), getCi(p.getDx(), i), p.getDt(),
                        {Psy[i], Psy[i+1], Psy[i+2]}));
     }
     // fiNext for last cell is old f0, so we calc this separately
     int iLast = p.getCellCount()-1;
     F1D fiLast = {f[iLast], fiPrev, fiAfterLast};
-    f.set(iLast, fNext(fiLast, getUi(u, iLast), getCi(p.getDx(), iLast), p, {Psy[iLast], Psy[iLast+1], Psy[iLast+2]}));
+    f.set(iLast, fNext(fiLast, getUi(u, iLast), getCi(p.getDx(), iLast), p.getDt(), {Psy[iLast], Psy[iLast+1], Psy[iLast+2]}));
 }
 
 void SolveTransportEquation1D(Area1D &f,
