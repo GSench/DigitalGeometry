@@ -8,7 +8,8 @@
 #include "../../TransportEquationSolver/Instances/VectorField1D.h"
 #include "EESolver1DParams.h"
 
-void EESolverStep(VectorField1D &v, const function<double(double)>& vc, const EESolver1DParams &p, int t);
-void SolveEE1D(VectorField1D &v, const function<double(double)>& vc, const EESolver1DParams &p);
+void EESolver1DVerticeStep(double &x, const function<double(double)>& vc, const EESolver1DParams &p, int it);
+
+void SolveEE1D(vector<double> &x, const function<double(double)>& vc, const EESolver1DParams &p);
 
 #endif //TRANSPORTEQUATION_EESOLVER1D_H

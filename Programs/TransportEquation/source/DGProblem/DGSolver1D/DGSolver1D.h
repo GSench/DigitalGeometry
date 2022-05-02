@@ -11,11 +11,9 @@
 #include "../../TransportEquationSolver/Solver1D/TESolver1DOutput.h"
 
 void DGSolverStep(Area1D &f, TESolver1DParams pf,
-                  VectorField1D &u, const EESolver1DParams &pu,
                   const function<double(double)>& vc, int t);
 
 void SolveDG1D(Area1D &f, const TESolver1DParams& pf,
-               VectorField1D& u, const EESolver1DParams &pu,
                const function<double(double)>& vc,
                TESolver1DOutput &out);
 

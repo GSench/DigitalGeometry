@@ -28,12 +28,6 @@ void StripSinMoveTest(){
             }
     );
     cout << "Psy THINC + Godunov" << endl;
-    EESolver1DParams uParams = {
-            params.getDt(),
-            params.getNTimeSteps(),
-            params.getDx(),
-            params.getCellCount()
-    };
 
     TESolver1DOutput out = minimal1DOutput(
             downDir(
@@ -48,8 +42,7 @@ void StripSinMoveTest(){
     function<double(double)> vc = [=](double t) -> double {
         return cos(t) * 0.1;
     };
-    VectorField1D u(params.getCellCount()+1);
 
-    SolveDG1D(f, params, u,  uParams, vc, out);
+    SolveDG1D(f, params, vc, out);
 
 }
