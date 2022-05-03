@@ -57,7 +57,7 @@ public:
         return NTimeSteps;
     }
 
-    const function<function<double(double)>(F1D, C1D)> &getFlowInterpolationFunctionFabric() const {
+    const function<function<double(double)>(F1D, C1D)> &getFlowInterpolationFunctionBuilder() const {
         return FlowInterpolationFunction;
     }
 };

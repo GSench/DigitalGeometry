@@ -14,6 +14,7 @@ void launchTests(){
 }
 
 int main() {
-    launchTests();
+    //launchTests();
+    StripSinMoveTest();
     return 0;
 }

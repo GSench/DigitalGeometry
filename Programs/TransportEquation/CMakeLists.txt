@@ -14,6 +14,8 @@ set(PROJECT_SOURCES
         source/TransportEquationSolver/Tools/InterpolationFunctions.cpp
         source/math/MathUtils.cpp
         source/TransportEquationSolver/Solver1D/TESolver1D.cpp
+        source/TransportEquationSolver/Solver1D/TERBSolver1D.cpp
+        source/TransportEquationSolver/Solver1D/TERBSolver1D.h
         source/TransportEquationSolver/Tools/THINCUtils.cpp
         source/stuff/CompilerDifferenceHighlighter.cpp
         source/Tests/TransportEquation1Dtests.cpp
@@ -64,6 +66,18 @@ set(PROJECT_SOURCES
         source/Tests/DigitalGeometryTests2D.cpp
         source/Tests/DigitalGeometryTests2D.h
         source/EulerEquationProblem/EESolver1D/EESolver1DParams.cpp
-        source/EulerEquationProblem/EESolver1D/EESolver1DParams.h source/TransportEquationSolver/Solver1D/TESolver1DParams.h source/EulerEquationProblem/EESolver2D/EESolver2DParams.cpp source/EulerEquationProblem/EESolver2D/EESolver2DParams.h source/DGProblem/DGSolver1D/DGSolver1DParams.cpp source/DGProblem/DGSolver1D/DGSolver1DParams.h source/DGProblem/DGSolver2D/DGSolver2DParams.cpp source/DGProblem/DGSolver2D/DGSolver2DParams.h source/EulerEquationProblem/EESolver2D/EESolver2DOutput.cpp source/EulerEquationProblem/EESolver2D/EESolver2DOutput.h source/DGProblem/Tools/VectorFieldCalculation.cpp source/DGProblem/Tools/VectorFieldCalculation.h)
+        source/EulerEquationProblem/EESolver1D/EESolver1DParams.h
+        source/TransportEquationSolver/Solver1D/TESolver1DParams.h
+        source/EulerEquationProblem/EESolver2D/EESolver2DParams.cpp
+        source/EulerEquationProblem/EESolver2D/EESolver2DParams.h
+        source/DGProblem/DGSolver1D/DGSolver1DParams.cpp
+        source/DGProblem/DGSolver1D/DGSolver1DParams.h
+        source/DGProblem/DGSolver2D/DGSolver2DParams.cpp
+        source/DGProblem/DGSolver2D/DGSolver2DParams.h
+        source/EulerEquationProblem/EESolver2D/EESolver2DOutput.cpp
+        source/EulerEquationProblem/EESolver2D/EESolver2DOutput.h
+        source/DGProblem/Tools/VectorFieldCalculation.cpp
+        source/DGProblem/Tools/VectorFieldCalculation.h
+        source/TransportEquationSolver/Instances/RBVectorField1D.cpp source/TransportEquationSolver/Instances/RBVectorField1D.h)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})

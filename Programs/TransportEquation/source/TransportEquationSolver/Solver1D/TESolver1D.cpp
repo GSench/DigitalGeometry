@@ -43,9 +43,9 @@ void TESolverStep(LineInterface &f,
         if(sgnUi<0){
             F1D invFi = inverse(fi);
             C1D invCi = inverse(ci);
-            Psy[i+1] = fInverseX(p.getFlowInterpolationFunctionFabric()(invFi, invCi));
+            Psy[i+1] = fInverseX(p.getFlowInterpolationFunctionBuilder()(invFi, invCi));
         } else {
-            Psy[i+1] = p.getFlowInterpolationFunctionFabric()(fi, ci);
+            Psy[i+1] = p.getFlowInterpolationFunctionBuilder()(fi, ci);
         }
     }
 

@@ -3,6 +3,7 @@
 //
 
 #include "VectorFieldCalculation.h"
+#include "../../TransportEquationSolver/Instances/RBVectorField1D.h"
 
 
 VectorField1D generateVectorField1D(double vc, int cellCount){
