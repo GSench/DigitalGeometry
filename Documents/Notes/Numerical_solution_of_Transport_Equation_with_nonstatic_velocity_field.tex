@@ -261,6 +261,55 @@ x\mid_{\tau=0}=\int_{t_n}^{t_n}u(t)dt + x^*-\int_{t_n}^{t_n+\tau^*}u(t)dt
 \label{eqn:CharacteristicFromZero}
 x\mid_{\tau=0}=x^*-\int_{t_n}^{t_n+\tau^*}u(t)dt
 \end{equation}
+Данное значение необходимо использовать как аргумент интерполяционной функции (\ref{eqn:PsyIntrpolationFunc}).
+\\Таким образом, значения потоков (\ref{eqn:FlowLCurr}-\ref{eqn:FlowRNext}) будут иметь вид:
+\begin{equation}
+\label{eqn:FlowLCurrXSubst}
+\Phi_{i-\frac{1}{2}}^n=\begin{cases}
+u^{t_n} \Psi_{i-1}(x(x_{i-\frac{1}{2}}, 0))=
+u^{t_n}\Psi_{i-1}(x_L-\int_{t_n}^{t_n}u(t)dt)=u^{t_n}\Psi_{i-1}(x_L)
 
+\\
+u^{t_n} \Psi_{i}(x(x_{i-\frac{1}{2}}, 0))=
+u^{t_n}\Psi_{i}(x_L-\int_{t_n}^{t_n}u(t)dt)=u^{t_n}\Psi_{i}(x_L)
+
+\end{cases}
+\end{equation}
+\begin{equation}
+\label{eqn:FlowRCurrXSubst}
+\Phi_{i+\frac{1}{2}}^n=\begin{cases}
+u^{t_n} \Psi_{i}(x(x_{i+\frac{1}{2}}, 0))=
+u^{t_n} \Psi_{i}(x_R-\int_{t_n}^{t_n}u(t)dt)=u^{t_n}\Psi_{i}(x_R)
+
+\\
+u^{t_n} \Psi_{i+1}(x(x_{i+\frac{1}{2}}, 0))=
+u^{t_n} \Psi_{i+1}(x_R-\int_{t_n}^{t_n}u(t)dt)=u^{t_n}\Psi_{i+1}(x_R)
+
+\end{cases}
+\end{equation}
+\begin{equation}
+\label{eqn:FlowLNextXSubst}
+\Phi_{i-\frac{1}{2}}^{n+1}=\begin{cases}
+u^{t_{n+1}} \Psi_{i-1}(x(x_{i-\frac{1}{2}}, \Delta t))=
+u^{t_{n+1}} \Psi_{i-1}(x_L-\int_{t_n}^{t_{n+1}}u(t)dt)=u^{t_{n+1}}\Psi_{i-1}(x_L-\Delta t \frac{u^{t_{n+1}}+u^{t_{n}}}{2})
+
+\\
+u^{t_{n+1}} \Psi_{i}(x(x_{i-\frac{1}{2}}, \Delta t))=
+u^{t_{n+1}} \Psi_{i}(x_L-\int_{t_n}^{t_{n+1}}u(t)dt)=u^{t_{n+1}}\Psi_{i}(x_L-\Delta t \frac{u^{t_{n+1}}+u^{t_{n}}}{2})
+
+\end{cases}
+\end{equation}
+\begin{equation}
+\label{eqn:FlowRNextXSubst}
+\Phi_{i+\frac{1}{2}}^{n+1}=\begin{cases}
+u^{t_{n+1}} \Psi_{i}(x(x_{i+\frac{1}{2}}, \Delta t))=
+u^{t_{n+1}} \Psi_{i}(x_R-\int_{t_n}^{t_{n+1}}u(t)dt)=u^{t_{n+1}}\Psi_{i}(x_R-\Delta t \frac{u^{t_{n+1}}+u^{t_{n}}}{2})
+
+\\
+u^{t_{n+1}} \Psi_{i+1}(x(x_{i+\frac{1}{2}}, \Delta t))=
+u^{t_{n+1}} \Psi_{i+1}(x_R-\int_{t_n}^{t_{n+1}}u(t)dt)=u^{t_{n+1}}\Psi_{i+1}(x_R-\Delta t \frac{u^{t_{n+1}}+u^{t_{n}}}{2})
+
+\end{cases}
+\end{equation}
 
 \end{document}
