@@ -62,24 +62,19 @@ f_{i-\frac{1}{2}}u_{i-\frac{1}{2}} d\tau
 \[
 \overrightarrow{u}(\overrightarrow{r},t)=\overrightarrow{v_c}(t)+[\overrightarrow{\omega}(t)\times \overrightarrow{r}(t)]
 \]
-А значит, для любой его компоненты (по направлению соответствующей оси) $u(x,t)$ - линейная функция по координате x.Зафиксируем шаг по времени $t_n$ и найдем функцию $u(x)$:\\
-Исходя из численного решения уравнения Эйлера интегрированием методом квадратур, нам известны значения $u_{i\pm\frac{1}{2}}$ на границах ячеек. Обозначим значения скорости и координаты на границах ячейки $\Delta x_i$:
-\[ u_{i-\frac{1}{2}}=u_L \]
-\[ u_{i+\frac{1}{2}}=u_R \]
-А сами границы ячейки:
-\[ x_{i-\frac{1}{2}}=x_L \]
-\[ x_{i+\frac{1}{2}}=x_R \]
-Тогда согласно тому, что u(x) - линейная функция:
-\[
-\frac{u-u_L}{u_R-u_L}=\frac{x-x_L}{x_R-x_L}
-\]
-Функция скорости на ячейке $\Delta x_i$ задается как:
-\begin{equation}
-u(x)=kx+b
-\end{equation}
-где
-\[ k=\frac{u_R-u_L}{\Delta x} \]
-\[ b=u_L-\frac{u_R-u_L}{\Delta x}x_L \]
+Рассмотрим составляющие поля скоростей вдоль направлений X,Y,Z:
+\[ \overrightarrow{u}(\overrightarrow{r},t)=(u_x, u_y, u_z)(\overrightarrow{r},t) \]
+\[ \overrightarrow{r}(t)=(x-x_c(t), y-y_c(t), z-z_c(t)) \]
+Векторы $\overrightarrow{v_c}(t)$ и $\overrightarrow{\omega}(t)$ считаются заданными.
+\[ \overrightarrow{v_c}(t)=(v_{cx}(t), v_{cy}(t), v_{cz}(t)) \]
+\[ \overrightarrow{\omega}(t)=(\omega_x(t), \omega_y(t), \omega_z(t)) \]
+
+\[ u_x(t)=v_{cx}(t)+\omega_y(t)z-\omega_y(t)z_c(t)-\omega_z(t)y+\omega_z(t)y_c(t) \]
+\[ u_y(t)=v_{cy}(t)-\omega_x(t)z+\omega_x(t)z_c(t)+\omega_z(t)x-\omega_z(t)x_c(t) \]
+\[ u_z(t)=v_{cz}(t)+\omega_x(t)y-\omega_x(t)y_c(t)-\omega_y(t)x+\omega_y(t)x_c(t) \]
+Таким образом, можно видеть, что скорости твердого тела вдоль каждого из направлений не зависят от координаты рассматриваемой точки на этом направлении. То есть, например, скорости $u_x$ твердого тела вдоль направления $OX$ не зависят от координаты $x$, а лишь от положения $y$ и $z$ и от времени $t$.
+
+В таком случае, при решении уравнения переноса мы можем рассматривать скорость постоянной вдоль каждого из направлений, но зависящей от времени. Поэтому вместо $u_{i-\frac{1}{2}}$, $u_{i+\frac{1}{2}}$ будем рассматривать $u$, зависящую от времени.
 
 \section{Метод характеристик}
 \begin{comment}
@@ -95,10 +90,37 @@ https://ru.wikipedia.org/wiki/%D0%9C%D0%B5%D1%82%D0%BE%D0%B4_%D1%85%D0%B0%D1%80%
 \]
 где кривая $(x(s),t(s))$ — характеристика.\\
 Установим, что
+\begin{equation}
+\label{eqn:CharacteristicsMethodEq}
+\frac{\text{d}}{\text{d}s}f(x(s),t(s))=\frac{\partial f}{\partial x}\frac{\text{d}x}{\text{d}s}+\frac{\partial f}{\partial t}\frac{\text{d}t}{\text{d}s}
+\end{equation}
+Положим, что
 \[
-\frac{\text{d}}{\text{d}s}u(x(s),t(s))=\frac{\partial u}{\partial x}\frac{\text{d}x}{\text{d}s}+\frac{\partial u}{\partial t}\frac{\text{d}t}{\text{d}s}
+\frac{\text{d}t}{\text{d}s}=1
 \]
-
+Следовательно, при $t(0)=0$, $s=t$. И теперь будем составлять ОДУ, используя метод характеристик в виде:
+\[
+\frac{\text{d}}{\text{d}t}f(x(t),t)=F(f,x(t),t)
+\]
+Будем искать решение вдоль характеристик, уравнение которых имеет вид:
+\[
+\frac{\text{d}x}{\text{d}t}=u(t)
+\]
+В таком случае уравнение (\ref{eqn:CharacteristicsMethodEq}) можно переписать в виде:
+\[
+\frac{\text{d}}{\text{d}t}f(x(t),t)=u(t)\frac{\partial f}{\partial x}+\frac{\partial f}{\partial t}
+\]
+таким образом, вдоль характеристики $(x(t),t)$ исходное уравнение в частных производных превращается в ОДУ:
+\[
+u_t=F(f,x(t),t)=0
+\]
+Данное уравнение говорит о том, что вдоль характеристик решение постоянное. Таким образом, $u(x,t)=u(x_0,0)$, где точки $(x,t)$ и $(x_0,0)$ лежат на одной характеристике. Видно, что для нахождения общего решения достаточно найти характеристики уравнения в виде:
+\begin{equation}
+\label{eqn:CharacteristicsEq}
+\frac{\text{d}x}{\text{d}t}=u(t)
+\end{equation}
+Будем искать решение на слое $t_n$ по времени. $\tau$ - время на слое $[t_n; t_{n+1}]$. То есть $\tau=0 \Leftrightarrow t=t_n$, $\tau=\Delta t \Leftrightarrow t=t_{n+1}$.
+\\Проинтегрируем уравнение (\ref{eqn:CharacteristicsEq}) по $t$ от $t_n$ до $t_n+\tau$:
 
 
 \end{document}
