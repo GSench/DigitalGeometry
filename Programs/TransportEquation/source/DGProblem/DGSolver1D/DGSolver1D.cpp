@@ -3,16 +3,14 @@
 //
 
 #include "DGSolver1D.h"
-#include "../../EulerEquationProblem/EESolver1D/EESolver1D.h"
-#include "../../TransportEquationSolver/Solver1D/TESolver1D.h"
+#include "../../TransportEquationSolver/Solver1D/TERBSolver1D.h"
 #include "../../math/MathUtils.h"
-#include "../Tools/VectorFieldCalculation.h"
 
 
 void DGSolverStep(Area1D &f, TESolver1DParams pf,
                   const function<double(double)>& vc, int t){
-    VectorField1D u = generateVectorField1D(fMoveX(vc, pf.getDt() / 2)(pf.getDt()*t), pf.getCellCount());
-    TESolverStep(f, u, pf);
+    RBVectorField1D u(vc(pf.getDt() * t), vc(pf.getDt() * (t+1)));
+    TERBSolverStep(f, u, pf);
 }
 
 void SolveDG1D(Area1D &f, const TESolver1DParams& pf,
