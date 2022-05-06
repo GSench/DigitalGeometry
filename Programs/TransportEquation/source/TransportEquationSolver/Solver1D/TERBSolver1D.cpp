@@ -1,10 +1,8 @@
-#include <cmath>
 #include <vector>
 #include <functional>
 
 #include "TERBSolver1D.h"
 #include "../../math/MathUtils.h"
-#include "../Instances/RBVectorField1D.h"
 
 using namespace std;
 
