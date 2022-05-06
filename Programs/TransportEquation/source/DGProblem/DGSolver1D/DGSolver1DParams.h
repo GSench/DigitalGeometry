@@ -7,7 +7,7 @@
 
 
 class DGSolver1DParams {
-
+//TODO DGSolver1DParams unites TESolver1DParams and EESolver1DParams
 };
 
 
