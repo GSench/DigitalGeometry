@@ -22,13 +22,13 @@ void ParabolicCenterTest(){
     function<Vector2D(double)> vc = [=](double t)->Vector2D{
         return {0.1, 1.-2*t};
     };
-    vector<Vector2D> vcMesh = mesh1D(vc, 0, params.NTimeSteps+1, params.dt);
+    vector<Vector2D> vcMesh = mesh1D(vc, 0, params.getNTimeSteps()+1, params.getDt());
     function<double(double)> omega = [=](double t)->double {
         return 0;
     };
     EESolver2DOutput out = minimal2DOutputEE(
-            downDir(testDir,"t_" + to_string(params.NTimeSteps) + ".txt"),
-            params.NTimeSteps);
+            downDir(testDir,"t_" + to_string(params.getNTimeSteps()) + ".txt"),
+            params.getNTimeSteps());
 
     SolveEE2D(mesh, vcMesh, omega, params, out);
 

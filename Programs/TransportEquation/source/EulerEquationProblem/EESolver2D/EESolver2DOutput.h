@@ -45,7 +45,7 @@ public:
     }
 
     void printHeader(const EESolver2DParams &params){
-        resultFile << params.NTimeSteps << "\t" << realNTimeSteps << "\t" << params.dt << endl;
+        resultFile << params.getNTimeSteps() << "\t" << realNTimeSteps << "\t" << params.getDt() << endl;
     }
 
     void print(const vector<Vector2D>& points, int t){

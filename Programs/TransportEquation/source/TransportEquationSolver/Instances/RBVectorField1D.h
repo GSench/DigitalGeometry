@@ -9,7 +9,7 @@
 #include "../../math/MathUtils.h"
 
 class RBVectorField1D {
-private:
+protected:
     double u;
     double uNext;
 public:
