@@ -20,7 +20,7 @@ using namespace std;
 
 void Solver1DStripMovementTest(){
     const string TEST_TITLE = "Solver1DStripMovementTest";
-    const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
+    const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
 
     TESolver1DParams params (
             0.3,
@@ -52,7 +52,7 @@ void Solver1DStripMovementTest(){
 
 void Solver1DStripBackMovementTest(){
     const string TEST_TITLE = "Solver1DStripBackMovementTest";
-    const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
+    const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
 
     TESolver1DParams params (
             0.3,
@@ -84,7 +84,7 @@ void Solver1DStripBackMovementTest(){
 
 void Solver1Dtests() {
     const string TEST_TITLE = "Solver1Dtests";
-    const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
+    const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
 
     int iNmax = 9;
     int iNmin = 3;
@@ -194,7 +194,7 @@ bool compare1DSolutions(const vector<double>& f1, const vector<double>& f2, int 
 
 bool test1DSolverStandard(){
     const string TEST_TITLE = "test1DSolverStandard";
-    const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
+    const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
 
     double CFL = 0.3;
     double areaLength = 1.0;
@@ -271,7 +271,7 @@ bool test1DSolverStandard(){
 
 bool test1DSolverBackStandard(){ //TODO Accurate 1D Standard Solver for back movement
     const string TEST_TITLE = "test1DSolverBackStandard";
-    const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
+    const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
 
     double CFL = 0.3;
     double areaLength = 1.0;

@@ -1,6 +1,7 @@
 #include "Tests/TransportEquation1Dtests.h"
 #include "Tests/TransportEquation2Dtests.h"
 #include "Tests/DigitalGeometryTests1D.h"
+#include "Tests/EulerEquation2Dtests.h"
 
 void launchTests(){
     if(!test1DSolverStandard()) return;
@@ -15,6 +16,6 @@ void launchTests(){
 
 int main() {
     //launchTests();
-    StripSinMoveTest();
+    ParabolicCenterTest();
     return 0;
 }

@@ -13,7 +13,7 @@ function<Vector2D(vector<Vector2D>, double)> trapezoidQuadrature(){
 vector<Vector2D> integrate(vector<Vector2D> f, double from, double to,
                            const function<Vector2D(vector<Vector2D>, double)>& quadrature){
     vector<Vector2D> integral(f.size());
-    integral[0] = zero();
+    integral[0] = Vector2D();
     double dx = (to - from) / ((int)f.size()-1);
     for(int i=1; i<f.size(); i++){
         integral[i] = integral[i-1];

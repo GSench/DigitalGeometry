@@ -15,7 +15,7 @@
 
 void StripSinMoveTest(){
     const string TEST_TITLE = "StripSinMoveTest";
-    const string testDir = initTest(TEST_TITLE, CALCULATION_1D_OUTPUT_PATH);
+    const string testDir = initTest(TEST_TITLE, CALCULATION_DG1D_OUTPUT_PATH);
 
     TESolver1DParams params (
             0.3,

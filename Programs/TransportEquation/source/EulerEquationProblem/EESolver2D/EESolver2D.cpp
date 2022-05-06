@@ -13,10 +13,11 @@ void EESolver2DCenterStep(Vector2D& xc, const vector<Vector2D>& vc, int it, cons
 void SolveEE2D(vector<Vector2D>& vertices, //vertices[0] is center
                const vector<Vector2D>& vc, const function<double(double)>& w,
                const EESolver2DParams& params, EESolver2DOutput& out){
-    for(int it=0; it<params.NTimeSteps; it++){
+    out.print(vertices, 0);
+    for(int it=1; it<=params.NTimeSteps; it++){
         EESolver2DCenterStep(vertices[0], vc, it, params);
         //TODO solve for vertices here
-        out.print(vertices);
+        out.print(vertices, it);
     }
 }
 

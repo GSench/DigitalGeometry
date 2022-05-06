@@ -10,8 +10,9 @@ class EESolver2DParams {
 public:
     double dt;
     int NTimeSteps;
-    double dx;
-    int cellCount;
+
+    EESolver2DParams(double dt, int nTimeSteps) : dt(dt), NTimeSteps(nTimeSteps) {}
+    EESolver2DParams(int nTimeSteps, double time) : dt(time/nTimeSteps), NTimeSteps(nTimeSteps) {}
 };
 
 

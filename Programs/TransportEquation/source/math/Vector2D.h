@@ -14,6 +14,7 @@ public:
     double y = 0;
 
     Vector2D(double x, double y) : x(x), y(y) {}
+    Vector2D() : x(0), y(0) {}
 
     double operator [](int xy) const {
         return xy==X ? x : y;
@@ -51,9 +52,5 @@ public:
         x/=s; y/=s;
     }
 };
-
-Vector2D zero() {
-    return {0,0};
-}
 
 #endif //TRANSPORTEQUATION_VECTOR2D_H

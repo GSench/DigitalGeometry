@@ -14,7 +14,7 @@
 
 void Solve2DRectMovementTest() {
     const string TEST_TITLE = "Solve2DRectMovementTest";
-    const string testDir = initTest(TEST_TITLE, CALCULATION_2D_OUTPUT_PATH);
+    const string testDir = initTest(TEST_TITLE, CALCULATION_TE2D_OUTPUT_PATH);
 
     TESolver2DParams params(
             0.3,
@@ -48,7 +48,7 @@ void Solve2DRectMovementTest() {
 
 void Solve2DWhiteBearMovementTest(){
     const string TEST_TITLE = "Solve2DWhiteBearMovementTest";
-    const string testDir = initTest(TEST_TITLE, CALCULATION_2D_OUTPUT_PATH);
+    const string testDir = initTest(TEST_TITLE, CALCULATION_TE2D_OUTPUT_PATH);
 
     TESolver2DParams params (
             0.3,
