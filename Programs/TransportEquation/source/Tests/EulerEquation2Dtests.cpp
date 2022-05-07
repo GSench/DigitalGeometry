@@ -26,13 +26,17 @@ void ParabolicCenterTest(){
     function<double(double)> omega = [=](double t)->double {
         return 0;
     };
+    vector<double> omegaMesh = mesh1D(omega, 0, params.getNTimeSteps()+1, params.getDt());
     EESolver2DOutput out = minimal2DOutputEE(
             downDir(testDir,"t_" + to_string(params.getNTimeSteps()) + ".txt"),
             params.getNTimeSteps());
+    out.printHeader(params);
 
-    SolveEE2D(mesh, vcMesh, omega, params, out);
+    SolveEE2D(mesh, vcMesh, omegaMesh, params, out);
 
     cout << "Final positions:" << endl;
     for(int i=0; i<mesh.size(); i++)
         cout << i << ": x = " << mesh[i].x << "; y = " << mesh[i].y << endl;
+
+    out.finish();
 }

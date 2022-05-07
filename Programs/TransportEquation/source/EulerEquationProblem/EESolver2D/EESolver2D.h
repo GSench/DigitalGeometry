@@ -19,7 +19,7 @@ using namespace std;
 void EESolver2DCenterStep(Vector2D& xc, const vector<Vector2D>& vc, int it, const EESolver2DParams& params);
 
 void SolveEE2D(vector<Vector2D>& vertices, //vertices[0] is center
-               const vector<Vector2D>& vc, const function<double(double)>& w,
+               const vector<Vector2D>& vc, const vector<double>& w,
                const EESolver2DParams& params, EESolver2DOutput& out);
 
 
