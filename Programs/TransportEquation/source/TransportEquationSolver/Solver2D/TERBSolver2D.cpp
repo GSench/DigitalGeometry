@@ -14,13 +14,13 @@ void TERBSolver2DStep(Area2D &f,
                       TESolver2DParams &p){
     for(int y=0; y<p.getCellCountY(); y++){
         f.projectX(y);
-        u.projectX(y+p.getDx()/2);
+        u.projectX((y+0.5)*p.getDx());
         p.projectX();
         TERBSolverStep(f, u, p);
     }
     for(int x=0; x<p.getCellCountX(); x++){
         f.projectY(x);
-        u.projectY(x+p.getDx()/2);
+        u.projectY((x+0.5)*p.getDx());
         p.projectY();
         TERBSolverStep(f, u, p);
     }

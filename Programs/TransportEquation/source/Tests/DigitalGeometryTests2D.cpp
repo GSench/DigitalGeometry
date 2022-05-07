@@ -3,41 +3,65 @@
 //
 
 #include <string>
-#include "DigitalGeometryTests2D.h"
+#include <iostream>
 #include "../configs.h"
+#include "Tests.h"
+#include "../DGProblem/DGSolver2D/DGSolver2DParams.h"
+#include "../TransportEquationSolver/Tools/InterpolationFunctions.h"
+#include "../DGProblem/DGSolver2D/DGSolver2DOutput.h"
+#include "../Utils/FileUtils.h"
+#include "../math/VectorMeshTools.h"
+#include "../DGProblem/DGSolver2D/DGSolver2D.h"
 
 using namespace std;
 
-void StripSinMoveTest(){
-    const string TEST_TITLE = "StripSinMoveTest";
-    const string testDir = initTest(TEST_TITLE, CALCULATION_DG1D_OUTPUT_PATH);
+void PlusRotateTest(){
+    const string TEST_TITLE = "PlusRotateTest";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_DG2D_OUTPUT_PATH);
 
-    TESolver1DParams params (
-            0.3,
-            0.1,
-            1.0,
-            64,
-            200,
+    double w = 2.0;
+    double h = 2.0;
+    double t = 1.0;
+    int N = 128;
+    int T = 128;
+    DGSolver2DParams params (
+            w/N,
+            N,
+            N,
+            t/T,
+            T,
             [=](F1D f1D, C1D c1D) -> function<double(double)> {
                 return PsyTHINCandGodunov(f1D, c1D, 3.5, 1e-4);
             }
     );
     cout << "Psy THINC + Godunov" << endl;
 
-    TESolver1DOutput out = minimal1DOutput(
+    DGSolver2DOutput out = minimal2DOutputDG(
             downDir(
                     testDir,
-                    "area_" + to_string(params.getCellCount()) + "_t_" + to_string(params.getNTimeSteps()) + ".txt"),
-            params.getNTimeSteps());
+                    "TE_area_" + to_string(N) + "_t_" + to_string(T) + ".txt"),
+            downDir(
+                    testDir,
+                    "EE_t_" + to_string(T) + ".txt"),
+            T);
     out.printHeader(params);
 
-    Area1D f(params.getCellCount(), false);
-    f.drawStructCount(1, 24, 16);
+    Area2D f(N, N);
+    f.drawRect(1.0, N/2-N/4, N/2-N/4-10, 10, 30);
+    f.drawRect(1.0, N/2-N/4-10, N/2-N/4, 30, 10);
 
-    function<double(double)> vc = [=](double t) -> double {
-        return cos(t) * 0.1;
+    vector<Vector2D> mesh = {Vector2D(w/N*(N/2-N/4), h/N*(N/2-N/4))};
+    function<Vector2D(double)> vc = [=](double t)->Vector2D{
+        return {1, 4-8*t};
     };
+    vector<Vector2D> vcMesh = mesh1D(vc, 0, T+1, params.getParamsForEE2D().getDt());
+    function<double(double)> omega = [=](double t)->double {
+        return 1.0;
+    };
+    vector<double> omegaMesh = mesh1D(omega, 0, T+1, params.getParamsForEE2D().getDt());
 
-    SolveDG1D(f, params, vc, out);
+    SolveDG2D(f, mesh, vcMesh, omegaMesh, params, out);
+
+    out.finish();
 
 }

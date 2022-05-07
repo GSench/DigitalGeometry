@@ -38,6 +38,11 @@ public:
         teOutput.print(area, it);
         eeOutput.print(points, it);
     }
+
+    void finish(){
+        teOutput.finish();
+        eeOutput.finish();
+    }
 };
 
 DGSolver2DOutput no2DOutputDG();
