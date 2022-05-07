@@ -23,7 +23,7 @@ void PlusRotateTest(){
     double h = 2.0;
     double t = 1.0;
     int N = 128;
-    int T = 128;
+    int T = 512;
     DGSolver2DParams params (
             w/N,
             N,
@@ -56,7 +56,7 @@ void PlusRotateTest(){
     };
     vector<Vector2D> vcMesh = mesh1D(vc, 0, T+1, params.getParamsForEE2D().getDt());
     function<double(double)> omega = [=](double t)->double {
-        return 1.0;
+        return 3.14159265359;
     };
     vector<double> omegaMesh = mesh1D(omega, 0, T+1, params.getParamsForEE2D().getDt());
 
