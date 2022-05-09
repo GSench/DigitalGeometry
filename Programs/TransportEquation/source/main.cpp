@@ -16,7 +16,6 @@ void launchTests(){
 }
 
 int main() {
-    //launchTests();
-    PlusRotateTest();
+    launchTests();
     return 0;
 }
