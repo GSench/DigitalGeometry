@@ -13,8 +13,8 @@ double getAlpha(double fiNext, double fiPrev) {
     return fiNext >= fiPrev ? fiNext : fiPrev;
 }
 
-double getXiavg(double beta, double gamma, double fi) {
-    return 1. / 2 / beta * log(exp(beta / gamma * (1 + gamma - 2 * fi)) / (1 - exp(beta / gamma * (1 - gamma - 2 * fi))));
+double getXiavg(double beta, double gamma, double fi, double fiMin, double deltaFi) {
+    return 1. / 2 / beta * log(exp(beta / gamma * (1 + gamma - 2 * (fi-fiMin)/deltaFi)) / (1 - exp(beta / gamma * (1 - gamma - 2 * (fi-fiMin)/deltaFi))));
 }
 
 bool calcCondition(double fiPrev, double fi, double fiNext, double eps) {

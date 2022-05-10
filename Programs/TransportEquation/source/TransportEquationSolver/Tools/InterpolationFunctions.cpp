@@ -28,7 +28,7 @@ function<double(double)> PsyTHINC(F1D f, C1D c, double beta) {
     double fiMax = max(f.fiPrev, f.fiNext);
     double deltaFi = fiMax - fiMin;
     double gamma = getGamma(f.fiNext, f.fiPrev);
-    double xiavg = getXiavg(beta, gamma,f. fi);
+    double xiavg = getXiavg(beta, gamma,f. fi,fiMin, deltaFi);
     return [=](double x)->double {
         return fiMin + (Fi)(beta, gamma, c.xL, c.dx, xiavg)(x) * deltaFi;
     };
