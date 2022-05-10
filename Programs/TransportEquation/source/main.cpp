@@ -16,6 +16,6 @@ void launchTests(){
 }
 
 int main() {
-    Solver1DStripMovementTest();
+    Solver1DJRStripMovementTest();
     return 0;
 }

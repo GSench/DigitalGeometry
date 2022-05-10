@@ -4,6 +4,7 @@
 #include "../../math/MathUtils.h"
 #include "THINCUtils.h"
 #include "../Instances/TESolver1DInstances.h"
+#include "JRUtils.h"
 
 using namespace std;
 
@@ -34,6 +35,17 @@ function<double(double)> PsyTHINC(F1D f, C1D c, double beta) {
     };
 }
 
+function<double(double)> PsyJR(F1D f, C1D c) {
+    double fiMin = min(f.fiPrev, f.fiNext);
+    double fiMax = max(f.fiPrev, f.fiNext);
+    double deltaFi = fiMax - fiMin;
+    double gamma = getGamma(f.fiNext, f.fiPrev);
+    double xiavg = getXiavgJR(c.xR, c.dx, gamma, f.fi, fiMin, deltaFi);
+    return [=](double x)->double {
+        return fiMin + (FiJR)(gamma, xiavg)(x) * deltaFi;
+    };
+}
+
 function<double(double)> PsyTHINCandGodunov(F1D f, C1D c, double beta, double eps) {
     if (!calcCondition(f.fiPrev, f.fi, f.fiNext, eps))
         return PsyGodunov(f.fi);
@@ -44,6 +56,12 @@ function<double(double)> PsyTHINCandMUSCL(F1D f, C1D c, double beta, double eps)
     if (!calcCondition(f.fiPrev, f.fi, f.fiNext, eps))
         return PsyMUSCL(f, c);
     else return PsyTHINC(f, c, beta);
+}
+
+function<double(double)> PsyJRandGodunov(F1D f, C1D c, double eps) {
+    if (!calcCondition(f.fiPrev, f.fi, f.fiNext, eps))
+        return PsyGodunov(f.fi);
+    else return PsyJR(f, c);
 }
 
 double getXforInterpolation(double x, double u, double t){

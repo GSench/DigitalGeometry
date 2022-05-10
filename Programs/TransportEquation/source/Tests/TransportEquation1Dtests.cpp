@@ -82,6 +82,38 @@ void Solver1DStripBackMovementTest(){
 
 }
 
+void Solver1DJRStripMovementTest(){
+    const string TEST_TITLE = "Solver1DJRStripMovementTest";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
+
+    TESolver1DParams params (
+            0.3,
+            0.1,
+            1.0,
+            64,
+            200,
+            [=](F1D f1D, C1D c1D) -> function<double(double)> {
+                return PsyJRandGodunov(f1D, c1D, 1e-4);
+            }
+    );
+    cout << "Psy JR + Godunov" << endl;
+
+    TESolver1DOutput out = minimal1DOutput(
+            downDir(
+                    testDir,
+                    "area_" + to_string(params.getCellCount()) + "_t_" + to_string(params.getNTimeSteps()) + ".txt"),
+            params.getNTimeSteps());
+    out.printHeader(params);
+
+    Area1D f(params.getCellCount(), true);
+    f.fillRightHalfWith(1);
+
+    VectorField1D u = getStaticVF1D(0.1, params.getCellCount()+1);
+
+    SolveTransportEquation1D(f, u, params, out);
+    out.finish();
+}
+
 void Solver1Dtests() {
     const string TEST_TITLE = "Solver1Dtests";
     const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);

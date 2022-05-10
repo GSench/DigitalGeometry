@@ -80,6 +80,6 @@ set(PROJECT_SOURCES
         source/EulerEquationProblem/EESolver2D/EESolver2DOutput.h
         source/DGProblem/Tools/VectorFieldCalculation.cpp
         source/DGProblem/Tools/VectorFieldCalculation.h
-        source/TransportEquationSolver/Instances/RBVectorField1D.cpp source/TransportEquationSolver/Instances/RBVectorField1D.h source/EulerEquationProblem/Tools/IntegrationTools.cpp source/EulerEquationProblem/Tools/IntegrationTools.h source/math/VectorMeshTools.cpp source/math/VectorMeshTools.h source/TransportEquationSolver/Instances/RBVectorField2D.cpp source/TransportEquationSolver/Instances/RBVectorField2D.h source/DGProblem/DGSolver2D/DGSolver2DOutput.cpp source/DGProblem/DGSolver2D/DGSolver2DOutput.h)
+        source/TransportEquationSolver/Instances/RBVectorField1D.cpp source/TransportEquationSolver/Instances/RBVectorField1D.h source/EulerEquationProblem/Tools/IntegrationTools.cpp source/EulerEquationProblem/Tools/IntegrationTools.h source/math/VectorMeshTools.cpp source/math/VectorMeshTools.h source/TransportEquationSolver/Instances/RBVectorField2D.cpp source/TransportEquationSolver/Instances/RBVectorField2D.h source/DGProblem/DGSolver2D/DGSolver2DOutput.cpp source/DGProblem/DGSolver2D/DGSolver2DOutput.h source/TransportEquationSolver/Tools/JRUtils.cpp source/TransportEquationSolver/Tools/JRUtils.h)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})
