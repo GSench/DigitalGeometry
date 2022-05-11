@@ -31,16 +31,16 @@ PlotOutputPath = downDir(OutputDir, "GraphicsResults")
 # Transport Equation
 TEPlotPath = downDir(PlotOutputPath, "TransportEquation")
 TE1DPlotRes = downDir(TEPlotPath, "Solver1D")
-TE2DPlotPath = downDir(TEPlotPath, "Solver2D")
+TE2DPlotRes = downDir(TEPlotPath, "Solver2D")
 
 # EulerEquation
 EEPlotPath = downDir(PlotOutputPath, "EulerEquation")
 EE1DPlotRes = downDir(EEPlotPath, "Solver1D")
-EE2DPlotPath = downDir(EEPlotPath, "Solver2D")
+EE2DPlotRes = downDir(EEPlotPath, "Solver2D")
 
 # DigitalGeometry
 DGPlotPath = downDir(PlotOutputPath, "DigitalGeometry")
 DG1DPlotRes = downDir(DGPlotPath, "Solver1D")
-DG2DPlotPath = downDir(DGPlotPath, "Solver2D")
+DG2DPlotRes = downDir(DGPlotPath, "Solver2D")
 
 

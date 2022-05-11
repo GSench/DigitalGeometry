@@ -87,13 +87,13 @@ void Solver1DJRStripMovementTest(){
     const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
 
     TESolver1DParams params (
-            0.1,
+            1./8.,
             0.1,
             1.0,
             64,
             600,
             [=](F1D f1D, C1D c1D) -> function<double(double)> {
-                return PsyJRandGodunov(f1D, c1D, 1e-4);
+                return PsyJR(f1D, c1D);
             }
     );
     cout << "Psy JR + Godunov" << endl;
