@@ -17,8 +17,17 @@ double clamp(double x, double lower, double upper) {
     return min(upper, max(x, lower));
 }
 
-function<double(double)> fInverseX(const function<double(double)> &f){
+function<double(double)> linearTransform(const function<double(double)> &f,
+                                         double dx, double kx, double dy, double ky){
     return [=](double x)->double {
-        return f(-x);
+        return dy + ky * f(dx + kx * x);
     };
+}
+
+function<double(double)> fInverseX(const function<double(double)> &f){
+    return linearTransform(f, 0, -1, 0, 1);
+}
+
+function<double(double)> fMoveX(const function<double(double)> &f, double dx){
+    return linearTransform(f, dx, 1, 0, 1);
 }
