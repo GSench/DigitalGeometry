@@ -198,9 +198,88 @@ f(t)=\int_{0}^{t}(\overrightarrow{v}_c(\tau)+[\overrightarrow{x}_c(\tau)\times-\
 \]
 Применим принцип численного решения интегрального уравнения Вольтера второго рода для вычисления значений $\overrightarrow{x}_k^i$ вектор – функции $\overrightarrow{x}_k(t)$ в узлах равномерной сетки $T_i=[t_{i-1}; t_i]$, $i=1..stepN$. Шаг сетки $\Delta t= t_i-t_{i-1}$. Количество узлов: $stepN+1$.\\
 При $t=t_i$ заменим интеграл в левой части уравнения на квадратурную формулу с коэффициентами $A_j^{stepN+1}$:
+\[
+\overrightarrow{x}_k^i-\Delta x \sum_{j=0}^iA_j^{stepN+1}[\overrightarrow{x}_k^j\times-\overrightarrow{\omega}_j]=\overrightarrow{f}_i+\overrightarrow{R}_i^{stepN+1}(x)
+\]
+Где $\overrightarrow{R}_i^{stepN+1}(x)$ - погрешность квадратурой формулы. Отбрасывая данную малую величину, решим систему уравнений относительно $\overrightarrow{x}_k^i$, $i=0..stepN$.
+\[
+\overrightarrow{x}_k^i-\Delta x \sum_{j=0}^{i-1}A_j^{stepN+1}[\overrightarrow{x}_k^j\times-\overrightarrow{\omega}_j]-\Delta x A_i^{stepN+1}[\overrightarrow{x}_k^i\times-\overrightarrow{\omega}_i]=\overrightarrow{f}_i
+\]
+\begin{equation}
+\label{eqn:xk_slae}
+\overrightarrow{x}_k^i-[\overrightarrow{x}_k^i\times-\Delta x A_i^{stepN+1}\overrightarrow{\omega}_i]=\overrightarrow{f}_i+\Delta x \sum_{j=0}^{i-1}A_j^{stepN+1}[\overrightarrow{x}_k^j\times-\overrightarrow{\omega}_j]
+\end{equation}
+Введем новые обозначения:
+\begin{list}{}{}
+\item $\overrightarrow{x}_k^i=\overrightarrow{x}$
+\item $-\Delta x A_i^{stepN+1}\overrightarrow{\omega}_i=\overrightarrow{b}$
+\item $\overrightarrow{f}_i+\Delta x \sum_{j=0}^{i-1}A_j^{stepN+1}[\overrightarrow{x}_k^j\times-\overrightarrow{\omega}_j]=\overrightarrow{c}$
+\end{list}
+Тогда уравнение (\ref{eqn:xk_slae}) примет вид:
+\[
+\overrightarrow{x}-[\overrightarrow{x}\times\overrightarrow{b}]=\overrightarrow{c}
+\]
+\[
+\overrightarrow{x}+[\overrightarrow{b}\times\overrightarrow{x}]=\overrightarrow{c}
+\]
+Заменим операцию векторного произведения на произведение кососимметрической матрицы на вектор.
+\[
+\overrightarrow{x}+[\overrightarrow{b}]_{\times}\overrightarrow{x}=\overrightarrow{c}
+\]
+\[
+(E+[\overrightarrow{b}]_{\times})\overrightarrow{x}=\overrightarrow{c}
+\]
+\[
+\overrightarrow{x}=(E+[\overrightarrow{b}]_{\times})^{-1}\overrightarrow{c}
+\]
+Матрица $E+[\overrightarrow{b}]_{\times}$ была рассчитана для двумерного случая, однако можно использовать тот же способ для расчета в трехмерном пространстве.\\
+Таким образом, мы выражаем вектор $x_k^i$ для $i=0..stepN$. Вектор $x_k^i$ необходимо рассчитывать последовательно, так как в сумме $\sum_{j=0}^{i-1}A_j^{stepN+1}[\overrightarrow{x}_k^j\times-\overrightarrow{\omega}_j]$ используются значения $x_k^j$ для $j=0..i-1$.\\
+В качестве квадратурной формулы была использована комбинация составной формулы Симпсона и правила трех восьмых.\\
+В результате была реализована программа для вычисления положений k-ой точки твердого тела в моменты времени $t_i$,$i=0..stepN$.\\
+Пример программного кода, реализующий данный алгоритм находится в Приложении (\ref{code:xk}).
 
+\subsection{Пример расчета}
+Вектор – функции в данной программе задаются с помощью лямбда - выражений на языке программирования C++, что обеспечивает высокую гибкость в настройке программы под любую конфигурацию задачи. Например, вектор - функция скорости центра масс твердого тела может быть задана следующим образом:
+\begin{lstlisting}
+function<VectorXd(double)> v = [=](double t)->VectorXd {
+        VectorXd v(n);
+        v(0) = 1;
+        v(1) = 50 - 9.81 * t;
+        return v;
+    };
+\end{lstlisting}
+Для демонстрации работы программы было выбрано твердое тело, состоящее из 12 точек, которые в начальный момент времени имели следующие координаты:
+
+Вектор угловой скорости:
+\begin{lstlisting}
+function<Vector3d(double)> omega = [=](double t)->Vector3d {
+    return Vector3d(0, 0, 1);
+};
+\end{lstlisting}
+Количество шагов и длина шага сетки:
+\begin{lstlisting}
+int stepsN = 100;
+double h = 0.1;
+\end{lstlisting}
+Координаты выбранных точек твердого тела записаны в файле output.txt и имеют следующий вид:
+\begin{figure}[h!]
+  \includegraphics[width=\linewidth]{Pictures/xki_parabolic_12points.png}
+  \caption{Пример расчета движения точек твердого тела}
+  \label{fig:xki}
+\end{figure}
+\\Для более наглядной визуализации результатов расчет была реализована программа на языке программирования Python, которая создает анимацию движения твердого тела по предрассчитанным данным о положениях точек.
+Результат работы данной программы прилагается в файле TestMovement.gif.
 
 \subsection{Исследование сходимости}
+Для расчета ошибки численного моделирования в данном примере было вычислено аналитическое решение.
+Ошибка была рассчитана по норме : как среднеквадратическое отклонение по следующей формуле:
+
+Где  – действительное положение k-ой точки твердого тела в момент времени , полученное из аналитического решения.
+Ошибка расчета  - центра твердого тела:
+Среднеквадратическое отклонение при вычислении 4000 шагов на отрезке времени 10с (длина временного шага 0.0025) составляет 2.47756e-10.
+Ошибка расчета 
+Среднеквадратическое отклонение при вычислении 4000 шагов на отрезке времени 10с (длина временного шага 0.0025) составляет 0.000469316.
+Следует отметить сходимость рассчитанного решения к аналитическому: при измельчении шага , значение ошибки  стремится к 0:
 
 \section{Численное решение уравнения переноса в одномерном случае со стационарным полем скоростей}
 \subsection{Уравнение переноса}
@@ -215,7 +294,7 @@ f(t)=\int_{0}^{t}(\overrightarrow{v}_c(\tau)+[\overrightarrow{x}_c(\tau)\times-\
 
 \section{Многомерное обобщение решения уравнения переноса с нестационарным полем скоростей}
 \subsection{Расщепление по направлениям}
-
+\subsection{Тестовые расчеты}
 
 \section{Заключение}
 
@@ -290,6 +369,76 @@ function<VectorXd(double)> getRightFuncNoMargin(function<VectorXd(double)> v, fu
         };
         return integrateVector(integrand, 0, t, pow(10, -5), pow(10, -5));
     };
+}
+\end{lstlisting}
+
+\subsection{Пример программного кода нахождения значений $x_k^i$}
+\label{code:xk}
+\begin{lstlisting}
+Array<VectorXd, Dynamic, 1> getXi(function<VectorXd(double)> v,
+VectorXd xi0,
+function<Vector3d(double)> omega,
+function<VectorXd(double)> xc, int stepsN, double h) {
+
+    Array<VectorXd, Dynamic, 1> Xn(stepsN + 1);
+
+    Array<VectorXd, Dynamic, 1> rightFuncCalc(stepsN + 1);
+    function<VectorXd(double)> rightFunc = getRightFunc(v, xi0, omega, xc);
+    for (int i = 0; i <= stepsN; i++)
+        rightFuncCalc(i) = rightFunc(i * h);
+
+    cout << "rightFuncCalc calculated" << endl;
+
+    Xn(0) = rightFuncCalc(0);
+
+    for (int k = 1; k <= stepsN; k++) {
+        double sk = k * h;
+
+        VectorXd innerSum(dimN);
+        for (int i = 0; i < dimN; i++) innerSum(i) = 0;
+
+
+        for (int j = 0; j < k; j++) {
+            double sj = j * h;
+            double Aj = (j == 0 ? 1. / 2. : 1.);
+
+            VectorXd prodResult(dimN);
+            Vector3d Xj(Xn(j)(0), Xn(j)(1), dimN < 3 ? 0 : Xn(j)(2));
+            Vector3d crossProd = Xj.cross(omega(sj));
+            for (int i = 0; i < dimN; i++) prodResult(i) = crossProd(i);
+
+            innerSum += Aj * prodResult;
+        }
+
+        // Xk - h * innerSum(K-1) - h * Ak * [Xk ; OmegaK]  = rightFuncK
+        // Xk - [Xk ; h * Ak *  OmegaK]  = rightFuncK + h * innerSum(K-1)
+        // a - [a ; b] = c, a=?
+        // ax - ay*bz = cx
+        // ay + ax*bz = cy
+        // (1 -bz)(ax)=(cx)
+        // (bz  1)(ay)=(cy)
+        // Ba=c, a = invB c
+
+        Vector3d b = h * 0.5 * omega(sk);
+
+        Vector2d rf2(rightFuncCalc(k)(0), rightFuncCalc(k)(1));
+        Vector2d is2(innerSum(0), innerSum(1));
+        Vector2d c = rf2 + h * is2;
+
+        Matrix2d B; B <<
+            1, -b(2),
+            b(2), 1;
+
+        Vector2d a = B.inverse() * c;
+
+        VectorXd Xk(dimN);
+        for (int i = 0; i < dimN; i++) Xk(i) = a(i);
+
+        Xn(k) = Xk;
+    }
+
+    return Xn;
+
 }
 \end{lstlisting}
 
