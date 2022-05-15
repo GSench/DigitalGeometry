@@ -12,6 +12,10 @@ TESolver1DOutput minimal1DOutput(const string& filePath, int NTimeSteps){
     return {true, false, false, true, false, filePath, true, NTimeSteps, 50, false};
 }
 
+TESolver1DOutput maximal1DOutput(const string& filePath, int NTimeSteps){
+    return {true, false, false, true, false, filePath, false, NTimeSteps, 50, false};
+}
+
 TESolver1DOutput normal1DOutput(const string& filePath, int NTimeSteps){
     return { true, true, true, true, true, filePath, true, NTimeSteps, 50, true};
 }

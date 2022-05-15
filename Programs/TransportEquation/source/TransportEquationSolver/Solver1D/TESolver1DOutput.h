@@ -113,6 +113,7 @@ public:
 
 TESolver1DOutput noOutput();
 TESolver1DOutput minimal1DOutput(const string& filePath, int NTimeSteps);
+TESolver1DOutput maximal1DOutput(const string& filePath, int NTimeSteps);
 TESolver1DOutput normal1DOutput(const string& filePath, int NTimeSteps);
 TESolver1DOutput jupyter1DOutput(const string& filePath, int NTimeSteps);
 
