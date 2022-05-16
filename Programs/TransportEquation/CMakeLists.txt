@@ -16,6 +16,8 @@ set(PROJECT_SOURCES
         source/TransportEquationSolver/Solver1D/TESolver1D.cpp
         source/TransportEquationSolver/Solver1D/TERBSolver1D.cpp
         source/TransportEquationSolver/Solver1D/TERBSolver1D.h
+        source/TransportEquationSolver/Solver1D/TERBJRSolver1D.cpp
+        source/TransportEquationSolver/Solver1D/TERBJRSolver1D.h
         source/TransportEquationSolver/Tools/THINCUtils.cpp
         source/stuff/CompilerDifferenceHighlighter.cpp
         source/Tests/TransportEquation1Dtests.cpp
