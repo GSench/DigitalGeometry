@@ -22,9 +22,8 @@ f(x,t)=\begin{cases}1 & {\bf x}\in liquid \\0 & {\bf x}\not\in liquid\end{cases}
 В одномерном случае уравнение сводится к виду:
 \begin{equation}
 \label{eqn:TE1D}
-\frac{\text{d}f_{x}}{\text{d}t} + \frac{\text{d}(f_{x}u_{x})}{\text{d}x}=0
+\frac{\partial f}{\partial t} + \frac{\partial (f u_{x})}{\partial x}=0
 \end{equation}
-В дальнейшем будем обозначать $f_x$ $u_x$ просто как $f$ и $u$, подразумевая значения, взятые вдоль направлений соответствующих осей.
 
 \section{Численное решение}
 \subsection{Численное решение в общем случае}
@@ -83,46 +82,35 @@ f_{i-\frac{1}{2}}u_{i-\frac{1}{2}} d\tau
 \[
 (f_i^{n+1}-f_i^n)
 +
-\frac{1}{\Delta x_i}
+\frac{1}{\Delta x_i} (
 \int_{t_n}^{t_{n+1}}
 {u}f_{i+\frac{1}{2}}d\tau
 -
-\frac{1}{\Delta x_i}
 \int_{t_n}^{t_{n+1}}
 {u}f_{i-\frac{1}{2}}d\tau
-=0
-\]
-Для вычисления интегралов используем квадратурную формулу трапеции:
-\[
-\int_{t_n}^{t_{n+1}}{u}f_{i+\frac{1}{2}}d\tau =
-\Delta t \frac{
-u^{t_{n+1}}f_{i+\frac{1}{2}}^{t_{n+1}} +
-u^{t_{n}}f_{i+\frac{1}{2}}^{t_{n}}
-}{2}
-\]
-\[
-\int_{t_n}^{t_{n+1}}{u}f_{i-\frac{1}{2}}d\tau =
-\Delta t \frac{
-u^{t_{n+1}}f_{i-\frac{1}{2}}^{t_{n+1}} +
-u^{t_{n}}f_{i-\frac{1}{2}}^{t_{n}}
-}{2}
-\]
-Используем данные квадратурные формулы для приближенного вычисления интегралов, подставим их в уравнение:
-\begin{equation}
-\label{eqn:TERB1D}
-(f_i^{n+1}-f_i^n)
-+
-\frac{\Delta t}{2\Delta x_i} (
-u^{t_{n+1}}f_{i+\frac{1}{2}}^{t_{n+1}}
-+ u^{t_{n}}f_{i+\frac{1}{2}}^{t_{n}}
-- u^{t_{n+1}}f_{i-\frac{1}{2}}^{t_{n+1}}
-- u^{t_{n}}f_{i-\frac{1}{2}}^{t_{n}}
 )=0
+\]
+Интегралы
+\begin{equation}
+\label{eqn:FlowR}
+\Phi_{i+\frac{1}{2}}=\int_{t_n}^{t_{n+1}}
+{u}f_{i+\frac{1}{2}}d\tau
 \end{equation}
-Значения $u^{t^*}f_{x^*}^{t^*}=\Phi_{x^*}^{t^*}$ представляют собой потоки через грани ячеек. Значения $f_{x^*}^{t^*}$ могут быть вычислены с использованием интерполяционной функции соответствующей методу решения. То есть будут вычислены, как
+\begin{equation}
+\label{eqn:FlowL}
+\Phi_{i-\frac{1}{2}}\int_{t_n}^{t_{n+1}}
+{u}f_{i-\frac{1}{2}}d\tau
+\end{equation}
+представляют собой потоки через правую $x_{i+\frac{1}{2}}=x_R$ и левую $x_{i-\frac{1}{2}}=x_L$ грани ячейки $\Delta x_i = \Delta x$ соответственно.\\
+
+Для вычисления значений $f_{x^*}^{t^*}$ необходимо построить подсеточную реконструкцию решения на соответствующей ячейке. При таком подходе значения $f_{x^*}^{t^*}$ считаются как значения интерполяционной функции, соответствующей методу решения.
+\[
+f_{x^*}^{t^*} = \Psi_0(x^*, t^*)
+\]
+Интерполяционная функция $\Psi_0(x^*, t^*)$ :
 \begin{equation}
 \label{eqn:PsyIntrpolationFunc}
-f_{x^*}^{t^*} = \begin{cases}
+\Psi_0(x^*, t^*) = \begin{cases}
 \Psi_{L}(x(x^*,\tau^*))
 & \int_{t_n}^{t_{n+1}} u^{\tau}d\tau\geq0
 \\
@@ -131,60 +119,23 @@ f_{x^*}^{t^*} = \begin{cases}
 \end{cases}
 \end{equation}
 Таким образом, реализуется метод \textit{upwind}: расчета потоков через грани по направлению переноса.
-То есть, при вычислении потока $\Phi_{x^*}^{t^*}$ для положительной скорости $u$ переноса на грани ячейки $x^*$ в течение шага $[t_n; t_{n+1}]$, будет использована интерполяционная функция $\Psi_{j}^{t^*}(x(x^*,t^*))$, построенная на ячейке $j$ слева от данной грани $x^*$, а при вычислении потока для отрицательной скорости $u$ будет использована интерполяционная функция $\Psi_{j}^{t^*}(x(x^*,t^*))$, построенная на ячейке $j$ справа от данной грани $x^*$.
-\\В соответствии с использованными разностными схемами и квадратурными формулами выбранного метода решения необходимо рассчитать следующие потоки:
+То есть, при вычислении потока $\Phi_{x^*}$ для положительной скорости $u$ переноса на грани $x^*$ ячейки в течение шага $[t_n; t_{n+1}]$, будет использована интерполяционная функция $\Psi_{j}(x(x^*,\tau^*))$, построенная на ячейке $j$ слева от данной грани $x^*$, а при вычислении потока для отрицательной скорости $u$ будет использована интерполяционная функция $\Psi_{j}(x(x^*,\tau^*))$, построенная на ячейке $j$ справа от данной грани $x^*$.\\
+
+В дальнейшем для выбора интерполяционной функции $\Psi_{j}$ в исследовании будут рассмотрены такие методы, как метод MUSCL (линейная интерполяция), метод THINC (интерполяция гиперболическим тангенсом) и метод Jump Reconstruction (интерполяция скачком).\\
+
+Выражение для расчета объемной доли переносимой скалярной величины через потоки в ячейке $\Delta x_i$ на следующем временном шаге $t_{n+1}$ имеет вид:
 \begin{equation}
-\label{eqn:FlowLCurr}
-\Phi_{i-\frac{1}{2}}^n=\begin{cases}
-u^{t_n} \Psi_{i-1}(x(x_{i-\frac{1}{2}}, 0))
-& u^{t_n}+u^{t_{n+1}}\geq0
-\\
-u^{t_n} \Psi_{i}(x(x_{i-\frac{1}{2}}, 0))
-& u^{t_n}+u^{t_{n+1}}<0
-\end{cases}
-\end{equation}
-\begin{equation}
-\label{eqn:FlowRCurr}
-\Phi_{i+\frac{1}{2}}^n=\begin{cases}
-u^{t_n} \Psi_{i}(x(x_{i+\frac{1}{2}}, 0))
-& u^{t_n}+u^{t_{n+1}}\geq0
-\\
-u^{t_n} \Psi_{i+1}(x(x_{i+\frac{1}{2}}, 0))
-& u^{t_n}+u^{t_{n+1}}<0
-\end{cases}
-\end{equation}
-\begin{equation}
-\label{eqn:FlowLNext}
-\Phi_{i-\frac{1}{2}}^{n+1}=\begin{cases}
-u^{t_{n+1}} \Psi_{i-1}(x(x_{i-\frac{1}{2}}, \Delta t))
-& u^{t_n}+u^{t_{n+1}}\geq0
-\\
-u^{t_{n+1}} \Psi_{i}(x(x_{i-\frac{1}{2}}, \Delta t))
-& u^{t_n}+u^{t_{n+1}}<0
-\end{cases}
-\end{equation}
-\begin{equation}
-\label{eqn:FlowRNext}
-\Phi_{i+\frac{1}{2}}^{n+1}=\begin{cases}
-u^{t_{n+1}} \Psi_{i}(x(x_{i+\frac{1}{2}}, \Delta t))
-& u^{t_n}+u^{t_{n+1}}\geq0
-\\
-u^{t_{n+1}} \Psi_{i+1}(x(x_{i+\frac{1}{2}}, \Delta t))
-& u^{t_n}+u^{t_{n+1}}<0
-\end{cases}
-\end{equation}
-Подставляя значения потоков (\ref{eqn:FlowLCurr}-\ref{eqn:FlowRNext}) в уравнение переноса для твердого тела в одномерном случае в виде разностной схемы (\ref{eqn:TERB1D}), получим выражение для расчета объемной доли переносимой скалярной величины в ячейке $\Delta x_i$ на следующем временном шаге $t_{n+1}$:
-\begin{equation}
-\label{eqn:fNext}
-f_i^{n+1}=f_i^n +
-\frac{\Delta t}{2\Delta x_i} (
-\Phi_{i+\frac{1}{2}}^{n+1}
-+ \Phi_{i+\frac{1}{2}}^n
-- \Phi_{i-\frac{1}{2}}^{n+1}
-- \Phi_{i-\frac{1}{2}}^n
+\label{fiNextFlows}
+f_i^{n+1}=f_i^n
+-
+\frac{1}{\Delta x_i} (
+\Phi_{i+\frac{1}{2}}
+-
+\Phi_{i-\frac{1}{2}}
 )=0
 \end{equation}
-\\В дальнейшем для выбора интерполяционной функции $\Psi_{j}$ в исследовании будут рассмотрены такие методы, как метод Годунова (интерполяция константой), метод MUSCL (линейная интерполяция), метод THINC (интерполяция гиперболическим тангенсом) и метод Jump Reconstruction (интерполяция скачком).
+
+
 
 \section{Метод характеристик}
 \begin{comment}
@@ -262,54 +213,68 @@ x\mid_{\tau=0}=\int_{t_n}^{t_n}u(t)dt + x^*-\int_{t_n}^{t_n+\tau^*}u(t)dt
 x\mid_{\tau=0}=x^*-\int_{t_n}^{t_n+\tau^*}u(t)dt
 \end{equation}
 Данное значение необходимо использовать как аргумент интерполяционной функции (\ref{eqn:PsyIntrpolationFunc}).
-\\Таким образом, значения потоков (\ref{eqn:FlowLCurr}-\ref{eqn:FlowRNext}) будут иметь вид:
+
+\section{Аппроксимация интегралов}
+В зависимости от выбранного метода подсеточной реконструкции, интегралы в потоках и в характеристике могут быть вычислены приближенно, с использованием квадратурных формул в случае непрерывной интерполяции распределения (этот способ использовался для методов MUSCL и THINC), или точно в случае кусочно-постоянной интерполяции распределения (этот способ использовался для методов MUSCL и THINC).
+\paragraph{Непрерывное распределение.}
+Рассмотрим непрерывную реконструкцию распределения. Для вычисления интегралов была использована квадратурная формула трапеции.\\
+Интеграл в характеристике (\ref{eqn:CharacteristicFromZero}) был заменен на квадратурную формулу:
 \begin{equation}
-\label{eqn:FlowLCurrXSubst}
-\Phi_{i-\frac{1}{2}}^n=\begin{cases}
-u^{t_n} \Psi_{i-1}(x(x_{i-\frac{1}{2}}, 0))=
-u^{t_n}\Psi_{i-1}(x_L-\int_{t_n}^{t_n}u(t)dt)=u^{t_n}\Psi_{i-1}(x_L)
-
-\\
-u^{t_n} \Psi_{i}(x(x_{i-\frac{1}{2}}, 0))=
-u^{t_n}\Psi_{i}(x_L-\int_{t_n}^{t_n}u(t)dt)=u^{t_n}\Psi_{i}(x_L)
-
-\end{cases}
+\label{eqn:CharacteristicQuadr}
+x\mid_{\tau=0}=x^*-\int_{t_n}^{t_n+\tau^*}u(t)dt=x^*-\Delta t \frac{u(t_n)+u(t_n+\tau^*)}{2}
+\end{equation}
+Для аппроксимации интегралов потоков (\ref{eqn:FlowR}), (\ref{eqn:FlowL}) была использована квадратурная формула трапеции.\\
+Интегралы в потоках были заменены на квадратурные формулы:
+\begin{equation}
+\label{eqn:flowRQuadr}
+\Phi_{i+\frac{1}{2}}=\int_{t_n}^{t_{n+1}}
+{u}f_{i+\frac{1}{2}}d\tau= \frac{\Delta t}{2}(
+u^{n+1}f_{i+\frac{1}{2}}^{n+1} +
+u^{n}f_{i+\frac{1}{2}}^{n}
+)
 \end{equation}
 \begin{equation}
-\label{eqn:FlowRCurrXSubst}
-\Phi_{i+\frac{1}{2}}^n=\begin{cases}
-u^{t_n} \Psi_{i}(x(x_{i+\frac{1}{2}}, 0))=
-u^{t_n} \Psi_{i}(x_R-\int_{t_n}^{t_n}u(t)dt)=u^{t_n}\Psi_{i}(x_R)
+\label{eqn:flowLQuadr}
+\Phi_{i-\frac{1}{2}}=\int_{t_n}^{t_{n+1}}
+{u}f_{i-\frac{1}{2}}d\tau= \frac{\Delta t}{2}(
+u^{n+1}f_{i-\frac{1}{2}}^{n+1} +
+u^{n}f_{i-\frac{1}{2}}^{n}
+)
+\end{equation}
 
-\\
-u^{t_n} \Psi_{i+1}(x(x_{i+\frac{1}{2}}, 0))=
-u^{t_n} \Psi_{i+1}(x_R-\int_{t_n}^{t_n}u(t)dt)=u^{t_n}\Psi_{i+1}(x_R)
-
-\end{cases}
+Таким образом, значения потоков (\ref{eqn:FlowR}), (\ref{eqn:FlowL}) будут иметь вид:
+\begin{equation}
+\label{eqn:FlowRContPsi}
+\Phi_{i+\frac{1}{2}}= \frac{\Delta t}{2}(
+u^{n} \Psi_{0}(x(x_{i+\frac{1}{2}}, 0))
++
+u^{n+1} \Psi_{0}(x(x_{i+\frac{1}{2}}, \Delta t))
+)
 \end{equation}
 \begin{equation}
-\label{eqn:FlowLNextXSubst}
-\Phi_{i-\frac{1}{2}}^{n+1}=\begin{cases}
-u^{t_{n+1}} \Psi_{i-1}(x(x_{i-\frac{1}{2}}, \Delta t))=
-u^{t_{n+1}} \Psi_{i-1}(x_L-\int_{t_n}^{t_{n+1}}u(t)dt)=u^{t_{n+1}}\Psi_{i-1}(x_L-\Delta t \frac{u^{t_{n+1}}+u^{t_{n}}}{2})
-
-\\
-u^{t_{n+1}} \Psi_{i}(x(x_{i-\frac{1}{2}}, \Delta t))=
-u^{t_{n+1}} \Psi_{i}(x_L-\int_{t_n}^{t_{n+1}}u(t)dt)=u^{t_{n+1}}\Psi_{i}(x_L-\Delta t \frac{u^{t_{n+1}}+u^{t_{n}}}{2})
-
-\end{cases}
+\label{eqn:FlowLContPsi}
+\Phi_{i-\frac{1}{2}}= \frac{\Delta t}{2}(
+u^n \Psi_{0}(x(x_{i-\frac{1}{2}}, 0))
++
+u^{n+1} \Psi_{0}(x(x_{i-\frac{1}{2}}, \Delta t))
+)
+\end{equation}
+Подставляя в них характеристики с координатами соответствующих граней и с нужным шагом по времени, получим окончательный вид уравнений для расчета потоков:
+\begin{equation}
+\label{eqn:FlowRContPsi}
+\Phi_{i+\frac{1}{2}}= \frac{\Delta t}{2}(
+u^{n} \Psi_{0}(x_R)
++
+u^{n+1} \Psi_{0}(x^R-\Delta t \frac{u^n+u^{n+1}}{2}))
+)
 \end{equation}
 \begin{equation}
-\label{eqn:FlowRNextXSubst}
-\Phi_{i+\frac{1}{2}}^{n+1}=\begin{cases}
-u^{t_{n+1}} \Psi_{i}(x(x_{i+\frac{1}{2}}, \Delta t))=
-u^{t_{n+1}} \Psi_{i}(x_R-\int_{t_n}^{t_{n+1}}u(t)dt)=u^{t_{n+1}}\Psi_{i}(x_R-\Delta t \frac{u^{t_{n+1}}+u^{t_{n}}}{2})
-
-\\
-u^{t_{n+1}} \Psi_{i+1}(x(x_{i+\frac{1}{2}}, \Delta t))=
-u^{t_{n+1}} \Psi_{i+1}(x_R-\int_{t_n}^{t_{n+1}}u(t)dt)=u^{t_{n+1}}\Psi_{i+1}(x_R-\Delta t \frac{u^{t_{n+1}}+u^{t_{n}}}{2})
-
-\end{cases}
+\label{eqn:FlowLContPsi}
+\Phi_{i-\frac{1}{2}}= \frac{\Delta t}{2}(
+u^{n} \Psi_{0}(x_L)
++
+u^{n+1} \Psi_{0}(x^L-\Delta t \frac{u^n+u^{n+1}}{2}))
+)
 \end{equation}
 
 \end{document}
