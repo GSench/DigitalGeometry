@@ -31,7 +31,7 @@ void PlusRotateTest(){
             t/T,
             T,
             [=](F1D f1D, C1D c1D) -> function<double(double)> {
-                return PsyTHINCandGodunov(f1D, c1D, 3.5, 1e-4);
+                return PsyJRandGodunov(f1D, c1D, 1e-4);
             }
     );
     cout << "Psy THINC + Godunov" << endl;

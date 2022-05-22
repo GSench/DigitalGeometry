@@ -3,10 +3,12 @@
 \usepackage[russian]{babel}
 \usepackage[OT1]{fontenc}
 \usepackage{amsmath}
+\usepackage{float}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{enumitem}
+\usepackage{caption}
 \usepackage{listings}
 \usepackage{xcolor}
 \lstset { %
@@ -60,7 +62,7 @@
 \textsc{\textbf{Аннотация}}\\
 Предметом исследования данной работы является цифровое представление нестационарной геометрии на декартовых сетках.
 Для данного представления рассматривается численное решение уравнения переноса с помощью метода объема жидкости (Volume of Fluid, VoF). Ключевым моментом реализации данного метода является аппроксимация скачка, которая является разрывом характеристической функции и наблюдается на границе двух сред.
-Цель данного исследования - программная реализация и сравнение различных схем геометрической реконструкции разрыва. Были исследованы классические методы Годунова (константа), MUSCL (линеная функция), относительно новый метод THINC (гиперболический тангенс), а также представлен метод Jump Reconstruction (JR, восполнение скачком).
+Цель данного исследования - программная реализация и сравнение различных схем геометрической реконструкции разрыва. Были исследованы классические методы Годунова (константа), MUSCL (линейная функция), относительно новый метод THINC (гиперболический тангенс), а также представлен метод Jump Reconstruction (JR, восполнение скачком).
 
 \newpage
 \tableofcontents
@@ -85,7 +87,7 @@
 
 
 \subsection{Обзор литературы}
-
+Схема Годунова - широко известный метод решения дифференциальных уравнений в частных производных. Данный метод был описан в научной работе \citep{Godunov_num_method} 
 
 \section{Постановка задачи}
 
@@ -266,6 +268,7 @@ f(t)=\int_{0}^{t}(\overrightarrow{v}_c(\tau)+[\overrightarrow{x}_c(\tau)\times-\
 Пример программного кода, реализующий данный алгоритм находится в Приложении (\ref{code:xk}).
 
 \subsection{Поле скоростей твердого тела.}
+\label{sec:RBVF}
 Поле скоростей твердого тела связано по формуле Эйлера:
 \[
 \overrightarrow{u}(\overrightarrow{r},t)=\overrightarrow{v_c}(t)+[\overrightarrow{\omega}(t)\times \overrightarrow{r}(t)]
@@ -336,6 +339,7 @@ error_k=\sqrt{\sum_{i=0}^{stepN}||\overrightarrow{x}_k^i-\overrightarrow{x_{real
 .\\
 
 \section{Численное решение уравнения переноса в одномерном случае со стационарным полем скоростей}
+\subsection{Постановка задачи}
 Теперь обратимся к решению уравнения переноса.
 Данное уравнение в частных производных представлено в следующем виде:
 \[
@@ -410,6 +414,7 @@ f_{i-\frac{1}{2}}^{n+\frac{1}{2}}=\Psi_{i-1}(x_{i-\frac{1}{2}}-u\frac{\Delta t}{
 \section{Численное решение уравнения переноса в одномерном случае с нестационарным полем скоростей}
 Уравнение переноса в общем случае имеет следующий вид:
 \begin{equation}
+\label{eqn:TE}
 \frac{\partial f}{\partial t}+\nabla\cdot(f\overrightarrow{u})=0
 \end{equation}
 Где u – векторное поле скоростей, f - переносимая скалярная величина, $ \nabla $ – оператор дивергенции. Определим f как функцию Хевисайда, принимающую значения 0 и 1:
@@ -423,6 +428,7 @@ f(x,t)=\begin{cases}1 & {\bf x}\in liquid \\0 & {\bf x}\not\in liquid\end{cases}
 \end{equation}
 
 \subsection{Численное решение}
+\label{sec:TESolutionUnonstat}
 \paragraph{Дискретизация.}
 Для численного решения проводится дискретизация:
 
@@ -591,7 +597,7 @@ x\mid_{\tau=0}=x^*-\int_{t_n}^{t_n+\tau^*}u(t)dt
 Данное значение необходимо использовать как аргумент интерполяционной функции (\ref{eqn:PsyIntrpolationFunc}).
 
 \subsection{Аппроксимация интегралов}
-В зависимости от выбранного метода подсеточной реконструкции, интегралы в потоках и в характеристике могут быть вычислены приближенно, с использованием квадратурных формул в случае непрерывной интерполяции распределения (этот способ использовался для методов MUSCL и THINC), или точно в случае кусочно-постоянной интерполяции распределения (этот способ использовался для методов MUSCL и THINC).
+В зависимости от выбранного метода подсеточной реконструкции, интегралы в потоках и в характеристике могут быть вычислены приближенно, с использованием квадратурных формул в случае непрерывной интерполяции распределения (этот способ использовался для методов MUSCL и THINC), или точно в случае кусочно-постоянной интерполяции распределения (этот способ использовался для метода JR).
 \paragraph{Непрерывное распределение.}
 Рассмотрим непрерывную реконструкцию распределения. Для вычисления интегралов была использована квадратурная формула трапеции.\\
 Интеграл в характеристике (\ref{eqn:CharacteristicFromZero}) был заменен на квадратурную формулу:
@@ -653,6 +659,65 @@ u^{n+1} \Psi_{0}(x^L-\Delta t \frac{u^n+u^{n+1}}{2}))
 )
 \end{equation}
 
+\paragraph{Кусочно - постоянное распределение. Метод JR.}\label{sec:JR_flows}
+В силу кусочно - постоянного характера распределения при использовании подхода аппроксимации скачка разрывной функцией (Jump Reconstruction), для данного метода необходим точный расчет интегралов. Найти аналитическое решение в данном случае возможно из-за того же кусочно - постоянного характера распределения.\\
+Рассмотрим случай положительной скорости на временном шаге $[t_n; t_{n+1}]$: $u^n+u^{n+1}\geq 0$. Случай отрицательной скорости рассматривается аналогично.\\
+Интеграл в характеристике (\ref{eqn:CharacteristicFromZero}) также был заменен на квадратурную формулу:
+\begin{equation}
+x\mid_{\tau=0}=x^*-\int_{t_n}^{t_n+\tau^*}u(t)dt=x^*-\Delta t u^n
+\end{equation}
+Подставляя данную формулу в уравнения потоков (\ref{eqn:FlowR}), (\ref{eqn:FlowL}), получим
+\begin{equation}
+\label{eqn:flowRJR}
+\Phi_{i+\frac{1}{2}}=
+\int_{t_n}^{t_{n+1}}{u}f_{i+\frac{1}{2}}d\tau=
+\int_{t_n}^{t_{n+1}}u\Psi_{0}(x(x_{i+\frac{1}{2}}, \tau))d\tau=
+u^{n+\frac{1}{2}}\int_{t_n}^{t_{n+1}}\Psi_{0}( x_{i+\frac{1}{2}}-\Delta t u^n )d\tau
+\end{equation}
+\begin{equation}
+\label{eqn:flowLJR}
+\Phi_{i-\frac{1}{2}}=
+\int_{t_n}^{t_{n+1}}{u}f_{i-\frac{1}{2}}d\tau=
+\int_{t_n}^{t_{n+1}}u\Psi_{0}(x(x_{i-\frac{1}{2}}, \tau))d\tau)=
+u^{n+\frac{1}{2}}\int_{t_n}^{t_{n+1}}\Psi_{0}( x_{i-\frac{1}{2}}-\Delta t u^n )d\tau
+\end{equation}
+Метод Jump Reconstruction работает только на разрывных ячейках, поэтому построенная на разрывной ячейке функция $\Psi_i(x)$ будет иметь вид:
+\[
+\Psi_i(x)=\begin{cases}\Psi_+ & x\leq x^* \\ \Psi_- & x > x^*\end{cases}
+\]
+Где $x^*$ - положение разрыва в абсолютных координатах, введенных на сетке.\\
+Таким образом, значения потоков (\ref{eqn:FlowR}), (\ref{eqn:FlowL}) будут иметь вид:
+\begin{equation}
+\label{eqn:FlowRJRPsiCase1}
+\Phi_{i+\frac{1}{2}}=u^{n+\frac{1}{2}}(\Psi_i^+\tau^*+\Psi_i^-(\Delta t-\tau^*))
+\end{equation}
+\begin{equation}
+\label{eqn:FlowLJRPsiCase1}
+\Phi_{i-\frac{1}{2}}=u^{n+\frac{1}{2}}(\Psi_{i-1}^+\tau^*+\Psi_{i-1}^-(\Delta t-\tau^*))
+\end{equation}
+Где
+\[
+\tau^*=\frac{x_{i+\frac{1}{2}}-x_i^*}{u^n}
+\]
+Здесь предполагается, что $\tau^*\leq\Delta t$. В случае, если $\tau^*>\Delta t$, то
+\begin{equation}
+\label{eqn:FlowRJRPsiCase2}
+\Phi_{i+\frac{1}{2}}=u^{n+\frac{1}{2}}\Psi_i^+\Delta t
+\end{equation}
+\begin{equation}
+\label{eqn:FlowLJRPsiCase2}
+\Phi_{i-\frac{1}{2}}=u^{n+\frac{1}{2}}\Psi_{i-1}^+\Delta t
+\end{equation}
+Оба случая можно объединить:
+\begin{equation}
+\label{eqn:FlowRJRPsi}
+\Phi_{i+\frac{1}{2}}=u^{n+\frac{1}{2}}(\Psi_i^+min(\Delta t, \tau^*)+\Psi_i^-max(0, \Delta t-\tau^*))
+\end{equation}
+\begin{equation}
+\label{eqn:FlowLJRPsi}
+\Phi_{i-\frac{1}{2}}=u^{n+\frac{1}{2}}(\Psi_{i-1}^+min(\Delta t, \tau^*)+\Psi_{i-1}^-min(0, \Delta t-\tau^*))
+\end{equation}
+
 \section{Исследование различных схем}
 Функция $\Psi_i(x)$ позволяет интерполировать значения на границах ячеек. Ее выбор определяет вид схемы численного решения: интерполяционной функции в точках разрыва функции – индикатора $f$, и, соответственно, вид получаемого решения. При выборе функции $\Psi(x)$ были рассмотрены следующие схемы:
 \begin{itemize}
@@ -677,31 +742,901 @@ f_i^{n+1}=f_i^n-\frac{u^n+u^{n+1}}{2}(f_i^n-f_{i-1}^n)\frac{\Delta t}{\Delta x}
 \]
 Результаты расчетов с помощью данного метода, после прохождения 1-6 периодов на разных сетках представлены ниже:
 \\
-\begin{figure}[h!]
-  \includegraphics[width=\linewidth]{Pictures/Godunov.png}
-  \caption{Расчеты 1D. Схема Годунова}
-  \label{fig:Godunov}
-\end{figure}\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=0.5\linewidth]{Pictures/Godunov.png}
+ \captionof{figure}{Расчеты 1D. Схема Годунова}
+ \label{fig:Godunov}
+\end{minipage}
+}
+\medskip
+\\
+Можно наблюдать значительное "размазывание" значений характеристической функции, которое увеличивается с каждым шагом по времени. Таким образом, проявляется эффект численной вязкости, который сильно искажает исходную форму твердого тела, представленного характеристической функцией.
+
 
 \subsection{Метод MUSCL (linear)}
+Схема MUSCL представляет собой метод конечных объемов и может применяться в случаях, когда система терпит разрывы. MUSCL - Monotonic Upstream-centered Scheme for Conservation Laws (Монотонная восходящая схема для законов сохранения). Данная схема имеет пространственную точность второго порядка. В отличие от схемы Годунова, для расчета потоков на границах ячеек используются не средние значения на ячейках, а значения линейных функций с ограничением наклона по левой и правой ячейке.
 
+При реализации схемы MUSCL в качестве функции $\Psi_i(x)$ берется линейная функция, проходящая через центр ячейки – положение $x_i$, и имеющая угол наклона, равный значению  функции $minmod$ от $f_{iR}^n$ и $f_{iL}^n$.
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=0.6\linewidth]{Pictures/MUSCL_scheme.png}
+ \captionof{figure}{Схема MUSCL}
+ \label{fig:MUSCL_sheme}
+\end{minipage}
+}
+\medskip
+\[
+\Psi_i(x)=k_i^nx+b_i^n
+\]
+Где
+\[
+k_i=minmod(f_{iR}^n, f_{iL}^n)
+\]
+\[
+f_{iR}=\frac{f_{i+1}^n-f_i^n}{\Delta x}
+\]
+\[
+f_{iL}=\frac{f_i^n-f_{i-1}^n}{\Delta x}
+\]
+\[
+minmod(a, b) = \begin{cases}0 & ab<0\\ sgn(a)min(|a|,|b|) & ab \geq 0\end{cases}
+\]
+\[
+b_i^n=f_i^n-k_i^nx_i
+\]
+Результаты расчетов с помощью данного метода, после прохождения 1-6 периодов на разных сетках представлены ниже:
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=0.5\linewidth]{Pictures/MUSCL.png}
+ \captionof{figure}{Расчеты 1D. Схема MUSCL}
+ \label{fig:MUSCL}
+\end{minipage}
+}
+\medskip
+\\
+Можно видеть, что линейный метод MUSCL меньше "размазывает" значения характеристической функции по сравнению с постоянным восполнением метода Годунова.
 
 \subsection{Метод THINC (tanh)}
+Схема THINC - (tangent of hyperbola for interface capturing: гиперболический тангенс для отслеживания поверхности) представляет собой метод конечных объемов.
 
+Данная схема применяется только в ячейках, где выполняется условие:
+\[
+\begin{cases}
+\epsilon<f_i^n<1-\epsilon & \text{то есть, }f_i^n\in(0; 1)
+\\
+(f_{i+1}^n-f_i^n)(f_i^n-f_{i-1}^n) & \text{условие монотонности}
+\end{cases}
+\]
+Где $\epsilon$ - малая величина. В расчетах использовалось значение $\epsilon=1e-4$.\\
+В тех ячейках, где данное условие не выполняется, используется схема Годунова или MUSCL.\\
+Для аппроксимации функции  на каждом  отрезке строится функция:
+\[
+F_i(x)=\frac{1}{2}(1+\gamma_itanh(\beta(\frac{x-x_{i-\frac{1}{2}}}{\Delta x}-x_i^*)))
+\]
+Где параметры $\beta$, $\gamma_i$ определяются следующим образом:
+\[
+\gamma_i=sgn(f_{i+1}^n-f_{i-1}^n)
+\]
+$\beta$ определяет сжатие по оси X – скорость прыжка.\\
+Параметр $x_i^*$ – относительное расстояние до середины прыжка $f$ от левой границы отрезка $x_{i-\frac{1}{2}}$.
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=\linewidth]{Pictures/THINC_scheme_xiavg.png}
+ \captionof{figure}{Схема THINC. $x_i^*$.}
+ \label{fig:THINC_scheme_xiavg}
+\end{minipage}
+}
+\medskip
+\\
+Тогда интерполяционная функция для метода THINC строится нормировкой функции $F_i(x)$ на значения $f_{i\pm 1}^n$ следующим образом:
+\[
+\Psi_i(x)=f_{min}+F_i(x)\Delta f_i
+\]
+Где
+\[
+f_{min} = min(f_{i-1}^n, f_{i+1}^n)
+\]
+\[
+f_{max} = max(f_{i-1}^n, f_{i+1}^n)
+\]    
+\[
+\Delta f_i=f_{max}-f_{min}
+\]
+Здесь $F_i(x)$ - это функция гиперболического тангенса, аппроксимирующая f(x) на ячейке $\Delta x_i$.
 
-\subsection{Метод JR (jump)}
+$x_i^*$ определяется из интегрального уравнения:
+\[
+f_i^n=\frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}\Psi_i(x)dx
+\]
+Аналитическое решение данного уравнения:
+\[
+f_i^n=\frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}(f_{min}+
+\frac{1}{2}(1+\gamma_itanh(\beta(\frac{x-x_{i-\frac{1}{2}}}{\Delta x}-x_i^*)))\Delta f_i)dx
+\]
+\[
+x_i^*=\frac{1}{2\beta}log\left(\frac{exp(\frac{\beta}{\gamma_i}(1+\gamma_i-2\frac{f_i^n-f_{min}}{\Delta f_i}))-1}{1-exp(\frac{\beta}{\gamma_i}(1-\gamma_i-2\frac{f_i^n-f_{min}}{\Delta f_i}))}\right)
+\]
 
+Таким образом, общий алгоритм построения  на ячейке выглядит следующим образом:
+\begin{enumerate}
+\item По значениям $f_{i-1}^n$ и $f_{i+1}^n$ рассчитываются значения $\gamma_i$, $f_{min}$, $f_{max}$, $\Delta f_i$.
+\item По значениям $\beta$, $gamma_i$, $f_i^n$, $f_{min}$, $\Delta f_i$ вычисляется значение $x_i^*$, необходимое для задания функции $F_i(x)$.
+\item Теперь готово все необходимое для задания функции $\Psi_i(x)=f_{min}+F_i(x)\Delta f_i$ на отрезке $\Delta x_i$.
+\end{enumerate}
+
+Результаты расчетов с помощью комбинации схемы THINC и схемы Годунова, после прохождения 1-6 периодов на разных сетках представлены ниже:
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=0.5\linewidth]{Pictures/THINC_Godunov.png}
+ \captionof{figure}{Расчеты 1D. Схема THINC + Годунов}
+ \label{fig:THINC_Godunov}
+\end{minipage}
+}
+\medskip
+\\
+Результаты расчетов с помощью комбинации схемы THINC и схемы MUSCL, после прохождения 1-6 периодов на разных сетках представлены ниже:
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=0.5\linewidth]{Pictures/THINC_MUSCL.png}
+ \captionof{figure}{Расчеты 1D. Схема THINC + MUSCL}
+ \label{fig:THINC_MUSCL}
+\end{minipage}
+}
+\medskip
+\\
+Можно наблюдать значительное, по сравнению с классическими методами, уменьшение "размазывание" значений характеристической функции.
+
+\subsection{Метод JR (Jump Reconstruction)}
+Метод Jump Reconstruction позволяет в точности восстановить значения характеристической функции благодаря аппроксимации скачка разрывной функцией.
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=0.5\linewidth]{Pictures/JR_func.png}
+ \captionof{figure}{Разрывная функция}
+ \label{fig:JR_func}
+\end{minipage}
+}
+\medskip
+\\
+Интерполяционная функция $\Psi_i(x)$ строится на тех же ячейках, где выполняются условия схемы THINC:
+\[
+\begin{cases}
+\epsilon<f_i^n<1-\epsilon & \text{то есть, }f_i^n\in(0; 1)
+\\
+(f_{i+1}^n-f_i^n)(f_i^n-f_{i-1}^n) & \text{условие монотонности}
+\end{cases}
+\]
+Где $\epsilon$ - малая величина. В расчетах использовалось значение $\epsilon=1e-4$.\\
+В тех ячейках, где данное условие не выполняется, используется схема Годунова или MUSCL.\\
+Для аппроксимации функции  на каждом  отрезке строится функция:
+\[
+F_i(x)=\frac{(1-\gamma_i)}{2}+\gamma_iH(x-x_i^*)
+\]
+Где $H(x)$ - функция Хевисайда.\\
+Параметр $x_i^*$ – положение прыжка $f$.
+$x_i^*$ определяется из интегрального уравнения:
+\[
+f_i^n=\frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}\Psi_i(x)dx
+\]
+Аналитическое решение данного уравнения:
+\[
+f_i^n=\frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}(f_{min}+
+\frac{(1-\gamma_i)}{2}+\gamma_iH(x-x_i^*))\Delta f_i)dx
+\]
+\[
+x_i^*=x_{i+\frac{1}{2}} - \Delta x_i(\frac{f_{i}-f_{min}}{\Delta f_i\gamma_i}-\frac{1-\gamma_i}{2\gamma_i})
+\]
+
+Таким образом, общий алгоритм построения  на ячейке выглядит следующим образом:
+\begin{enumerate}
+\item По значениям $f_{i-1}^n$ и $f_{i+1}^n$ рассчитываются значения $\gamma_i$, $f_{min}$, $f_{max}$, $\Delta f_i$.
+\item По значениям $gamma_i$, $f_i^n$, $f_{min}$, $\Delta f_i$ вычисляется значение $x_i^*$, необходимое для задания функции $F_i(x)$.
+\item Теперь готово все необходимое для задания функции $\Psi_i(x)=f_{min}+F_i(x)\Delta f_i$ на отрезке $\Delta x_i$.
+\end{enumerate}
+Однако для вычисления интегралов потоков при данном методе с кусочно - постоянным восполнением необходим точный расчет интегралов, описанный в разделе (\ref{sec:JR_flows}).
+
+Результаты расчетов с помощью комбинации схемы JR и схемы Годунова, после прохождения 1-6 периодов на разных сетках представлены ниже:
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=0.5\linewidth]{Pictures/THINC_Godunov.png}
+ \captionof{figure}{Расчеты 1D. Схема JR + Годунов}
+ \label{fig:JR_Godunov}
+\end{minipage}
+}
+\medskip
+\\
+Таким образом, при использовании метода Jump Reconstruction в одномерном случае на каждом временном шаге не происходит "размазывания" значений, и присутствует единственная ячейка с переходными значениями объемных долей. Таким образом, решение в одномерном случае получается точным. 
+
+\subsection{Тестовые расчеты}
+Таким образом, программа для расчета движения строится следующим образом:\\
+Начальные условия – значения $f_i^0$, которые аппроксимирую скалярную величину $f$ заданы в массиве.
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=\linewidth]{Pictures/Godunov_t0.png}
+ \captionof{figure}{Начальные условия для тестовых расчетов}
+\end{minipage}
+}
+\medskip
+\\
+Исследуемая область устроена таким образом, что последняя ячейка $i=cellCount-1$ - предыдущая для первой ячейки $i$, и наоборот. То есть вся область представляет собой кольцо, заданы периодические граничные условия. Количество ячеек подобрано таким образом, чтобы «планка» проходила полный круг за целое число шагов по времени. Тогда после прохождения каждого периода точное решение будет соответствовать начальным условиям.
+Размер ячеек постоянен и равен соответственно:
+\[
+\Delta x=\frac{L}{N}
+\]
+Шаг по времени выбирается в соответствие с условием Куранта по формуле: 
+\[
+\Delta t=CFL\frac{\Delta x}{u}
+\]
+Тогда для прохождения одного периода потребуется T шагов по времени:
+\[
+T=\frac{N}{CFL}
+\]
+Все расчеты производились с числом CFL=0.3. Это позволило убрать нежелательные осцилляции в методе THINC при расчете рядом с границей скачка. Количество ячеек сетки N тогда было выбрано: [24, 48, 96, 192, 384, 768]. При расчетах использовалась скорость u=0.1.
+На каждом шаге по времени происходит вычисление новых значений $f_i^{n+1}$ через потоки, которые рассчитываются в соответствии с выбранным методом восполнения.\\
+Функция $\Psi_i(x)$ выбирается на каждой ячейке в соответствии со схемой расчетов. Для каждого следующего отрезка $\Delta x_{i+1}$ мы сохраняем функцию $\Psi_i(x)$, и используем ее в качестве $\Psi_{i-1}(x)$.\\
+Таким образом, мы делаем шаг по времени для всех отрезков $\Delta x_{i}$.
+
+Пример программной реализации на языке программирования C++ численного решения уравнения переноса в одномерном случае находится в Приложении [\ref{code:TESolver1D}].\\
+Результаты расчетов были визуализированы с помощью программы на языке Python.\\
+Примеры расчетов для используемых методов на сетках с разным разрешением:
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=\linewidth]{Pictures/solutions_N24_96_T1.png}
+ \captionof{figure}{Расчеты 1D движения планки различными методами. Число ячеек 24, 48, 96. Прохождение 1 периода.}
+\end{minipage}
+}
+\medskip
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=\linewidth]{Pictures/solutions_N192_768_T1.png}
+ \captionof{figure}{Расчеты 1D движения планки различными методами. Число ячеек 192, 384, 768. Прохождение 1 периода.}
+\end{minipage}
+}
+\medskip
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=\linewidth]{Pictures/solutions_N24_96_T6.png}
+ \captionof{figure}{Расчеты 1D движения планки различными методами. Число ячеек 24, 48, 96. Прохождение 6 периодов.}
+\end{minipage}
+}
+\medskip
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=\linewidth]{Pictures/solutions_N192_768_T6.png}
+ \captionof{figure}{Расчеты 1D движения планки различными методами. Число ячеек 192, 384, 768. Прохождение 6 периодов.}
+\end{minipage}
+}
+\medskip
+\\
 
 \subsection{Исследование сходимости}
+\paragraph{Расчет ошибки}
+Для всех вычислений была рассчитана ошибка по норме $l_2$ по формуле:
+\[
+error_{l_2}(N, T)=\sqrt{\sum_{i=0}^{N-1}((f_i^T-f_i^{exact})\Delta x)^2}
+\]
+Где $f_i^{exact}=f_i^0$ (так как планка проходит целое число периодов).
+
+Данная ошибка была вычислена после прохождения T=[1..6] периодов на сетках с N=[24, 48, 96, 192, 384, 768] ячейками. Соответствующие таблицы ошибок для всех методов представлены ниже:
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+  & T1 & T2 & T3 & T4 & T5 & T6 \\
+\hline
+N24 & 0.0595699 & 0.0768529 & 0.0876215 & 0.0938853 & 0.0974552 & 0.0994732 \\
+\hline
+N48 & 0.0343195 & 0.0422635 & 0.0489433 & 0.0543952 & 0.0586747 & 0.0619692 \\
+\hline
+N96 & 0.0203693 & 0.024306 & 0.0272539 & 0.0299097 & 0.0323704 & 0.0346239 \\
+\hline
+N192 & 0.0121176 & 0.0144143 & 0.015962 & 0.0171938 & 0.0182741 & 0.0192768 \\
+\hline
+N384 & 0.00720701 & 0.00857172 & 0.00948658 & 0.0101944 & 0.0107809 & 0.0112883 \\
+\hline
+N768 & 0.00428586 & 0.0050971 & 0.00564099 & 0.0060617 & 0.00640951 & 0.00670845 \\
+\hline
+\end{tabular}
+\captionof{table}{Ошибка в схеме Годунова}
+\label{tab:GodunovError}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+  & T1 & T2 & T3 & T4 & T5 & T6 \\
+\hline
+N24 & 0.0392346 & 0.0445669 & 0.0490333 & 0.0534235 & 0.0576686 & 0.0616839 \\
+\hline
+N48 & 0.0223648 & 0.0253282 & 0.0271637 & 0.028482 & 0.0295385 & 0.0304656 \\
+\hline
+N96 & 0.0126646 & 0.0143063 & 0.0153512 & 0.0161337 & 0.0167661 & 0.0173002 \\
+\hline
+N192 & 0.00715315 & 0.00806674 & 0.00864907 & 0.00908569 & 0.00943849 & 0.00973635 \\
+\hline
+N384 & 0.00403337 & 0.00454284 & 0.00486817 & 0.00511226 & 0.0053096 & 0.00547623 \\
+\hline
+N768 & 0.00227142 & 0.00255613 & 0.00273812 & 0.00287473 & 0.00298521 & 0.00307853 \\
+\hline
+\end{tabular}
+\captionof{table}{Ошибка в схеме MUSCL}
+\label{tab:MUSCLError}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+  & T1 & T2 & T3 & T4 & T5 & T6 \\
+\hline
+N24 & 0.00823062 & 0.00823302 & 0.00823357 & 0.00823392 & 0.00823399 & 0.00823399 \\
+\hline
+N48 & 0.0041157 & 0.00411636 & 0.00411636 & 0.00411657 & 0.00411685 & 0.00411681 \\
+\hline
+N96 & 0.00205787 & 0.00205821 & 0.00205827 & 0.00205829 & 0.00205829 & 0.00205843 \\
+\hline
+N192 & 0.0010291 & 0.00102914 & 0.00102914 & 0.00102922 & 0.00102921 & 0.00102922 \\
+\hline
+N384 & 0.000514571 & 0.000514608 & 0.000514609 & 0.000514604 & 0.000514602 & 0.000514604 \\
+\hline
+N768 & 0.000257304 & 0.000257302 & 0.000257302 & 0.000257301 & 0.000257302 & 0.000257302 \\
+\hline
+\end{tabular}
+\captionof{table}{Ошибка в схеме THINC + Годунов}
+\label{tab:THINC_Godunov_Error}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+  & T1 & T2 & T3 & T4 & T5 & T6 \\
+\hline
+N24 & 0.00823047 & 0.00823123 & 0.00823164 & 0.00823161 & 0.00823284 & 0.00823292 \\
+\hline
+N48 & 0.00411565 & 0.00411571 & 0.00411591 & 0.00411609 & 0.00411618 & 0.00411591 \\
+\hline
+N96 & 0.00205785 & 0.00205808 & 0.00205803 & 0.0020579 & 0.00205794 & 0.00205799 \\
+\hline
+N192 & 0.00102904 & 0.00102895 & 0.00102899 & 0.00102916 & 0.00102914 & 0.00102913 \\
+\hline
+N384 & 0.000514474 & 0.000514581 & 0.000514565 & 0.000514566 & 0.000514574 & 0.000514576 \\
+\hline
+N768 & 0.000257291 & 0.000257283 & 0.000257288 & 0.000257299 & 0.000257295 & 0.000257293 \\
+\hline
+\end{tabular}
+\captionof{table}{Ошибка в схеме THINC + MUSCL}
+\label{tab:THINC_MUSCL_Error}
+\end{center}
+
+Схема JR в одномерном случае дает около нулевую ошибку, так как восстанавливает решение в точности.
+
+Из полученных данных можно сделать вывод, что использование схемы THINC дает значительное увеличение точности по сравнению с методом Годунова или MUSCL. Схема THINC позволяет на порядок уменьшить величину ошибки. Сравнивая комбинацию методов THINC + Годунов и THINC+MUSCL, можно заметить очень маленькую разницу в результатах расчетов и величинах ошибки (менее 1\%). Такой результат получается вследствие того, что вычисляемая функция $\Psi_i(x)$ в тех ячейках, где значения $f_i^n$ близки к 0 или 1 (используется MUSCL), получалась практически горизонтальной прямой, то есть самим значением $f_i^n$, как в схеме Годунова. Таким образом, нет значимой разницы в комбинировании схемы THINC со схемой Годунова или MUSCL для текущей реализации решения задачи.
+
+\paragraph{Исследование сходимости.}
+Полагая, что метод имеет порядок сходимости $\beta$, если $\exists \alpha \in (0; 1]$ такое что выполняется неравенство $error_{l_2}(N, T)\leq\alpha\Delta x^{\beta}$, было проведено исследование сходимости. Приведя неравенство к виду $ln(error_{l_2}(N, T))\leq\beta ln(\Delta x)+const$, построены графики зависимости логарифма ошибки к логарифму размера ячейки. Данные графики аппроксимируются прямыми, угол наклона которых – это порядок аппроксимации $\beta$.\\
+Построенные графики с рассчитанными значениями порядка сходимости представлены ниже:
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=\linewidth]{Pictures/Godunov_conv_T1_3.png}
+ \captionof{figure}{Графики сходимости для схемы Годунова. Период 1-3}
+\end{minipage}
+}
+\medskip
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=\linewidth]{Pictures/Godunov_conv_T4_6.png}
+ \captionof{figure}{Графики сходимости для схемы Годунова. Период 4-6}
+\end{minipage}
+}
+\medskip
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=\linewidth]{Pictures/MUSCL_conv_T1_3.png}
+ \captionof{figure}{Графики сходимости для схемы MUSCL. Период 1-3}
+\end{minipage}
+}
+\medskip
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=\linewidth]{Pictures/MUSCL_conv_T4_6.png}
+ \captionof{figure}{Графики сходимости для схемы MUSCL. Период 4-6}
+\end{minipage}
+}
+\medskip
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=\linewidth]{Pictures/THINC_Godunov_conv_T1_3.png}
+ \captionof{figure}{Графики сходимости для схемы THINC + Годунов. Период 1-3}
+\end{minipage}
+}
+\medskip
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=\linewidth]{Pictures/THINC_Godunov_conv_T4_6.png}
+ \captionof{figure}{Графики сходимости для схемы THINC + Годунов. Период 4-6}
+\end{minipage}
+}
+\medskip
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=\linewidth]{Pictures/THINC_MUSCL_conv_T1_3.png}
+ \captionof{figure}{Графики сходимости для схемы THINC + MUSCL. Период 1-3}
+\end{minipage}
+}
+\medskip
+\\
+\makebox[0pt][l]{%
+\begin{minipage}{\textwidth}
+\centering
+    \includegraphics[width=\linewidth]{Pictures/THINC_MUSCL_conv_T4_6.png}
+ \captionof{figure}{Графики сходимости для схемы THINC + MUSCL. Период 4-6}
+\end{minipage}
+}
+\medskip
+\\
 
 \section{Многомерное обобщение решения уравнения переноса с нестационарным полем скоростей}
+Алгоритм численного решения уравнения переноса для случая двух или трех измерений может быть построен на основе численного решения уравнения переноса в одномерном случае.
+Исходя из вида данного уравнения в частных производных, есть возможность рассчитать решение в проекции на одном из направлений, при заданном положении данной проекции по другим направлениям.
+
+Уравнение переноса в общем случае имеет вид (\ref{eqn:TE}):
+\begin{equation}
+\frac{\partial f}{\partial t}+\nabla\cdot(f\overrightarrow{u})=0
+\end{equation}
+В разделе (\ref{sec:TESolutionUnonstat}) проводится численное решение данного уравнения в одномерном случае (\ref{fiNextFlows}) в проекции на одну из осей. Получена алгебраическая формула для нахождения значения скалярной величины на следующем временном шаге через потоки на гранях ячеек.
+\begin{equation}
+f_i^{n+1}=f_i^n
+-
+\frac{1}{\Delta x} (
+\Phi_{i+\frac{1}{2}}
+-
+\Phi_{i-\frac{1}{2}}
+)=0
+\end{equation}
+Данное уравнение можно записать для каждого из направлений X,Y,Z на введенной сетке при фиксированном положении на других осях:
+\begin{equation}
+f_i^{n+1}=f_i^n
+-
+\frac{1}{\Delta x} (
+\Phi_{i+\frac{1}{2}}
+-
+\Phi_{i-\frac{1}{2}}
+)=0
+\end{equation}, $i=1..N$, $j,k=const$
+\begin{equation}
+f_j^{n+1}=f_j^n
+-
+\frac{1}{\Delta x} (
+\Phi_{j+\frac{1}{2}}
+-
+\Phi_{j-\frac{1}{2}}
+)=0
+\end{equation}, $j=1..M$, $i,k=const$
+\begin{equation}
+f_k^{n+1}=f_k^n
+-
+\frac{1}{\Delta x} (
+\Phi_{k+\frac{1}{2}}
+-
+\Phi_{k-\frac{1}{2}}
+)=0
+\end{equation}, $k=1..P$, $i,j=const$
+Скорость $u$, содержащаяся в вычислении потоков $\Phi$ постоянна на всех ячейках каждого из направлений при фиксированном положении на других направлениях, поэтому может быть использована аналогично одномерному случаю для каждого из направлений. Эта особенность характерна для поля скоростей твердого тела и описана в разделе (\ref{sec:RBVF}).
+
 \subsection{Расщепление по направлениям}
+Метод расщепления по направлениям заключается в том, что исходная задача решается в проекции на одно из направлений на сетке при фиксированных положениях данного направления по другим осям сетки. Затем полученное решение используется в качестве начальных условий для расчета по следующему направлению. В результате, для каждой ячейки сетки будут учитываться потоки на всех ее гранях.
+
+То есть, в двумерном случае, скалярная величина, содержащаяся в каждая ячейке, представляющей собой квадрат, будет пересчитываться 2 раза. Сначала рассчитываются потоки на первой паре противоположных граней, затем, поверх изменений после прохождения по одному из направлений, на второй паре противоположных граней. При этом необходимо рассчитать M x N ячеек. То есть одномерный модуль численного алгоритма решения будет запущен M раз для каждого направления X (при каждом фиксированном значении по направлению Y) и N раз для каждого направления Y (при каждом фиксированном значении по направлению X).
+Данный алгоритм может быть записан в виде:
+\begin{enumerate}
+\item {Решение одномерного уравнения переноса на шаге по времени $\Delta t_{n+1}$ по X направлению M раз (при Y = 1..M) при начальных условиях $f^{n}$.}
+\item {Полученное решение $f'^{n+1}$ является начальными условиями для решения по направлению Y.}
+\item {Решение одномерного уравнения переноса на шаге по времени $\Delta t_{n+1}$ по Y направлению N раз (при X = 1..N) при начальных условиях $f'^{n+1}$.}
+\item {Полученное решение является решением для шага $\Delta t_{n+1}$: $f''^{n+1}=f^{n+1}$ и используется в качестве начальных условий для следующего шага по времени.}
+\end{enumerate}
+
+Таким образом, была реализована программа решения уравнения переноса в многомерном случае на основе модуля расчета уравнения переноса в одномерном случае. Основой данного алгоритма является расщепление по направлениям, при этом используется одномерный модуль программы, описанный в разделе (\ref{sec:TESolutionUnonstat}).
+
 \subsection{Тестовые расчеты}
+В качестве тестовых вычислений был проведен расчет движения твердого тела в поле стационарной и нестационарной скорости с элементами поступательного и вращательного движения.
 
+Начальные условия для движения тела в поле стационарной скорости:
+\[
+\overrightarrow{u}(t)=(0.1, 0.1)
+\]
+$CFL=0.3$\\
+$areaWidth=1.0$\\
+$areaHeight=1.0$\\
+$cellCountX=128$\\
+$cellCountY=128$\\
+$NTimeSteps=400$\\
+
+Результаты расчетов для схемы Годунова:
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestGodunov/Solve2DWhiteBearMovementTest_t0.png}
+  \captionof{figure}{t=0}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestGodunov/Solve2DWhiteBearMovementTest_t10.png}
+  \captionof{figure}{t=80}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestGodunov/Solve2DWhiteBearMovementTest_t20.png}
+  \captionof{figure}{t=160}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestGodunov/Solve2DWhiteBearMovementTest_t30.png}
+  \captionof{figure}{t=240}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestGodunov/Solve2DWhiteBearMovementTest_t40.png}
+  \captionof{figure}{t=320}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestGodunov/Solve2DWhiteBearMovementTest_t50.png}
+  \captionof{figure}{t=400}
+\end{minipage}
+\end{figure}
+
+Результаты расчетов для схемы MUSCL:
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestMUSCL/Solve2DWhiteBearMovementTest_t0.png}
+  \captionof{figure}{t=0}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestMUSCL/Solve2DWhiteBearMovementTest_t10.png}
+  \captionof{figure}{t=80}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestMUSCL/Solve2DWhiteBearMovementTest_t20.png}
+  \captionof{figure}{t=160}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestMUSCL/Solve2DWhiteBearMovementTest_t30.png}
+  \captionof{figure}{t=240}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestMUSCL/Solve2DWhiteBearMovementTest_t40.png}
+  \captionof{figure}{t=320}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestMUSCL/Solve2DWhiteBearMovementTest_t50.png}
+  \captionof{figure}{t=400}
+\end{minipage}
+\end{figure}
+
+Результаты расчетов для схемы THINC:
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestTHINC/Solve2DWhiteBearMovementTest_t0.png}
+  \captionof{figure}{t=0}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestTHINC/Solve2DWhiteBearMovementTest_t10.png}
+  \captionof{figure}{t=80}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestTHINC/Solve2DWhiteBearMovementTest_t20.png}
+  \captionof{figure}{t=160}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestTHINC/Solve2DWhiteBearMovementTest_t30.png}
+  \captionof{figure}{t=240}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestTHINC/Solve2DWhiteBearMovementTest_t40.png}
+  \captionof{figure}{t=320}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestTHINC/Solve2DWhiteBearMovementTest_t50.png}
+  \captionof{figure}{t=400}
+\end{minipage}
+\end{figure}
+
+Результаты расчетов для схемы JR:
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestJR/Solve2DWhiteBearMovementTest_t0.png}
+  \captionof{figure}{t=0}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestJR/Solve2DWhiteBearMovementTest_t10.png}
+  \captionof{figure}{t=80}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestJR/Solve2DWhiteBearMovementTest_t20.png}
+  \captionof{figure}{t=160}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestJR/Solve2DWhiteBearMovementTest_t30.png}
+  \captionof{figure}{t=240}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestJR/Solve2DWhiteBearMovementTest_t40.png}
+  \captionof{figure}{t=320}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/Solve2DWhiteBearMovementTestJR/Solve2DWhiteBearMovementTest_t50.png}
+  \captionof{figure}{t=400}
+\end{minipage}
+\end{figure}
+
+Начальные условия для движения тела в нестационарном поле скорости твердого тела:
+\[
+\overrightarrow{v}_c(t)=(1, 4-8t)
+\]
+\[
+\overrightarrow{\omega}_c(t)=(0, 0, \pi)
+\]
+$areaWidth=2.0$\\
+$areaHeight=2.0$\\
+$cellCountX=128$\\
+$cellCountY=128$\\
+$NTimeSteps=512$\\
+
+Результаты расчетов для схемы MUSCL:
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestMUSCL/PlusRotateTest_t0.png}
+  \captionof{figure}{t=0}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestMUSCL/PlusRotateTest_t10.png}
+  \captionof{figure}{t=102}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestMUSCL/PlusRotateTest_t20.png}
+  \captionof{figure}{t=205}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestMUSCL/PlusRotateTest_t30.png}
+  \captionof{figure}{t=307}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestMUSCL/PlusRotateTest_t40.png}
+  \captionof{figure}{t=410}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestMUSCL/PlusRotateTest_t50.png}
+  \captionof{figure}{t=512}
+\end{minipage}
+\end{figure}
+
+Результаты расчетов для схемы THINC:
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestTHINC/PlusRotateTest_t0.png}
+  \captionof{figure}{t=0}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestTHINC/PlusRotateTest_t10.png}
+  \captionof{figure}{t=102}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestTHINC/PlusRotateTest_t20.png}
+  \captionof{figure}{t=205}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestTHINC/PlusRotateTest_t30.png}
+  \captionof{figure}{t=307}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestTHINC/PlusRotateTest_t40.png}
+  \captionof{figure}{t=410}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestTHINC/PlusRotateTest_t50.png}
+  \captionof{figure}{t=512}
+\end{minipage}
+\end{figure}
+
+Результаты расчетов для схемы JR:
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestJR/PlusRotateTest_t0.png}
+  \captionof{figure}{t=0}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestJR/PlusRotateTest_t10.png}
+  \captionof{figure}{t=102}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestJR/PlusRotateTest_t20.png}
+  \captionof{figure}{t=205}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestJR/PlusRotateTest_t30.png}
+  \captionof{figure}{t=307}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestJR/PlusRotateTest_t40.png}
+  \captionof{figure}{t=410}
+\end{minipage}%
+\begin{minipage}{.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusRotateTestJR/PlusRotateTest_t50.png}
+  \captionof{figure}{t=512}
+\end{minipage}
+\end{figure}
+
+Сравнение размазывания исходной формы твердого тела после поступательного и вращательного движения:
+\begin{figure}[H]
+\centering
+\begin{minipage}{.25\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusInit.png}
+  \captionof{figure}{Initial}
+\end{minipage}%
+\begin{minipage}{.25\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusMUSCL.png}
+  \captionof{figure}{MUSCL}
+\end{minipage}%
+\begin{minipage}{.25\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusTHINC.png}
+  \captionof{figure}{THINC}
+\end{minipage}%
+\begin{minipage}{.25\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{Pictures/PlusJR.png}
+  \captionof{figure}{JR}
+\end{minipage}
+\end{figure}
+
+\newpage
 \section{Заключение}
+Таким образом, были исследованы методы численного решения уравнения переноса с использованием подхода цифровой геометрии. Был исследован численный метод решения уравнения переноса и реализован его программный алгоритм для одномерного случая.
 
-\section{Список литературы}
+Важно отметить, что исследование схем для решения уравнение переноса в одномерном случае позволяет использовать данный подход в двумерном и трехмерном пространстве. Программа, написанная для одномерного случая, будет использована в дальнейшем как расчетный блок для многомерного случая.
 
+Для представления цифровой геометрии были исследованы схемы с разным порядком точности, в том числе схема Годунова, MUSCL и THINC. Применение схемы THINC в отличие от других схем позволяет с высокой точностью описать поведение геометрии в цифровом виде, значительно уменьшить величину ошибки при расчетах.
+
+Был разработан метод точного восполнения разрыва на границе двух сред. Метод Jump Reconstruction позволяет в точности восстановить решение в одномерном случае и показывает хорошие результаты при многомерном обобщении.
+
+\newpage
+\begin{thebibliography}{3}
+\bibitem{Godunov_sovle_gido}Годунов С.К. О единственности решения уравнений гидродинамики / С.К.Годунов // Математический сборник. - 1956. - Т.40, N 4. - С.467-478.
+\bibitem{Godunov_diff_scheme}Багриновский К.А. Разностные схемы для многомерных задач / К.А.Багриновский, С.К.Годунов // Доклады Академии наук СССР. - 1957. - Т.115, N 3. - С.431-433.
+\bibitem{Godunov_num_method}Годунов С.К. Разностный метод численного расчета разрывных решений уравнений гидродинамики / С.К.Годунов // Математический сборник. - 1959. - Т.47, N 3. - С.271-306.
+\bibitem{Godunov_smearing}Годунов С.К. О неединственном «размазывании» разрывов в решениях квазилинейных систем / С.К.Годунов // Доклады Академии наук СССР. - 1961. - Т.136, N 2. - С.272-273.
+\bibitem{Godunov_error}Годунов С.К. Оценки невязок для приближенных решений простейших уравнений газовой динамики / С.К.Годунов // Журнал вычислительной математики и математической физики. - 1961. - Т.1, N 4. - С.622-637.
+\bibitem{Godunov_num_sch_2nd_ord}Годунов С.К. О разностных схемах второго порядка точности для многомерных задач / С.К.Годунов, А.В.Забродин // Журнал вычислительной математики и математической физики. - 1962. - Т.2, N 4. - С.706-708.
+\bibitem{Godunov_num_method_2}Годунов С.К. Разностные методы численного решения задач газовой динамики / С.К.Годунов, К.А.Семендяев // Журнал вычислительной математики и математической физики. - 1962. - Т.2, N 1. - С.3-14.
+\bibitem{bib_item}Годунов С.К. Проблема обобщенного решения в теории квазилинейных уравнений и в газовой динамике / С.К.Годунов // Успехи математических наук. - 1962. - Т.17, вып.3. - С.147-158.
+\bibitem{bib_item}Годунов С.К. Об использовании подвижных сеток в газодинамических расчетах / С.К.Годунов, Г.П.Прокопов // Журнал вычислительной математики и математической физики. - 1972. - Т.12, N 2. - С.429-440.
+\bibitem{bib_item}Бахвалов П.А. Нестационарный метод геометрического корректора и его использование для оценки точности конечно-объемной схемы на неструктурированных сетках // Препринты ИПМ им. М.В.Келдыша. - 2016. - № 122. - 28 с.
+\bibitem{bib_item}Бочкарева Е.В., Храпов С.С. Численное моделирование динамики звуковых волн в активных средах с использованием схемы MUSCL // Вестник Волгоградского государственного университета. Серия 1: Математика. Физика. – 2015. – № 1 (18). - С. 13-22.
+\bibitem{bib_item}Чжан Ч., Меньшов И.С. Сквозной метод расчета уравнений переноса многокомпонентной гетерогенной системы на фиксированных эйлеровых сетках // Математическое моделирование. – 2019. - №4 (31). – С. 111–130.
+\bibitem{bib_item}Xiao F., Honma Y., Kono T. A simple algebraic interface capturing scheme using hyperbolic tangent function // International Journal for Numerical Methods in Fluids. 2005. Т. 48, № 9, с. 1023—1040.
+\bibitem{bib_item}Einfeldt B., Munz C. D., Roe P. L. On Godunov-type methods near low densities // Journal of Computational Physics. 1991. Т. 92, № 2, с. 273—295.
+\bibitem{bib_item}Ronit Kumar, Lidong Cheng, Yunong Xiong, Bin Xie, Rémi Abgrall, Feng Xiao. THINC scaling method that bridges VOF and level set schemes. // Journal of Computational Physics. 2021. 436: 110323.
+\end{thebibliography}
+
+\newpage
 \section{Приложения}
 \subsection{Пример программного кода нахождения координаты центра твердого тела в моменты времени $t_i$}
 \label{code:xc}
@@ -844,10 +1779,77 @@ function<VectorXd(double)> xc, int stepsN, double h) {
 }
 \end{lstlisting}
 
-\subsection{Пример программного кода нахождения значений правой функции в моменты времени $t_i$}
-\label{code:}
+\subsection{Пример программного кода решения уравнения переноса в одномерном случае со стационарным полем скоростей}
+\label{code:TESolver1D}
 \begin{lstlisting}
+double flow(const function<double(double)>& PsyL,
+            const function<double(double)>& PsyR,
+            double x, double u, double dt){
+    return u>=0 ?
+    PsyL(getXforInterpolation(x, u, dt/2)) :
+    PsyR(getXforInterpolation(x, u, dt/2));
+}
 
+double fNext(F1D fi,
+             U1D ui,
+             C1D ci,
+             double dt,
+             const vector<function<double(double)>> &Psy){ // 3 functions: {Psy|i-1 , Psy|i , Psy|i+1}
+    double fiR = flow(Psy[1], Psy[2], ci.xR, ui.uR, dt);
+    double fiL = flow(Psy[0], Psy[1], ci.xL, ui.uL, dt);
+    return fi.fi - 1.0 / ci.dx * (fiR*ui.uR - fiL*ui.uL) * dt;
+}
+
+void TESolverStep(LineInterface &f,
+                  LineInterface &u,
+                  TESolver1DParams &p){
+    vector<function<double(double)>> Psy(p.getCellCount()+2);
+    for(int i=-1; i<p.getCellCount()+1; i++){
+        int sgnUi = 0;
+        if(i==-1) //TODO extend u outside area like f
+            sgnUi = sgn(u[0]);
+        else if(i==p.getCellCount())
+            sgnUi = sgn(u[i]);
+        else
+            sgnUi = sgn((u[i]+u[i+1])/2.);
+        F1D fi = getFi(f, i);
+        C1D ci = getCi(p.getDx(), i);
+        if(sgnUi<0){
+            F1D invFi = inverse(fi);
+            C1D invCi = inverse(ci);
+            Psy[i+1] = fInverseX(p.getFlowInterpolationFunctionBuilder()(invFi, invCi));
+        } else {
+            Psy[i+1] = p.getFlowInterpolationFunctionBuilder()(fi, ci);
+        }
+    }
+
+
+    double fiPrev = f[-1];
+    double fiAfterLast = f[p.getCellCount()];
+
+    for (int i = 0; i < p.getCellCount()-1; i++) { // calculating all cells except last
+        F1D fi = getFi(f, i);
+        fi.fiPrev = fiPrev; // using saved fi as fiPrev in the next cell
+        fiPrev = fi.fi;
+        f.set(i, fNext(fi, getUi(u, i), getCi(p.getDx(), i), p.getDt(),
+                       {Psy[i], Psy[i+1], Psy[i+2]}));
+    }
+    // fiNext for last cell is old f0, so we calc this separately
+    int iLast = p.getCellCount()-1;
+    F1D fiLast = {f[iLast], fiPrev, fiAfterLast};
+    f.set(iLast, fNext(fiLast, getUi(u, iLast), getCi(p.getDx(), iLast), p.getDt(), {Psy[iLast], Psy[iLast+1], Psy[iLast+2]}));
+}
+
+void SolveTransportEquation1D(Area1D &f,
+                              VectorField1D &u,
+                              TESolver1DParams &p,
+                              TESolver1DOutput &output) {
+    output.print(f, 0, p.getDx());
+    for (int n = 0; n < p.getNTimeSteps(); n++) {
+        TESolverStep(f, u, p);
+        output.print(f, n+1, p.getDx());
+    }
+}
 \end{lstlisting}
 
 \end{document}
