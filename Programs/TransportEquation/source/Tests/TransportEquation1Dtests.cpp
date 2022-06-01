@@ -90,7 +90,7 @@ void Solver1DJRStripMovementTest(){
 
     TESolver1DParams params (
             0.7,
-            1,
+            1.0,
             16,
             16,
             10,
@@ -110,7 +110,7 @@ void Solver1DJRStripMovementTest(){
     Area1D f(params.getCellCount(), true);
     f.fillRightHalfWith(1);
 
-    RBVectorField1D u(1.0, 1.0);
+    RBVectorField1D u(-1.0, -1.0);
 
     SolveTransportEquationRBJR1D(f, u, params, out);
     out.finish();

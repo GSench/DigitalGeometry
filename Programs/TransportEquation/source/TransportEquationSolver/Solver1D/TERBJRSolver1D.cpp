@@ -15,36 +15,44 @@ double fNext(F1D fi, F1D fiPrev, F1D fiNext,
     double fiL = 0;
     double fiR = 0;
     double uiHalfNext = (u.getU() + u.getUNext())/2.;
+    if(u.direction()<0){
+        ci = inverse(ci);
+        fi = inverse(fi);
+        fiPrev = inverse(fiNext);
+        uiHalfNext = abs(uiHalfNext);
+    }
+    if(calcCondition(fi.fiPrev, fi.fi, fi.fiNext, 1e-4)){
+        double fiMin = min(fi.fiPrev, fi.fiNext);
+        double fiMax = max(fi.fiPrev, fi.fiNext);
+        double deltaFi = fiMax - fiMin;
+        double gamma = getGamma(fi.fiNext, fi.fiPrev);
+        double xJump = getXiavgJR(ci.xR, ci.dx, gamma, fi.fi, fiMin, deltaFi);
+        double tJump = (ci.xR - xJump)/abs(u.getU());
+        fiR = uiHalfNext * (fi.fiNext * min(dt, tJump) + fi.fiPrev * max(0., dt - tJump));
+    } else {
+        fiR = uiHalfNext * fi.fi * dt;
+    }
+    if(calcCondition(fiPrev.fiPrev, fiPrev.fi, fiPrev.fiNext, 1e-4)){
+        double fiMin = min(fiPrev.fiPrev, fiPrev.fiNext);
+        double fiMax = max(fiPrev.fiPrev, fiPrev.fiNext);
+        double deltaFi = fiMax - fiMin;
+        double gamma = getGamma(fiPrev.fiNext, fiPrev.fiPrev);
+        double xJump = getXiavgJR(ci.xL, ci.dx, gamma, fiPrev.fi, fiMin, deltaFi);
+        double tJump = (ci.xL - xJump)/abs(u.getU());
+        fiL = uiHalfNext * (fiPrev.fiNext * min(dt, tJump) + fiPrev.fiPrev * max(0., dt - tJump));
+    } else {
+        fiL = uiHalfNext * fiPrev.fi * dt;
+    }
+    /*
     if(u.direction()>0){
-        if(calcCondition(fi.fiPrev, fi.fi, fi.fiNext, 1e-4)){
-            double fiMin = min(fi.fiPrev, fi.fiNext);
-            double fiMax = max(fi.fiPrev, fi.fiNext);
-            double deltaFi = fiMax - fiMin;
-            double gamma = getGamma(fi.fiNext, fi.fiPrev);
-            double xJump = getXiavgJR(ci.xR, ci.dx, gamma, fi.fi, fiMin, deltaFi);
-            double tJump = (ci.xR - xJump)/u.getU();
-            fiR = uiHalfNext * (fi.fiNext * min(dt, tJump) + fi.fiPrev * max(0., dt - tJump));
-        } else {
-            fiR = uiHalfNext * fi.fi * dt;
-        }
-        if(calcCondition(fiPrev.fiPrev, fiPrev.fi, fiPrev.fiNext, 1e-4)){
-            double fiMin = min(fiPrev.fiPrev, fiPrev.fiNext);
-            double fiMax = max(fiPrev.fiPrev, fiPrev.fiNext);
-            double deltaFi = fiMax - fiMin;
-            double gamma = getGamma(fiPrev.fiNext, fiPrev.fiPrev);
-            double xJump = getXiavgJR(ci.xL, ci.dx, gamma, fiPrev.fi, fiMin, deltaFi);
-            double tJump = (ci.xL - xJump)/u.getU();
-            fiL = uiHalfNext * (fiPrev.fiNext * min(dt, tJump) + fiPrev.fiPrev * max(0., dt - tJump));
-        } else {
-            fiL = uiHalfNext * fiPrev.fi * dt;
-        }
+
     } else {
         if(calcCondition(fiNext.fiPrev, fiNext.fi, fiNext.fiNext, 1e-4)){
             double fiMin = min(fiNext.fiPrev, fiNext.fiNext);
             double fiMax = max(fiNext.fiPrev, fiNext.fiNext);
             double deltaFi = fiMax - fiMin;
             double gamma = getGamma(fiNext.fiNext, fiNext.fiPrev);
-            double xJump = getXiavgJR(ci.xR, ci.dx, gamma, fiNext.fi, fiMin, deltaFi);
+            double xJump = getXiavgJR(ci.xR+ci.dx, ci.dx, gamma, fiNext.fi, fiMin, deltaFi);
             double tJump = (ci.xR - xJump)/u.getU();
             fiR = uiHalfNext * (fiNext.fiNext * min(dt, tJump) + fiNext.fiPrev * max(0., dt - tJump));
         } else {
@@ -55,13 +63,13 @@ double fNext(F1D fi, F1D fiPrev, F1D fiNext,
             double fiMax = max(fi.fiPrev, fi.fiNext);
             double deltaFi = fiMax - fiMin;
             double gamma = getGamma(fi.fiNext, fi.fiPrev);
-            double xJump = getXiavgJR(ci.xL, ci.dx, gamma, fi.fi, fiMin, deltaFi);
+            double xJump = getXiavgJR(ci.xR, ci.dx, gamma, fi.fi, fiMin, deltaFi);
             double tJump = (ci.xL - xJump)/u.getU();
             fiL = uiHalfNext * (fi.fiNext * min(dt, tJump) + fi.fiPrev * max(0., dt - tJump));
         } else {
             fiL = uiHalfNext * fi.fi * dt;
         }
-    }
+    }*/
     return fi.fi - (fiR - fiL) / ci.dx;
 }
 
@@ -75,7 +83,7 @@ void TERBJRSolverStep(LineInterface &f,
     }
 
     for (int i = 0; i < p.getCellCount(); i++) { // calculating all cells except last
-        f.set(i, fNext(oldFi[i+1], oldFi[i], oldFi[i+1], u, getCi(p.getDx(), i), p.getDt()));
+        f.set(i, fNext(oldFi[i+1], oldFi[i], oldFi[i+2], u, getCi(p.getDx(), i), p.getDt()));
     }
 
 }
