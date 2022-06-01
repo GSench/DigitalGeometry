@@ -4,15 +4,9 @@
 #include "TERBJRSolver1D.h"
 #include "../../math/MathUtils.h"
 #include "../Tools/THINCUtils.h"
+#include "../Tools/JRUtils.h"
 
 using namespace std;
-
-double flow(const function<double(double)>& PsyL,
-            const function<double(double)>& PsyR,
-            double x, RBVectorField1D u, double dt){
-    const function<double(double)>& Psy = u.direction()>=0 ? PsyL : PsyR;
-    return u.getU()*Psy(x)+u.getUNext()*Psy(x-dt*(u.getUNext()+u.getU())/2.);
-}
 
 double fNext(F1D fi, F1D fiPrev, F1D fiNext,
              RBVectorField1D u,
@@ -20,47 +14,70 @@ double fNext(F1D fi, F1D fiPrev, F1D fiNext,
              double dt) {
     double fiL = 0;
     double fiR = 0;
+    double uiHalfNext = (u.getU() + u.getUNext())/2.;
     if(u.direction()>0){
         if(calcCondition(fi.fiPrev, fi.fi, fi.fiNext, 1e-4)){
-
+            double fiMin = min(fi.fiPrev, fi.fiNext);
+            double fiMax = max(fi.fiPrev, fi.fiNext);
+            double deltaFi = fiMax - fiMin;
+            double gamma = getGamma(fi.fiNext, fi.fiPrev);
+            double xJump = getXiavgJR(ci.xR, ci.dx, gamma, fi.fi, fiMin, deltaFi);
+            double tJump = (ci.xR - xJump)/u.getU();
+            fiR = uiHalfNext * (fi.fiNext * min(dt, tJump) + fi.fiPrev * max(0., dt - tJump));
+        } else {
+            fiR = uiHalfNext * fi.fi * dt;
+        }
+        if(calcCondition(fiPrev.fiPrev, fiPrev.fi, fiPrev.fiNext, 1e-4)){
+            double fiMin = min(fiPrev.fiPrev, fiPrev.fiNext);
+            double fiMax = max(fiPrev.fiPrev, fiPrev.fiNext);
+            double deltaFi = fiMax - fiMin;
+            double gamma = getGamma(fiPrev.fiNext, fiPrev.fiPrev);
+            double xJump = getXiavgJR(ci.xL, ci.dx, gamma, fiPrev.fi, fiMin, deltaFi);
+            double tJump = (ci.xL - xJump)/u.getU();
+            fiL = uiHalfNext * (fiPrev.fiNext * min(dt, tJump) + fiPrev.fiPrev * max(0., dt - tJump));
+        } else {
+            fiL = uiHalfNext * fiPrev.fi * dt;
+        }
+    } else {
+        if(calcCondition(fiNext.fiPrev, fiNext.fi, fiNext.fiNext, 1e-4)){
+            double fiMin = min(fiNext.fiPrev, fiNext.fiNext);
+            double fiMax = max(fiNext.fiPrev, fiNext.fiNext);
+            double deltaFi = fiMax - fiMin;
+            double gamma = getGamma(fiNext.fiNext, fiNext.fiPrev);
+            double xJump = getXiavgJR(ci.xR, ci.dx, gamma, fiNext.fi, fiMin, deltaFi);
+            double tJump = (ci.xR - xJump)/u.getU();
+            fiR = uiHalfNext * (fiNext.fiNext * min(dt, tJump) + fiNext.fiPrev * max(0., dt - tJump));
+        } else {
+            fiR = uiHalfNext * fiNext.fi * dt;
+        }
+        if(calcCondition(fi.fiPrev, fi.fi, fi.fiNext, 1e-4)){
+            double fiMin = min(fi.fiPrev, fi.fiNext);
+            double fiMax = max(fi.fiPrev, fi.fiNext);
+            double deltaFi = fiMax - fiMin;
+            double gamma = getGamma(fi.fiNext, fi.fiPrev);
+            double xJump = getXiavgJR(ci.xL, ci.dx, gamma, fi.fi, fiMin, deltaFi);
+            double tJump = (ci.xL - xJump)/u.getU();
+            fiL = uiHalfNext * (fi.fiNext * min(dt, tJump) + fi.fiPrev * max(0., dt - tJump));
+        } else {
+            fiL = uiHalfNext * fi.fi * dt;
         }
     }
-
-    double fiR = flow(Psy[1], Psy[2], ci.xR, u, dt);
-    double fiL = flow(Psy[0], Psy[1], ci.xL, u, dt);
-    return fi.fi - dt / 2. / ci.dx  * (fiR - fiL);
+    return fi.fi - (fiR - fiL) / ci.dx;
 }
 
 void TERBJRSolverStep(LineInterface &f,
                     RBVectorField1D &u,
                     TESolver1DParams &p){
-    vector<function<double(double)>> Psy(p.getCellCount()+2);
+
+    vector<F1D> oldFi(p.getCellCount()+2);
     for(int i=-1; i<p.getCellCount()+1; i++){
-        F1D fi = getFi(f, i);
-        C1D ci = getCi(p.getDx(), i);
-        if(u.direction()<0){
-            F1D invFi = inverse(fi);
-            C1D invCi = inverse(ci);
-            Psy[i+1] = fInverseX(p.getFlowInterpolationFunctionBuilder()(invFi, invCi));
-        } else {
-            Psy[i+1] = p.getFlowInterpolationFunctionBuilder()(fi, ci);
-        }
+        oldFi[i+1] = getFi(f, i);
     }
 
-    double fiPrev = f[-1];
-    double fiAfterLast = f[p.getCellCount()];
-
-    for (int i = 0; i < p.getCellCount()-1; i++) { // calculating all cells except last
-        F1D fi = getFi(f, i);
-        fi.fiPrev = fiPrev; // using saved fi as fiPrev in the next cell
-        fiPrev = fi.fi;
-        f.set(i, fNext(fi, u, getCi(p.getDx(), i), p.getDt(),
-                       {Psy[i], Psy[i+1], Psy[i+2]}));
+    for (int i = 0; i < p.getCellCount(); i++) { // calculating all cells except last
+        f.set(i, fNext(oldFi[i+1], oldFi[i], oldFi[i+1], u, getCi(p.getDx(), i), p.getDt()));
     }
-    // fiNext for last cell is old f0, so we calc this separately
-    int iLast = p.getCellCount()-1;
-    F1D fiLast = {f[iLast], fiPrev, fiAfterLast};
-    f.set(iLast, fNext(fiLast, u, getCi(p.getDx(), iLast), p.getDt(), {Psy[iLast], Psy[iLast+1], Psy[iLast+2]}));
+
 }
 
 void SolveTransportEquationRBJR1D(Area1D &f,

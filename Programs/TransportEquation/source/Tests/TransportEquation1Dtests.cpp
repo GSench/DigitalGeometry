@@ -16,6 +16,7 @@
 #include "Tests.h"
 #include "../Utils/FileUtils.h"
 #include "../TransportEquationSolver/Solver1D/TERBSolver1D.h"
+#include "../TransportEquationSolver/Solver1D/TERBJRSolver1D.h"
 
 using namespace std;
 
@@ -88,11 +89,11 @@ void Solver1DJRStripMovementTest(){
     const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
 
     TESolver1DParams params (
-            1./8.,
-            0.1,
-            1.0,
-            64,
-            600,
+            0.7,
+            1,
+            16,
+            16,
+            10,
             [=](F1D f1D, C1D c1D) -> function<double(double)> {
                 return PsyJRandGodunov(f1D, c1D, 1e-4);
             }
@@ -109,9 +110,9 @@ void Solver1DJRStripMovementTest(){
     Area1D f(params.getCellCount(), true);
     f.fillRightHalfWith(1);
 
-    RBVectorField1D u(0.1, 0.1);
+    RBVectorField1D u(1.0, 1.0);
 
-    SolveTransportEquationRB1D(f, u, params, out);
+    SolveTransportEquationRBJR1D(f, u, params, out);
     out.finish();
 }
 
