@@ -267,12 +267,12 @@ f(t)=\int_{0}^{t}(\overrightarrow{v}_c(\tau)+[\overrightarrow{x}_c(\tau)\times-\
 \label{sec:RBVF}
 Поле скоростей твердого тела связано по формуле Эйлера:
 \[
-\overrightarrow{u}(\overrightarrow{r},t)=\overrightarrow{v_c}(t)+[\overrightarrow{\omega}(t)\times \overrightarrow{r}(t)]
+\overrightarrow{u}(\overrightarrow{x},t)=\overrightarrow{v_c}(t)+[\overrightarrow{\omega}(t)\times (\overrightarrow{x}_c(t)-\overrightarrow{x})]
 \]
 Рассмотрим составляющие поля скоростей вдоль направлений X,Y,Z:
 \[ \overrightarrow{u}(\overrightarrow{r},t)=(u_x, u_y, u_z)(\overrightarrow{r},t) \]
 \[ \overrightarrow{r}(t)=(x-x_c(t), y-y_c(t), z-z_c(t)) \]
-Векторы $\overrightarrow{v_c}(t)$ и $\overrightarrow{\omega}(t)$ считаются заданными.
+Векторы $\overrightarrow{v_c}(t)$ - скорость центра т.т. и $\overrightarrow{\omega}(t)$ - угловая скорость т.т. считаются заданными.
 \[ \overrightarrow{v_c}(t)=(v_{cx}(t), v_{cy}(t), v_{cz}(t)) \]
 \[ \overrightarrow{\omega}(t)=(\omega_x(t), \omega_y(t), \omega_z(t)) \]
 
@@ -343,7 +343,7 @@ error_k=\sqrt{\sum_{i=0}^{stepN}||\overrightarrow{x}_k^i-\overrightarrow{x_{real
 \]
 Где $\overrightarrow{u}$ – векторное поле скоростей, $f$ - переносимая скалярная величина. Определим  как функцию Хевисайда, принимающую значения 0 и 1:
 \begin{equation}
-f(x,t)=\begin{cases}1 & {\bf x}\in liquid \\0 & {\bf x}\not\in liquid\end{cases}
+f(x,t)=\begin{cases}1 & {\bf x}\not\in D(t) \\0 & {\bf x}\in D(t)\end{cases}
 \end{equation}
 $\nabla$ – оператор дивергенции.\\
 В одномерном случае данная задача рассматривается в виде:
@@ -420,7 +420,7 @@ f(x,t)=\begin{cases}1 & {\bf x}\in liquid \\0 & {\bf x}\not\in liquid\end{cases}
 В одномерном случае уравнение сводится к виду:
 \begin{equation}
 \label{eqn:TE1D}
-\frac{\partial f}{\partial t} + \frac{\partial (f u_{x})}{\partial x}=0
+\frac{\partial f}{\partial t} + \frac{\partial (f u)}{\partial x}=0
 \end{equation}
 
 \subsection{Численное решение}
@@ -437,7 +437,7 @@ f(x,t)=\begin{cases}1 & {\bf x}\in liquid \\0 & {\bf x}\not\in liquid\end{cases}
 \paragraph{Численное решение в общем случае.}
 Проинтегрируем уравнение переноса в одномерном случае (\ref{eqn:TE1D}) по времени на шаге $[t_n; t_{n+1}]$:
 \[
-(f^{n+1}-f^n)+\int_{t_n}^{t_{n+1}}\frac{\text{d}(f u)}{\text{d}x}d\tau=0
+(f^{n+1}-f^n)+\int_{t_n}^{t_{n+1}}\frac{\partial(f u)}{\partial x}d\tau=0
 \]
 Для численного дифференцирования используем явную разностную схему 2 порядка:
 \[

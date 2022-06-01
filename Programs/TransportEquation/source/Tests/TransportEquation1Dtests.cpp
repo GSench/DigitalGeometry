@@ -90,8 +90,8 @@ void Solver1DJRStripMovementTest(){
             1./8.,
             0.1,
             1.0,
-            64,
-            600,
+            48,
+            384,
             [=](F1D f1D, C1D c1D) -> function<double(double)> {
                 return PsyJR(f1D, c1D);
             }

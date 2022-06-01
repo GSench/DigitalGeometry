@@ -18,9 +18,10 @@ def plotArea1D(cellCount, dx, frame, plotTitle, plotOutPath, showPic):
     x = xCells(cellCount, dx)
     y = frame
 
-    plt.bar(x, y, color = ['cornflowerblue'], width = dx)
+    plt.plot(x, y, 'k-')
+    plt.plot(x, y, 'ro', markersize=14)
 
-    if cellCount < 100:
+    if False:
         plt.plot(x, y, 'ro')
         for i,j in zip(x,y):
             ax.annotate("{:10.4f}".format(j),xy=(i,j), ha='left', rotation=90)
@@ -42,8 +43,9 @@ def animation1D(cellCount, dx, NTimeSteps, realNTimeSteps, dt, frames, slowmo, p
     camera = Camera(fig)
     for frame in frames:
         y = frame
-        plt.bar(x, y, color = ['cornflowerblue'], width = dx)
-        if cellCount < 100:
+        plt.plot(x, y, 'k-')
+        plt.plot(x, y, 'ro', markersize=14)
+        if False:
             plt.plot(x, y, 'ro')
             for i,j in zip(x,y):
                 ax.annotate("{:10.4f}".format(j),xy=(i,j), ha='left', rotation=90)
