@@ -27,6 +27,8 @@ set(PROJECT_SOURCES
         source/TransportEquationSolver/Solver2D/TESolver2D.h
         source/TransportEquationSolver/Solver2D/TERBSolver2D.cpp
         source/TransportEquationSolver/Solver2D/TERBSolver2D.h
+        source/TransportEquationSolver/Solver2D/TERBJRSolver2D.cpp
+        source/TransportEquationSolver/Solver2D/TERBJRSolver2D.h
         source/math/Vector2D.h
         source/Tests/StandardSolver.cpp source/Tests/StandardSolver.h
         source/TransportEquationSolver/Solver1D/TESolver1DOutput.h
