@@ -31,3 +31,12 @@ function<double(double)> fInverseX(const function<double(double)> &f){
 function<double(double)> fMoveX(const function<double(double)> &f, double dx){
     return linearTransform(f, dx, 1, 0, 1);
 }
+
+double errorL2(vector<double> f, const vector<double>& fexact, double h){
+    double error = 0;
+    for (int i = 0; i < f.size(); i++) {
+        error += pow(f[i]*h - fexact[i] * h, 2);
+    }
+    error = sqrt(error);
+    return error;
+}

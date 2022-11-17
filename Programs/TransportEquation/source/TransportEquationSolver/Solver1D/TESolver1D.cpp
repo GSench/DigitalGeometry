@@ -76,13 +76,3 @@ void SolveTransportEquation1D(Area1D &f,
         output.print(f, n+1, p.getDx());
     }
 }
-
-//TODO remove from here errorL2
-double errorL2(vector<double> f, const vector<double>& fexact, double h){
-    double error = 0;
-    for (int i = 0; i < f.size(); i++) {
-        error += pow(f[i]*h - fexact[i] * h, 2);
-    }
-    error = sqrt(error);
-    return error;
-}
