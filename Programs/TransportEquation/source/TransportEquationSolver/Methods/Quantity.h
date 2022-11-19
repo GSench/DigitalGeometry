@@ -31,11 +31,11 @@ protected:
 public:
     explicit Quantity(int dimensions):dimensions(dimensions),neighbours(dimensions*2){}
 
-    Quantity& prev(){
+    virtual Quantity& prev(){
         return neighbours[direction*2];
     }
 
-    Quantity& next(){
+    virtual Quantity& next(){
         return neighbours[direction*2+1];
     }
 

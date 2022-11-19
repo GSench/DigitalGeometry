@@ -26,6 +26,15 @@ public:
     void setAlfa(double alfa) {
         newAlfa = alfa;
     }
+
+    VolumeFraction& next() override {
+        return dynamic_cast<VolumeFraction&>(Quantity::next());
+    }
+
+    VolumeFraction& prev() override {
+        return dynamic_cast<VolumeFraction&>(Quantity::next());
+    }
+
 };
 
 
