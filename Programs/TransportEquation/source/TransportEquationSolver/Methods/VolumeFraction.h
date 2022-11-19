@@ -10,16 +10,22 @@
 class VolumeFraction : public Quantity {
 private:
     double alfa = 0;
+    double newAlfa = 0;
+protected:
+    void apply() override {
+        alfa = newAlfa;
+    }
 public:
-    explicit VolumeFraction(double alfa) :
-        alfa(alfa) {}
+    explicit VolumeFraction(int dimensions, double alfa) :
+            Quantity(dimensions), alfa(alfa), newAlfa(alfa) {}
 
     double getAlfa() const {
         return alfa;
     }
 
-
-
+    void setAlfa(double alfa) {
+        newAlfa = alfa;
+    }
 };
 
 
