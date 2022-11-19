@@ -17,7 +17,6 @@ private:
     int direction = X;
     int dimensions = 1;
     vector<Quantity> neighbours; // {left, right}|1D, bottom, top}|2D, back, forward}|3D
-protected:
     bool hasChanges = false;
 public:
     explicit Quantity(int dimensions):dimensions(dimensions),neighbours(dimensions*2){}
@@ -51,6 +50,7 @@ public:
     void commit(){
         if(hasChanges) {
             apply();
+            hasChanges = false;
             for(Quantity& q: neighbours)
                 q.commit();
         }
