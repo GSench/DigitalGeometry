@@ -17,7 +17,17 @@ private:
     int direction = X;
     int dimensions = 1;
     vector<Quantity> neighbours; // {left, right}|1D, bottom, top}|2D, back, forward}|3D
-    bool hasChanges = false;
+    int version = 0;
+    void commit(int newVersion){
+        if(version!=newVersion){
+            version=newVersion;
+            apply();
+            for(Quantity& q: neighbours)
+                q.commit(version);
+        }
+    }
+protected:
+    virtual void apply() = 0;
 public:
     explicit Quantity(int dimensions):dimensions(dimensions),neighbours(dimensions*2){}
 
@@ -48,15 +58,8 @@ public:
     }
 
     void commit(){
-        if(hasChanges) {
-            apply();
-            hasChanges = false;
-            for(Quantity& q: neighbours)
-                q.commit();
-        }
+        commit(version+1);
     }
-
-    virtual void apply() = 0;
 
     virtual ~Quantity() = default;
 
