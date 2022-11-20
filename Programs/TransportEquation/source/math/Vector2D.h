@@ -15,7 +15,7 @@ public:
     int dim() override {return 2;};
 
     Vector2D(double x, double y) : Vector3D(x, y) {}
-    Vector2D(double x) : Vector3D(x) {}
+    explicit Vector2D(double x) : Vector3D(x) {}
     Vector2D() : Vector3D() {}
 };
 
