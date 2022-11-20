@@ -5,51 +5,18 @@
 #ifndef TRANSPORTEQUATION_VECTOR2D_H
 #define TRANSPORTEQUATION_VECTOR2D_H
 
-#include "Constants.h"
+#include "Vector3D.h"
 
-class Vector2D {
+class Vector2D : public Vector3D {
+private:
+    Vector2D(double x, double y, double z) : Vector3D(x, y, z) {}
+
 public:
-    double x = 0;
-    double y = 0;
+    int dim() override {return 2;};
 
-    Vector2D(double x, double y) : x(x), y(y) {}
-    Vector2D() : x(0), y(0) {}
-
-    double operator [](int xy) const {
-        return xy==X ? x : y;
-    }
-
-    Vector2D operator+(Vector2D v) const{
-        return {x+v.x, y+v.y};
-    }
-
-    void operator+=(Vector2D v) {
-        x+=v.x; y+=v.y;
-    }
-
-    Vector2D operator-(Vector2D v) const{
-        return {x-v.x, y-v.y};
-    }
-
-    void operator-=(Vector2D v) {
-        x-=v.x; y-=v.y;
-    }
-
-    Vector2D operator*(double s) const{
-        return {x*s, y*s};
-    }
-
-    void operator*=(double s) {
-        x*=s; y*=s;
-    }
-
-    Vector2D operator/(double s) const{
-        return {x/s, y/s};
-    }
-
-    void operator/=(double s) {
-        x/=s; y/=s;
-    }
+    Vector2D(double x, double y) : Vector3D(x, y) {}
+    Vector2D(double x) : Vector3D(x) {}
+    Vector2D() : Vector3D() {}
 };
 
 #endif //TRANSPORTEQUATION_VECTOR2D_H

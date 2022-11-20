@@ -7,12 +7,12 @@
 
 #include <vector>
 #include <functional>
-#include "../../math/Vector2D.h"
+#include "../../math/Vector3D.h"
 
 using namespace std;
 
-function<Vector2D(vector<Vector2D>, double)> trapezoidQuadrature();
-vector<Vector2D> integrate(vector<Vector2D> f, double from, double to,
-                           const function<Vector2D(vector<Vector2D>, double)>& quadrature);
+function<Vector3D(vector<Vector3D>, double)> trapezoidQuadrature();
+vector<Vector3D> integrate(vector<Vector3D> f, double from, double to,
+                           const function<Vector3D(vector<Vector3D>, double)>& quadrature);
 
 #endif //TRANSPORTEQUATION_INTEGRATIONTOOLS_H

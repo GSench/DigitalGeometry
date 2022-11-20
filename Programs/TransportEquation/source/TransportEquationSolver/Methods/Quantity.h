@@ -6,6 +6,8 @@
 #define TRANSPORTEQUATION_QUANTITY_H
 
 #include "../../math/Constants.h"
+#include "../../math/Vector2D.h"
+#include "../../math/Vector3D.h"
 #include <vector>
 #include <cstdlib>
 #include <stdexcept>
@@ -18,6 +20,10 @@ private:
     int dimensions = 1;
     vector<Quantity> neighbours; // {left, right}|1D, bottom, top}|2D, back, forward}|3D
     int version = 0;
+
+    Vector3D cellPos;
+    Vector3D cellSize;
+
     void commit(int newVersion){
         if(version!=newVersion){
             version=newVersion;
@@ -29,7 +35,26 @@ private:
 protected:
     virtual void apply() = 0;
 public:
-    explicit Quantity(int dimensions):dimensions(dimensions),neighbours(dimensions*2){}
+    explicit Quantity(Vector3D& cellPos, Vector3D& cellSize):
+        dimensions(cellPos.dim()),
+        neighbours(cellPos.dim()*2),
+        cellPos(cellPos),
+        cellSize(cellSize)
+    {}
+
+    explicit Quantity(Vector3D& cellPos, double dx): // square, cube
+        dimensions(cellPos.dim()),
+        neighbours(cellPos.dim()*2),
+        cellPos(cellPos),
+        cellSize(dx)
+    {}
+
+    explicit Quantity(double cellPos, double dx): // 1D
+            dimensions(1),
+            neighbours(2),
+            cellPos(1, cellPos),
+            cellSize(1, dx)
+    {}
 
     virtual Quantity& prev(){
         return neighbours[direction*2];
@@ -41,6 +66,22 @@ public:
 
     void setNeighbour(int dir, int lr, Quantity& n){
         neighbours[dir*2+lr] = n;
+    }
+
+    double x(){
+        return cellPos[direction];
+    }
+
+    double dx(){
+        return cellSize[direction];
+    }
+
+    double xL(){
+        return cellPos[direction]-cellSize[direction]/2;
+    }
+
+    double xR(){
+        return cellPos[direction]+cellSize[direction]/2;
     }
 
     void setXDir() {

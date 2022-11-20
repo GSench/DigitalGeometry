@@ -30,6 +30,7 @@ set(PROJECT_SOURCES
         source/TransportEquationSolver/Solver2D/TERBJRSolver2D.cpp
         source/TransportEquationSolver/Solver2D/TERBJRSolver2D.h
         source/math/Vector2D.h
+        source/math/Vector3D.h
         source/Tests/StandardSolver.cpp source/Tests/StandardSolver.h
         source/TransportEquationSolver/Solver1D/TESolver1DOutput.h
         source/TransportEquationSolver/Solver1D/TESolver1DOutput.cpp
@@ -84,6 +85,26 @@ set(PROJECT_SOURCES
         source/EulerEquationProblem/EESolver2D/EESolver2DOutput.h
         source/DGProblem/Tools/VectorFieldCalculation.cpp
         source/DGProblem/Tools/VectorFieldCalculation.h
-        source/TransportEquationSolver/Instances/RBVectorField1D.cpp source/TransportEquationSolver/Instances/RBVectorField1D.h source/EulerEquationProblem/Tools/IntegrationTools.cpp source/EulerEquationProblem/Tools/IntegrationTools.h source/math/VectorMeshTools.cpp source/math/VectorMeshTools.h source/TransportEquationSolver/Instances/RBVectorField2D.cpp source/TransportEquationSolver/Instances/RBVectorField2D.h source/DGProblem/DGSolver2D/DGSolver2DOutput.cpp source/DGProblem/DGSolver2D/DGSolver2DOutput.h source/TransportEquationSolver/Tools/JRUtils.cpp source/TransportEquationSolver/Tools/JRUtils.h source/TransportEquationSolver/Methods/Flow.h source/TransportEquationSolver/Methods/GodunovFlow.h source/TransportEquationSolver/Methods/TransportVelocity.h source/TransportEquationSolver/Methods/VolumeFraction.h source/TransportEquationSolver/Methods/Quantity.h source/TransportEquationSolver/Methods/MUSCLFlow.h source/TransportEquationSolver/Methods/TimeTransportVelocity.h source/math/Constants.h)
+        source/TransportEquationSolver/Instances/RBVectorField1D.cpp
+        source/TransportEquationSolver/Instances/RBVectorField1D.h
+        source/EulerEquationProblem/Tools/IntegrationTools.cpp
+        source/EulerEquationProblem/Tools/IntegrationTools.h
+        source/math/VectorMeshTools.cpp
+        source/math/VectorMeshTools.h
+        source/TransportEquationSolver/Instances/RBVectorField2D.cpp
+        source/TransportEquationSolver/Instances/RBVectorField2D.h
+        source/DGProblem/DGSolver2D/DGSolver2DOutput.cpp
+        source/DGProblem/DGSolver2D/DGSolver2DOutput.h
+        source/TransportEquationSolver/Tools/JRUtils.cpp
+        source/TransportEquationSolver/Tools/JRUtils.h
+        source/TransportEquationSolver/Methods/Flow.h
+        source/TransportEquationSolver/Methods/GodunovFlow.h
+        source/TransportEquationSolver/Methods/TransportVelocity.h
+        source/TransportEquationSolver/Methods/VolumeFraction.h
+        source/TransportEquationSolver/Methods/Quantity.h
+        source/TransportEquationSolver/Methods/MUSCLFlow.h
+        source/TransportEquationSolver/Methods/TimeTransportVelocity.h
+        source/math/Constants.h
+        )
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})
