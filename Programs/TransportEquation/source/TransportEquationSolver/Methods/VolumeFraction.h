@@ -16,15 +16,31 @@ protected:
         alfa = newAlfa;
     }
 public:
-    explicit VolumeFraction(int dimensions, double alfa) :
-            Quantity(dimensions), alfa(alfa), newAlfa(alfa) {}
+
+    explicit VolumeFraction(Vector3D& cellPos, Vector3D& cellSize, double alfa):
+        Quantity(cellPos, cellSize),
+        alfa(alfa),
+        newAlfa(alfa)
+    {}
+
+    explicit VolumeFraction(Vector3D& cellPos, double dx, double alfa): // square, cube
+        Quantity(cellPos, dx),
+        alfa(alfa),
+        newAlfa(alfa)
+    {}
+
+    explicit VolumeFraction(double cellPos, double dx, double alfa): // 1D
+        Quantity(cellPos, dx),
+        alfa(alfa),
+        newAlfa(alfa)
+    {}
 
     double getAlfa() const {
         return alfa;
     }
 
-    void setAlfa(double alfa) {
-        newAlfa = alfa;
+    void setAlfa(double a) {
+        newAlfa = a;
     }
 
     VolumeFraction& next() override {
@@ -32,7 +48,7 @@ public:
     }
 
     VolumeFraction& prev() override {
-        return dynamic_cast<VolumeFraction&>(Quantity::next());
+        return dynamic_cast<VolumeFraction&>(Quantity::prev());
     }
 
 };

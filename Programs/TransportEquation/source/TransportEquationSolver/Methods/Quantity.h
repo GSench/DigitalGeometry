@@ -18,7 +18,7 @@ class Quantity {
 private:
     int direction = X;
     int dimensions = 1;
-    vector<Quantity> neighbours; // {left, right}|1D, bottom, top}|2D, back, forward}|3D
+    vector<Quantity*> neighbours; // {left, right}|1D, bottom, top}|2D, back, forward}|3D
     int version = 0;
 
     Vector3D cellPos;
@@ -28,12 +28,12 @@ private:
         if(version!=newVersion){
             version=newVersion;
             apply();
-            for(Quantity& q: neighbours)
-                q.commit(version);
+            for(Quantity* q: neighbours)
+                q->commit(version);
         }
     }
 protected:
-    virtual void apply() = 0;
+    virtual void apply() { }
 public:
     explicit Quantity(Vector3D& cellPos, Vector3D& cellSize):
         dimensions(cellPos.dim()),
@@ -52,20 +52,20 @@ public:
     explicit Quantity(double cellPos, double dx): // 1D
             dimensions(1),
             neighbours(2),
-            cellPos(1, cellPos),
-            cellSize(1, dx)
+            cellPos(cellPos),
+            cellSize(dx)
     {}
 
     virtual Quantity& prev(){
-        return neighbours[direction*2];
+        return *neighbours[direction*2];
     }
 
     virtual Quantity& next(){
-        return neighbours[direction*2+1];
+        return *neighbours[direction*2+1];
     }
 
     void setNeighbour(int dir, int lr, Quantity& n){
-        neighbours[dir*2+lr] = n;
+        neighbours[dir*2+lr] = &n;
     }
 
     double x(){
@@ -102,7 +102,7 @@ public:
         commit(version+1);
     }
 
-    virtual ~Quantity() = default;
+    //virtual ~Quantity() = default;
 
 };
 
