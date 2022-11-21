@@ -21,6 +21,8 @@ private:
     vector<Quantity*> neighbours; // {left, right}|1D, bottom, top}|2D, back, forward}|3D
     int version = 0;
 
+    // these variables are values, passing Vector1D/2D leads to object slicing, so mind that returning them as references returns Vector3D, and no cast will help!
+    // if you need to get these values as references to its original Vectors' dimensions, make them pointers and init them in constructors as copy of passed reference, or as reference to copied passed objects
     Vector3D cellPos;
     Vector3D cellSize;
 
