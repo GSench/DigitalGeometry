@@ -14,6 +14,7 @@
 
 using namespace std;
 
+template<typename T>
 class Quantity {
 private:
     int direction = X;
@@ -26,37 +27,49 @@ private:
     Vector3D cellPos;
     Vector3D cellSize;
 
-    void commit(int newVersion){
+    T quantity;
+    T newQuantity;
+
+    void apply(int newVersion){
         if(version!=newVersion){
             version=newVersion;
-            apply();
+            quantity = newQuantity;
             for(Quantity* q: neighbours)
-                q->commit(version);
+                q->apply(version);
         }
     }
-protected:
-    virtual void apply() { }
 public:
-    explicit Quantity(Vector3D& cellPos, Vector3D& cellSize):
+    explicit Quantity(Vector3D& cellPos, Vector3D& cellSize, T& quantity):
         dimensions(cellPos.dim()),
         neighbours(cellPos.dim()*2),
         cellPos(cellPos),
-        cellSize(cellSize)
+        cellSize(cellSize),
+        quantity(quantity)
     {}
 
-    explicit Quantity(Vector3D& cellPos, double dx): // square, cube
+    explicit Quantity(Vector3D& cellPos, double dx, T& quantity): // square, cube
         dimensions(cellPos.dim()),
         neighbours(cellPos.dim()*2),
         cellPos(cellPos),
-        cellSize(dx)
+        cellSize(dx),
+        quantity(quantity)
     {}
 
-    explicit Quantity(double cellPos, double dx): // 1D
+    explicit Quantity(double cellPos, double dx, T& quantity): // 1D
             dimensions(1),
             neighbours(2),
             cellPos(cellPos),
-            cellSize(dx)
+            cellSize(dx),
+            quantity(quantity)
     {}
+
+    T getQuantity() const {
+        return quantity;
+    }
+
+    void setQuantity(T q) {
+        newQuantity = q;
+    }
 
     virtual Quantity& prev(){
         return *neighbours[direction*2];
@@ -100,8 +113,8 @@ public:
         direction = Z;
     }
 
-    void commit(){
-        commit(version+1);
+    void apply(){
+        apply(version+1);
     }
 
     //virtual ~Quantity() = default;

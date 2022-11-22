@@ -8,10 +8,10 @@
 #include "TransportVelocity.h"
 #include "Quantity.h"
 
-//template<typename Quantity>
+template<typename T>
 class Flow {
 public:
-    virtual Quantity& calc(Quantity& l, Quantity& r, double dt, TransportVelocity& u) = 0;
+    virtual T& calc(Quantity<T>& l, Quantity<T>& r, double dt, TransportVelocity& u) = 0;
 };
 
 

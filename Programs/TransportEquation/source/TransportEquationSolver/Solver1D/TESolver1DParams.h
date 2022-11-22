@@ -6,13 +6,14 @@
 #define TRANSPORTEQUATION_TESOLVER1DPARAMS_H
 
 #include "../Instances/TESolver1DInstances.h"
+#include "../Methods/Flow.h"
 
 class TESolver1DParams {
 private:
     double dx;
     double dt;
     int NTimeSteps;
-    function<function<double(double)>(F1D f, C1D c)> FlowInterpolationFunction;
+    Flow& flow;
 
 protected:
     int cellCount;
@@ -21,25 +22,25 @@ public:
     TESolver1DParams(
             double dx, int cellCount,
             double dt, int nTimeSteps,
-            const function<function<double(double)>(F1D, C1D)> &flowInterpolationFunction
+            Flow& flow
             ) :
             dx(dx),
             cellCount(cellCount),
             dt(dt),
             NTimeSteps(nTimeSteps),
-            FlowInterpolationFunction(flowInterpolationFunction)
+            flow(flow)
             {}
 
     TESolver1DParams(
             double CFL, double uPrimary,
             double areaLength, int cellCount, int nTimeSteps,
-            const function<function<double(double)>(F1D, C1D)> &flowInterpolationFunction
+            Flow& flow
             ) :
             dx(areaLength/cellCount),
             cellCount(cellCount),
             dt(CFL *  /*dx=*/areaLength/cellCount  / uPrimary),
             NTimeSteps(nTimeSteps),
-            FlowInterpolationFunction(flowInterpolationFunction)
+            flow(flow)
     {}
     double getDx() const {
         return dx;
@@ -57,8 +58,8 @@ public:
         return NTimeSteps;
     }
 
-    const function<function<double(double)>(F1D, C1D)> &getFlowInterpolationFunctionBuilder() const {
-        return FlowInterpolationFunction;
+    Flow& getFlow() {
+        return flow;
     }
 };
 

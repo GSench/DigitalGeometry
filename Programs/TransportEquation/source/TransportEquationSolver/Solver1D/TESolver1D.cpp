@@ -26,47 +26,19 @@ double fNext(F1D fi,
     return fi.fi - 1.0 / ci.dx * (fiR*ui.uR - fiL*ui.uL) * dt;
 }
 
-void TESolverStep(LineInterface &f,
-                  LineInterface &u,
+template<typename T>
+void TESolverStep(Quantity<T> &f,
+                  VectorField1D &u,
                   TESolver1DParams &p){
-    vector<function<double(double)>> Psy(p.getCellCount()+2);
-    for(int i=-1; i<p.getCellCount()+1; i++){
-        int sgnUi = 0;
-        if(i==-1) //TODO extend u outside area like f
-            sgnUi = sgn(u[0]);
-        else if(i==p.getCellCount())
-            sgnUi = sgn(u[i]);
-        else
-            sgnUi = sgn((u[i]+u[i+1])/2.);
-        F1D fi = getFi(f, i);
-        C1D ci = getCi(p.getDx(), i);
-        if(sgnUi<0){
-            F1D invFi = inverse(fi);
-            C1D invCi = inverse(ci);
-            Psy[i+1] = fInverseX(p.getFlowInterpolationFunctionBuilder()(invFi, invCi));
-        } else {
-            Psy[i+1] = p.getFlowInterpolationFunctionBuilder()(fi, ci);
-        }
+    Quantity<T> currentQuantity = f;
+    for (int i = 0; i < p.getCellCount(); i++) {
+
+        f.setQuantity()
     }
-
-
-    double fiPrev = f[-1];
-    double fiAfterLast = f[p.getCellCount()];
-
-    for (int i = 0; i < p.getCellCount()-1; i++) { // calculating all cells except last
-        F1D fi = getFi(f, i);
-        fi.fiPrev = fiPrev; // using saved fi as fiPrev in the next cell
-        fiPrev = fi.fi;
-        f.set(i, fNext(fi, getUi(u, i), getCi(p.getDx(), i), p.getDt(),
-                       {Psy[i], Psy[i+1], Psy[i+2]}));
-    }
-    // fiNext for last cell is old f0, so we calc this separately
-    int iLast = p.getCellCount()-1;
-    F1D fiLast = {f[iLast], fiPrev, fiAfterLast};
-    f.set(iLast, fNext(fiLast, getUi(u, iLast), getCi(p.getDx(), iLast), p.getDt(), {Psy[iLast], Psy[iLast+1], Psy[iLast+2]}));
 }
 
-void SolveTransportEquation1D(Area1D &f,
+template<typename T>
+void SolveTransportEquation1D(Quantity<T> &f,
                               VectorField1D &u,
                               TESolver1DParams &p,
                               TESolver1DOutput &output) {
