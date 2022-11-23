@@ -27,6 +27,8 @@ private:
     Vector3D cellPos;
     Vector3D cellSize;
 
+    bool border = false;
+
     T quantity;
     T newQuantity;
 
@@ -39,7 +41,7 @@ private:
         }
     }
 public:
-    explicit Quantity(Vector3D& cellPos, Vector3D& cellSize, T& quantity):
+    explicit Quantity(Vector3D& cellPos, Vector3D& cellSize, T quantity):
         dimensions(cellPos.dim()),
         neighbours(cellPos.dim()*2),
         cellPos(cellPos),
@@ -47,7 +49,7 @@ public:
         quantity(quantity)
     {}
 
-    explicit Quantity(Vector3D& cellPos, double dx, T& quantity): // square, cube
+    explicit Quantity(Vector3D& cellPos, double dx, T quantity): // square, cube
         dimensions(cellPos.dim()),
         neighbours(cellPos.dim()*2),
         cellPos(cellPos),
@@ -55,7 +57,7 @@ public:
         quantity(quantity)
     {}
 
-    explicit Quantity(double cellPos, double dx, T& quantity): // 1D
+    explicit Quantity(double cellPos, double dx, T quantity): // 1D
             dimensions(1),
             neighbours(2),
             cellPos(cellPos),
@@ -111,6 +113,18 @@ public:
     void setZDir() {
         if(dimensions<3) throw domain_error("attempt to switch Z direction in 1D/2D quantity");
         direction = Z;
+    }
+
+    bool isBorder() const {
+        return border;
+    }
+
+    void markBorder(){
+        border = true;
+    }
+
+    void markIntermediate(){
+        border = false;
     }
 
     void apply(){

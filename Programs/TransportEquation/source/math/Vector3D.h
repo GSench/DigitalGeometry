@@ -64,6 +64,10 @@ public:
     void operator/=(double s) {
         x/=s; y/=s; z/=s;
     }
+
+    static Vector3D& zero(){
+        return *(new Vector3D());
+    }
 };
 
 #endif //TRANSPORTEQUATION_VECTOR3D_H

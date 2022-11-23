@@ -7,17 +7,12 @@
 
 
 #include "Flow.h"
-#include "VolumeFraction.h"
 #include "TimeTransportVelocity.h"
 
-class MUSCLFlow : Flow {
+class MUSCLFlow : Flow<double> {
 public:
-    Quantity& calc(Quantity& l, Quantity& r, double dt, TransportVelocity& u) override {
-        VolumeFraction& fl = dynamic_cast<VolumeFraction&>(l);
-        VolumeFraction& fr = dynamic_cast<VolumeFraction&>(r);
-        TimeTransportVelocity& ut = dynamic_cast<TimeTransportVelocity&>(u);
-
-        return u.direction() > 0 ? l : r;
+    double calc(Quantity<double>& l, Quantity<double>& r, double dt, Velocity& u) override {
+        return u.direction() > 0 ? l.getQuantity() : r.getQuantity();
     }
 };
 

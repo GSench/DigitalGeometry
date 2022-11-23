@@ -6,9 +6,9 @@
 #define TRANSPORTEQUATION_TIMETRANSPORTVELOCITY_H
 
 #include "../../math/MathUtils.h"
-#include "TransportVelocity.h"
+#include "Velocity.h"
 
-class TimeTransportVelocity : TransportVelocity {
+class TimeTransportVelocity : Velocity {
 private:
     double u = 0;
     double uNext = 0;

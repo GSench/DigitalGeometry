@@ -6,12 +6,12 @@
 #define TRANSPORTEQUATION_GODUNOVFLOW_H
 
 #include "Flow.h"
-#include "VolumeFraction.h"
 
-class GodunovFlow : public Flow {
+template<typename T>
+class GodunovFlow : public Flow<T> {
 public:
-    Quantity& calc(Quantity& l, Quantity& r, double dt, TransportVelocity& u) override {
-        return u.direction() > 0 ? l : r;
+    T calc(Quantity<T>& l, Quantity<T>& r, double dt, Velocity& u) override {
+        return u.direction() > 0 ? l.getQuantity() : r.getQuantity();
     }
 };
 

@@ -8,12 +8,13 @@
 #include "../Instances/TESolver1DInstances.h"
 #include "../Methods/Flow.h"
 
+template<typename T>
 class TESolver1DParams {
 private:
     double dx;
     double dt;
     int NTimeSteps;
-    Flow& flow;
+    Flow<T>& flow;
 
 protected:
     int cellCount;
@@ -22,7 +23,7 @@ public:
     TESolver1DParams(
             double dx, int cellCount,
             double dt, int nTimeSteps,
-            Flow& flow
+            Flow<T>& flow
             ) :
             dx(dx),
             cellCount(cellCount),
@@ -34,7 +35,7 @@ public:
     TESolver1DParams(
             double CFL, double uPrimary,
             double areaLength, int cellCount, int nTimeSteps,
-            Flow& flow
+            Flow<T>& flow
             ) :
             dx(areaLength/cellCount),
             cellCount(cellCount),
@@ -58,7 +59,7 @@ public:
         return NTimeSteps;
     }
 
-    Flow& getFlow() {
+    Flow<T>& getFlow() {
         return flow;
     }
 };
