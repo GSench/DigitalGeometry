@@ -115,6 +115,10 @@ public:
         direction = Z;
     }
 
+    int getDirection() const {
+        return direction;
+    }
+
     bool isBorder() const {
         return border;
     }

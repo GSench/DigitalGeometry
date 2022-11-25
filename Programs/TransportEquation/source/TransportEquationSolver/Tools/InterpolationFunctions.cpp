@@ -1,4 +1,3 @@
-#include <vector>
 #include <functional>
 
 #include "../../math/MathUtils.h"

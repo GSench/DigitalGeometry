@@ -7,12 +7,13 @@
 
 
 #include "Flow.h"
-#include "TimeTransportVelocity.h"
+#include "TimeStepVelocity.h"
 
-class MUSCLFlow : Flow<double> {
+class MUSCLFlow : Flow<double, TimeStepVelocity&> {
 public:
-    double calc(Quantity<double>& l, Quantity<double>& r, double dt, Velocity& u) override {
-        return u.direction() > 0 ? l.getQuantity() : r.getQuantity();
+    double calc(Quantity<double>& l, Quantity<double>& r, double dt, Quantity<TimeStepVelocity&>& u) override {
+        double transportSpeed = u.getQuantity().getU()[u.getDirection()];
+        return transportSpeed > 0 ? l.getQuantity() : r.getQuantity();
     }
 };
 

@@ -8,10 +8,10 @@
 #include "Flow.h"
 
 template<typename T>
-class GodunovFlow : public Flow<T> {
+class GodunovFlow : public Flow<T, Velocity&> {
 public:
-    T calc(Quantity<T>& l, Quantity<T>& r, double dt, Velocity& u) override {
-        return u.direction() > 0 ? l.getQuantity() : r.getQuantity();
+    T calc(Quantity<T>& l, Quantity<T>& r, double dt, Quantity<Velocity&>& u) override {
+        return u.getQuantity().direction()[u.getDirection()] > 0 ? l.getQuantity() : r.getQuantity();
     }
 };
 

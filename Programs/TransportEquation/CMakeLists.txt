@@ -65,7 +65,7 @@ set(PROJECT_SOURCES
         source/TransportEquationSolver/Methods/GodunovFlow.h
         source/TransportEquationSolver/Methods/MUSCLFlow.h
         source/TransportEquationSolver/Methods/Quantity.h
-        source/TransportEquationSolver/Methods/TimeTransportVelocity.h
+        source/TransportEquationSolver/Methods/TimeStepVelocity.h
         source/TransportEquationSolver/Methods/Velocity.h
         #source/TransportEquationSolver/Solver1D/TERBJRSolver1D.cpp
         #source/TransportEquationSolver/Solver1D/TERBJRSolver1D.h

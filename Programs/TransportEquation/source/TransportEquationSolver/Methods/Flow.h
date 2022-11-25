@@ -6,11 +6,12 @@
 #define TRANSPORTEQUATION_FLOW_H
 
 #include "Velocity.h"
+#include "Quantity.h"
 
-template<typename T>
+template<typename T, typename U>
 class Flow {
 public:
-    virtual T calc(Quantity<T>& l, Quantity<T>& r, double dt, Velocity& u) = 0;
+    virtual T calc(Quantity<T>& l, Quantity<T>& r, double dt, Quantity<U>& u) = 0;
 };
 
 
