@@ -8,7 +8,7 @@ void updateCell(Quantity<F> &f,
                 TESolver1DParams<F,U> &p){
     F fL = p.getFlow().calc(f.prev(), f, p.getDt(), u);
     F fR = p.getFlow().calc(f, f.next(), p.getDt(), u.next());
-    F fNext = f.getQuantity() - p.getDt() / 2. / f.dx() * (fR - fL);
+    F fNext = f.getQuantity() - 1. / f.dx() * (fR - fL);
     f.setQuantity(fNext);
 }
 
