@@ -11,7 +11,7 @@ template<typename T>
 class GodunovFlow : public Flow<T, Velocity&> {
 public:
     T calc(Quantity<T>& l, Quantity<T>& r, double dt, Quantity<Velocity&>& u) override {
-        return u.getQuantity().direction()[u.getDirection()] > 0 ? l.getQuantity() : r.getQuantity();
+        return dt/2. * (u.getQuantity().direction()[u.getDirection()] > 0 ? l.getQuantity() : r.getQuantity());
     }
 };
 
