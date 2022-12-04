@@ -73,8 +73,8 @@ set(PROJECT_SOURCES
         #source/TransportEquationSolver/Solver1D/TERBSolver1D.h
         source/TransportEquationSolver/Solver1D/TESolver1D.cpp
         source/TransportEquationSolver/Solver1D/TESolver1D.h
-        #source/TransportEquationSolver/Solver1D/TESolver1DOutput.cpp
-        #source/TransportEquationSolver/Solver1D/TESolver1DOutput.h
+        source/TransportEquationSolver/Solver1D/TESolver1DOutput.cpp
+        source/TransportEquationSolver/Solver1D/TESolver1DOutput.h
         source/TransportEquationSolver/Solver1D/TESolver1DParams.h
         #source/TransportEquationSolver/Solver2D/TERBJRSolver2D.cpp
         #source/TransportEquationSolver/Solver2D/TERBJRSolver2D.h

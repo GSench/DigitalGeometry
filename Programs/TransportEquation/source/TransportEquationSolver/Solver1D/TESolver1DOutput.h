@@ -8,11 +8,12 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include "../Instances/Area1D.h"
+#include <functional>
 #include "TESolver1DParams.h"
 
 using namespace std;
 
+template<typename T, typename U>
 class TESolver1DOutput {
 private:
     bool printToFile = false;
@@ -26,6 +27,8 @@ private:
     int realNTimeSteps = 50;
     double printNStep = 1;
     bool allowPrintError = true;
+    function<string&(T)>& T2String;
+    function<string&(U)>& U2String;
 public:
     TESolver1DOutput(
             bool printToFile,
@@ -37,7 +40,9 @@ public:
             bool barePrint,
             int NTimeSteps,
             int maxFrames,
-            bool allowPrintError
+            bool allowPrintError,
+            function<string&(T)>& T2String,
+            function<string&(U)>& U2String
             ) :
             printToFile(printToFile),
             printXAxes(printXAxes),
@@ -48,25 +53,27 @@ public:
             NTimeSteps(NTimeSteps),
             realNTimeSteps(barePrint ? min(maxFrames, NTimeSteps) : NTimeSteps),
             printNStep( (double)NTimeSteps / min(maxFrames, NTimeSteps)),
-            allowPrintError(allowPrintError)
+            allowPrintError(allowPrintError),
+            T2String(T2String),
+            U2String(U2String)
             {
         if(printToFile){
             resultFile.open(resultFilePath);
         }
     }
 
-    void printHeader(const TESolver1DParams &params){
+    void printHeader(const TESolver1DParams<T, U> &params){
         resultFile << params.getCellCount() << "\t" << params.getDx() << endl;
         resultFile << params.getNTimeSteps() << "\t" << realNTimeSteps << "\t" << params.getDt() << endl;
     }
 
-    void print(Area1D &f, int t, double h){
+    void print(Quantity<T> &f, int t, double h){
         if(!printToFile) return;
 
         if(barePrint)
-        if(t!=0 && t!=NTimeSteps)
-            if((int)(t/printNStep) == (int)((t-1)/printNStep))
-                return;
+            if(t!=0 && t!=NTimeSteps)
+                if((int)(t/printNStep) == (int)((t-1)/printNStep))
+                    return;
 
         if(t==0 && printHorizontally && printXAxes && printXAxesOnes){
             for (int i = 0; i < f.size(); i++)
@@ -111,10 +118,15 @@ public:
     }
 };
 
-TESolver1DOutput noOutput();
-TESolver1DOutput minimal1DOutput(const string& filePath, int NTimeSteps);
-TESolver1DOutput maximal1DOutput(const string& filePath, int NTimeSteps);
-TESolver1DOutput normal1DOutput(const string& filePath, int NTimeSteps);
-TESolver1DOutput jupyter1DOutput(const string& filePath, int NTimeSteps);
+template<typename T, typename U>
+TESolver1DOutput<T,U> noOutput();
+template<typename T, typename U>
+TESolver1DOutput<T,U> minimal1DOutput(const string& filePath, int NTimeSteps);
+template<typename T, typename U>
+TESolver1DOutput<T,U> maximal1DOutput(const string& filePath, int NTimeSteps);
+template<typename T, typename U>
+TESolver1DOutput<T,U> normal1DOutput(const string& filePath, int NTimeSteps);
+template<typename T, typename U>
+TESolver1DOutput<T,U> jupyter1DOutput(const string& filePath, int NTimeSteps);
 
 #endif //TRANSPORTEQUATION_TESOLVER1DOUTPUT_H
