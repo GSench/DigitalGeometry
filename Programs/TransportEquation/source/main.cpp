@@ -6,7 +6,6 @@
 #include "Tests/EulerEquation2Dtests.h"
 #include "Tests/DigitalGeometryTests2D.h"*/
 
-#include "math/Vector2D.h"
 #include "TransportEquationSolver/Methods/Quantity.h"
 
 /*

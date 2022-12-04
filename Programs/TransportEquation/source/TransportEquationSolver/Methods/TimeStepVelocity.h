@@ -10,20 +10,20 @@
 
 class TimeStepVelocity : Velocity {
 private:
-    Vector3D& u;
-    Vector3D& uNext;
+    Vector& u;
+    Vector& uNext;
 public:
-    TimeStepVelocity(Vector3D& u, Vector3D& uNext) : u(u), uNext(uNext) {}
+    TimeStepVelocity(Vector& u, Vector& uNext) : u(u), uNext(uNext) {}
 
-    Vector3D& getU() const {
+    Vector& getU() const {
         return u;
     }
 
-    Vector3D& getUNext() const {
+    Vector& getUNext() const {
         return uNext;
     }
 
-    Vector3D direction() override {
+    Vector direction() override {
         return u+uNext;
     }
 };

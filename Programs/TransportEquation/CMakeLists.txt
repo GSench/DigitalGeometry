@@ -102,8 +102,7 @@ set(PROJECT_SOURCES
         source/math/Constants.h
         source/math/MathUtils.cpp
         source/math/MathUtils.h
-        source/math/Vector2D.h
-        source/math/Vector3D.h
+        source/math/Vector.h
         source/math/VectorMeshTools.cpp
         source/math/VectorMeshTools.h
         source/stuff/CompilerDifferenceHighlighter.cpp

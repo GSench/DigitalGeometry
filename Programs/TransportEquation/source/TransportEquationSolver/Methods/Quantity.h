@@ -6,8 +6,7 @@
 #define TRANSPORTEQUATION_QUANTITY_H
 
 #include "../../math/Constants.h"
-#include "../../math/Vector2D.h"
-#include "../../math/Vector3D.h"
+#include "../../math/Vector.h"
 #include <vector>
 #include <cstdlib>
 #include <stdexcept>
@@ -24,8 +23,8 @@ private:
 
     // these variables are values, passing Vector1D/2D leads to object slicing, so mind that returning them as references returns Vector3D, and no cast will help!
     // if you need to get these values as references to its original Vectors' dimensions, make them pointers and init them in constructors as copy of passed reference, or as reference to copied passed objects
-    Vector3D cellPos;
-    Vector3D cellSize;
+    Vector cellPos;
+    Vector cellSize;
 
     bool border = false;
 
@@ -41,19 +40,19 @@ private:
         }
     }
 public:
-    explicit Quantity(Vector3D& cellPos, Vector3D& cellSize, T quantity):
-        dimensions(cellPos.dim()),
-        neighbours(cellPos.dim()*2),
+    explicit Quantity(Vector& cellPos, Vector& cellSize, T quantity):
+        dimensions(cellPos.dim),
+        neighbours(cellPos.dim*2),
         cellPos(cellPos),
         cellSize(cellSize),
         quantity(quantity)
     {}
 
-    explicit Quantity(Vector3D& cellPos, double dx, T quantity): // square, cube
-        dimensions(cellPos.dim()),
-        neighbours(cellPos.dim()*2),
+    explicit Quantity(Vector& cellPos, double dx, T quantity): // square, cube
+        dimensions(cellPos.dim),
+        neighbours(cellPos.dim*2),
         cellPos(cellPos),
-        cellSize(dx),
+        cellSize(vector<double>(cellPos.dim, dx)),
         quantity(quantity)
     {}
 

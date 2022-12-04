@@ -5,11 +5,11 @@
 #ifndef TRANSPORTEQUATION_VELOCITY_H
 #define TRANSPORTEQUATION_VELOCITY_H
 
-#include "../../math/Vector3D.h"
+#include "../../math/Vector.h"
 
 class Velocity {
 public:
-    virtual Vector3D direction()=0;
+    virtual Vector direction()=0;
 };
 
 
