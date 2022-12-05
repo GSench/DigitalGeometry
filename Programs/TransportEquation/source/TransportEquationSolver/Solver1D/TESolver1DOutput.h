@@ -109,6 +109,25 @@ public:
         }
     }
 
+    TESolver1DOutput():
+            printToFile(false),
+            printXAxes(false),
+            printT(false),
+            printHorizontally(false),
+            printXAxesOnes(false),
+            barePrint(false),
+            NTimeSteps(0),
+            realNTimeSteps(0),
+            printNStep(0),
+            allowPrintError(false),
+            T2String(nullptr),
+            U2String(nullptr)
+    {} // no output
+
+    TESolver1DOutput(const string& filePath, int NTimeSteps, int maxFrames, function<string(T)> T2String) : TESolver1DOutput(
+            true, false, false, true, false, filePath, true, NTimeSteps, maxFrames, false, T2String, nullptr
+            ){} // minimalistic output
+
     void printHeader(const TESolver1DParams<T, U> &params){
         print2File(params.getCellCount());print2File("\t");
         print2File(params.getDx()); print2File("\n");
@@ -163,17 +182,5 @@ public:
 };
 
 function<string(double)> doublePrinter();
-
-TESolver1DOutput<double,double> noOutput();
-//template<typename T>
-TESolver1DOutput<double,double> terminal1DOutput(int NTimeSteps, function<string(double)> T2String);
-template<typename T>
-TESolver1DOutput<T,double> minimal1DOutput(const string& filePath, int NTimeSteps, function<string(T)> T2String);
-template<typename T>
-TESolver1DOutput<T,double> maximal1DOutput(const string& filePath, int NTimeSteps, function<string(T)> T2String);
-template<typename T>
-TESolver1DOutput<T,double> normal1DOutput(const string& filePath, int NTimeSteps, function<string(T)> T2String);
-template<typename T>
-TESolver1DOutput<T,double> jupyter1DOutput(const string& filePath, int NTimeSteps, function<string(T)> T2String);
 
 #endif //TRANSPORTEQUATION_TESOLVER1DOUTPUT_H
