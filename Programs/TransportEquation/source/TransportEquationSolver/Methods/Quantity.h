@@ -136,7 +136,20 @@ public:
         apply(version+1);
     }
 
+    void fillQuantity(int fromCell, int toCell, T newQuantity){
+        Quantity<T>* fIter = *this;
+        for(int i=0; i<fromCell; i++){
+            fIter = fIter->next();
+        }
+        for(int i=fromCell; i<toCell; i++){
+            fIter->setQuantity(newQuantity);
+            fIter = fIter->next();
+        }
+    }
+
 };
 
+template<typename T>
+Quantity<T>& generate1DMesh(int cellCount, double dx, T defaultValue);
 
 #endif //TRANSPORTEQUATION_QUANTITY_H
