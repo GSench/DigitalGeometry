@@ -5,13 +5,15 @@
 #ifndef TRANSPORTEQUATION_QUANTITY_H
 #define TRANSPORTEQUATION_QUANTITY_H
 
-#include "../../math/Constants.h"
 #include "../../math/Vector.h"
 #include <vector>
 #include <cstdlib>
 #include <stdexcept>
 
 using namespace std;
+
+const int L = 0;
+const int R = 1;
 
 template<typename T>
 class Quantity {
@@ -72,12 +74,12 @@ public:
         newQuantity = q;
     }
 
-    virtual Quantity& prev(){
-        return *neighbours[direction*2];
+    Quantity* prev(){
+        return neighbours[direction*2];
     }
 
-    virtual Quantity& next(){
-        return *neighbours[direction*2+1];
+    Quantity* next(){
+        return neighbours[direction*2+1];
     }
 
     void setNeighbour(int dir, int lr, Quantity& n){
@@ -133,8 +135,6 @@ public:
     void apply(){
         apply(version+1);
     }
-
-    //virtual ~Quantity() = default;
 
 };
 

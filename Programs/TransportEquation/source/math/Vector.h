@@ -16,7 +16,7 @@ private:
     vector<double> vals;
 public:
 
-    const int dim;
+    int dim;
 
     explicit Vector(const vector<double>& vals): vals(vals), dim(vals.size()) {}
     Vector(double x, double y, double z) : vals(3), dim(3) {

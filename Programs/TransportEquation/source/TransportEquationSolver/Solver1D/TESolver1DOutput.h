@@ -13,10 +13,13 @@
 
 using namespace std;
 
+static const string TERMINAL = "TERMINAL";
+
 template<typename T, typename U>
 class TESolver1DOutput {
 private:
     bool printToFile = false;
+    bool useTerminal = false;
     bool printXAxes = true;
     bool printT = true;
     bool printHorizontally = false;
@@ -27,8 +30,50 @@ private:
     int realNTimeSteps = 50;
     double printNStep = 1;
     bool allowPrintError = true;
-    function<string&(T)>& T2String;
-    function<string&(U)>& U2String;
+    function<string(T)> T2String;
+    function<string(U)> U2String;
+
+    void print2File(const string& txt){
+        if(useTerminal) cout << txt;
+        else resultFile << txt;
+    }
+    void print2File(double d){
+        if(useTerminal) cout << to_string(d);
+        else resultFile << to_string(d);
+    }
+    void print2File(int d){
+        if(useTerminal) cout << to_string(d);
+        else resultFile << to_string(d);
+    }
+    void printXAxes2File(Quantity<T>& f, const string& separator){
+        Quantity<T>* fIter = &f;
+        do {
+            print2File(fIter->x()); print2File(separator);
+            fIter = fIter->next();
+        }
+        while (!fIter->isBorder());
+        print2File(fIter->x()); print2File(separator);
+    }
+    void printQuantity2File(Quantity<T>& f, const string& separator){
+        Quantity<T>* fIter = &f;
+        do {
+            print2File(T2String(fIter->getQuantity())); print2File(separator);
+            fIter = fIter->next();
+        }
+        while (!fIter->isBorder());
+        print2File(T2String(fIter->getQuantity())); print2File(separator);
+    }
+    void printQuantityWithXAxes2File(Quantity<T>& f, const string& separatorBetween, const string& separatorEnd){
+        Quantity<T>* fIter = &f;
+        do {
+            print2File(fIter->x()); print2File(separatorBetween);
+            print2File(T2String(fIter->getQuantity())); print2File(separatorEnd);
+            fIter = fIter->next();
+        }
+        while (!fIter->isBorder());
+        print2File(fIter->x()); print2File(separatorBetween);
+        print2File(T2String(fIter->getQuantity())); print2File(separatorEnd);
+    }
 public:
     TESolver1DOutput(
             bool printToFile,
@@ -41,8 +86,8 @@ public:
             int NTimeSteps,
             int maxFrames,
             bool allowPrintError,
-            function<string&(T)>& T2String,
-            function<string&(U)>& U2String
+            function<string(T)> T2String,
+            function<string(U)> U2String
             ) :
             printToFile(printToFile),
             printXAxes(printXAxes),
@@ -58,16 +103,21 @@ public:
             U2String(U2String)
             {
         if(printToFile){
-            resultFile.open(resultFilePath);
+            useTerminal = resultFilePath == TERMINAL;
+            if(useTerminal)
+                resultFile.open(resultFilePath);
         }
     }
 
     void printHeader(const TESolver1DParams<T, U> &params){
-        resultFile << params.getCellCount() << "\t" << params.getDx() << endl;
-        resultFile << params.getNTimeSteps() << "\t" << realNTimeSteps << "\t" << params.getDt() << endl;
+        print2File(params.getCellCount());print2File("\t");
+        print2File(params.getDx()); print2File("\n");
+        print2File(params.getNTimeSteps()); print2File("\t");
+        print2File(realNTimeSteps); print2File("\t");
+        print2File(params.getDt()); print2File("\n");
     }
 
-    void print(Quantity<T> &f, int t, double h){
+    void print(Quantity<T> &f, int t){
         if(!printToFile) return;
 
         if(barePrint)
@@ -76,57 +126,54 @@ public:
                     return;
 
         if(t==0 && printHorizontally && printXAxes && printXAxesOnes){
-            for (int i = 0; i < f.size(); i++)
-                resultFile << (i + 0.5) * h << "\t";
-            resultFile  << endl;
+            printXAxes2File(f, "\t");
+            print2File("\n");
         }
 
         if(printT)
-            resultFile << "t " << t << endl;
+            print2File("t "); print2File(t); print2File("\n");
         if(printHorizontally) {
             if(printXAxes && !printXAxesOnes) {
-                for (int i = 0; i < f.size(); i++)
-                    resultFile << (i + 0.5) * h << "\t";
-                resultFile << endl;
+                printXAxes2File(f, "\t");
+                print2File("\n");
             }
-            for (int i = 0; i < f.size(); i++)
-                resultFile << f[i] << "\t";
-            resultFile  << endl;
+            printQuantity2File(f, "\t");
+            print2File("\n");
         } else {
             if(printXAxes)
-                for (int i = 0; i < f.size(); i++)
-                    resultFile << (i + 0.5) * h << "\t" << f[i] << endl;
+                printQuantityWithXAxes2File(f, "\t", "\n");
             else
-                for (int i = 0; i < f.size(); i++)
-                    resultFile << f[i] << endl;
+                printQuantity2File(f, "\n");
         }
     }
 
     void printError(double error){
         if(!allowPrintError) return;
-        resultFile << "error " << error << endl;
+        print2File("error "); print2File(error); print2File("\n");
     }
 
     void printLine(string& line){
-        if(printToFile)
-            resultFile << line << endl;
+        if(printToFile) print2File(line+"\n");
     }
 
     void finish(){
-        if(printToFile)
+        if(printToFile && !useTerminal)
             resultFile.close();
     }
 };
 
-template<typename T, typename U>
-TESolver1DOutput<T,U> noOutput();
-template<typename T, typename U>
-TESolver1DOutput<T,U> minimal1DOutput(const string& filePath, int NTimeSteps);
-template<typename T, typename U>
-TESolver1DOutput<T,U> maximal1DOutput(const string& filePath, int NTimeSteps);
-template<typename T, typename U>
-TESolver1DOutput<T,U> normal1DOutput(const string& filePath, int NTimeSteps);
-template<typename T, typename U>
-TESolver1DOutput<T,U> jupyter1DOutput(const string& filePath, int NTimeSteps);
+function<string(double)> printVolumeFraction();
+
+TESolver1DOutput<double,double> noOutput();
+template<typename T>
+TESolver1DOutput<T,double> terminal1DOutput(int NTimeSteps, function<string(T)> T2String);
+template<typename T>
+TESolver1DOutput<T,double> minimal1DOutput(const string& filePath, int NTimeSteps, function<string(T)> T2String);
+template<typename T>
+TESolver1DOutput<T,double> maximal1DOutput(const string& filePath, int NTimeSteps, function<string(T)> T2String);
+template<typename T>
+TESolver1DOutput<T,double> normal1DOutput(const string& filePath, int NTimeSteps, function<string(T)> T2String);
+template<typename T>
+TESolver1DOutput<T,double> jupyter1DOutput(const string& filePath, int NTimeSteps, function<string(T)> T2String);
 
 #endif //TRANSPORTEQUATION_TESOLVER1DOUTPUT_H
