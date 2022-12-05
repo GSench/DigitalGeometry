@@ -16,13 +16,15 @@ template<typename F, typename U>
 void TESolverStep(Quantity<F>& f,
                   Quantity<U>& u,
                   TESolver1DParams<F,U>& p){
+    Quantity<F>* fIter = &f;
+    Quantity<U>* uIter = &u;
     do {
-        updateCell<F,U>(f, u, p);
-        f = f.next();
-        u = u.next();
+        updateCell<F,U>(fIter, uIter, p);
+        fIter = fIter->next();
+        uIter = uIter->next();
     }
     while (!f.isBorder());
-    updateCell<F,U>(f, u, p);
+    updateCell<F,U>(fIter, uIter, p);
 }
 
 template<typename F, typename U>

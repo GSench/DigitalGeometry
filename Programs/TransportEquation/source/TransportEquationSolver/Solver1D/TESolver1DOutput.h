@@ -104,7 +104,7 @@ public:
             {
         if(printToFile){
             useTerminal = resultFilePath == TERMINAL;
-            if(useTerminal)
+            if(!useTerminal)
                 resultFile.open(resultFilePath);
         }
     }
