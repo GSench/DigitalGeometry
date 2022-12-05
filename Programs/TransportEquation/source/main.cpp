@@ -45,7 +45,8 @@ int main() {
     cout << "q1: " << q1.prev()->next()->xL() << endl;
     cout << "q0: " << q0.next()->prev()->xR() << endl;
 
-    TESolver1DOutput<double, double> output = terminal1DOutput(1,printVolumeFraction());
+    TESolver1DOutput<double, double> output = terminal1DOutput(1, doublePrinter());
+    //(true, true, true, true, false, TERMINAL, false, 1, 0, false, doublePrinter(), doublePrinter());
 
     output.print(q0, 0);
     cout << "q0 = " << q0.getQuantity() << endl;

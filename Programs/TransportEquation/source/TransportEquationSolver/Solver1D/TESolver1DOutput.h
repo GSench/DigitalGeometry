@@ -162,11 +162,11 @@ public:
     }
 };
 
-function<string(double)> printVolumeFraction();
+function<string(double)> doublePrinter();
 
 TESolver1DOutput<double,double> noOutput();
-template<typename T>
-TESolver1DOutput<T,double> terminal1DOutput(int NTimeSteps, function<string(T)> T2String);
+//template<typename T>
+TESolver1DOutput<double,double> terminal1DOutput(int NTimeSteps, function<string(double)> T2String);
 template<typename T>
 TESolver1DOutput<T,double> minimal1DOutput(const string& filePath, int NTimeSteps, function<string(T)> T2String);
 template<typename T>
