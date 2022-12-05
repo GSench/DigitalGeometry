@@ -30,13 +30,13 @@ void TESolverStep(Quantity<F>& f,
 template<typename F, typename U>
 void SolveTransportEquation1D(Quantity<F>& f,
                               Quantity<U>& u,
-                              TESolver1DParams<F,U>& p//,
-                              //TESolver1DOutput &output
+                              TESolver1DParams<F,U>& p,
+                              TESolver1DOutput<F,U> &output
                               ) {
-    //output.print(f, 0, p.getDx());
+    output.print(f, 0);
     for (int n = 0; n < p.getNTimeSteps(); n++) {
         TESolverStep<F,U>(f, u, p);
         f.apply();
-        //output.print(f, n+1, p.getDx());
+        output.print(f, n+1);
     }
 }
