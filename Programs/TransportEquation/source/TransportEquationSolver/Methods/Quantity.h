@@ -136,13 +136,13 @@ public:
         apply(version+1);
     }
 
-    void fillQuantity(int fromCell, int toCell, T newQuantity){
+    void fillQuantity(int fromCell, int toCell, T q){
         Quantity<T>* fIter = *this;
         for(int i=0; i<fromCell; i++){
             fIter = fIter->next();
         }
         for(int i=fromCell; i<toCell; i++){
-            fIter->setQuantity(newQuantity);
+            fIter->setQuantity(q);
             fIter = fIter->next();
         }
     }
