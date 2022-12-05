@@ -138,9 +138,8 @@ public:
 
     void fillQuantity(int fromCell, int toCell, T q){
         Quantity<T>* fIter = *this;
-        for(int i=0; i<fromCell; i++){
+        for(int i=0; i<fromCell; i++)
             fIter = fIter->next();
-        }
         for(int i=fromCell; i<toCell; i++){
             fIter->setQuantity(q);
             fIter = fIter->next();
