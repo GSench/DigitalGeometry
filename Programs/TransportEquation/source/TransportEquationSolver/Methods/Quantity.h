@@ -152,23 +152,39 @@ public:
 };
 
 template<typename T>
-Quantity<T>& generate1DMesh(int cellCount, double dx, double offset, T defaultValue){
-    Quantity<T>* mesh = new Quantity<T>(offset, dx, defaultValue);
+pair<Quantity<T>*,Quantity<T>*> generate1DMesh(int cellCount, double posDelta, double cellSize, double offset, T defaultValue){
+    Quantity<T>* mesh = new Quantity<T>(offset, cellSize, defaultValue);
     mesh->markBorder();
     Quantity<T>* meshIter = mesh;
     for(int i=0; i<cellCount-2; i++){
-        Quantity<T>* nextCell = new Quantity<T>(meshIter->x()+dx, dx, defaultValue);
+        Quantity<T>* nextCell = new Quantity<T>(meshIter->x() + posDelta, cellSize, defaultValue);
         nextCell->setNeighbour(X, L, *meshIter);
         meshIter->setNeighbour(X, R, *nextCell);
         meshIter = meshIter->next();
     }
-    Quantity<T>* finalCell = new Quantity<T>(meshIter->x()+dx, dx, defaultValue);
+    Quantity<T>* finalCell = new Quantity<T>(meshIter->x() + posDelta, cellSize, defaultValue);
     finalCell->markBorder();
     finalCell->setNeighbour(X, L, *meshIter);
-    finalCell->setNeighbour(X, R, *mesh);
     meshIter->setNeighbour(X, R, *finalCell);
-    mesh->setNeighbour(X, L, *finalCell);
-    return *mesh;
+    return {mesh, finalCell};
+}
+
+template<typename T>
+Quantity<T>& generate1DPeriodicMesh(int cellCount, double posDelta, double cellSize, double offset, T defaultValue){
+    pair<Quantity<T>*,Quantity<T>*> rawMesh = generate1DMesh<T>(cellCount, posDelta, cellSize, offset, defaultValue);
+    rawMesh.first->setNeighbour(X, L, *(rawMesh.second));
+    rawMesh.second->setNeighbour(X, R, *(rawMesh.first));
+    return *(rawMesh.first);
+}
+
+template<typename T>
+Quantity<T>& generate1DBorderedMesh(int cellCount, double posDelta, double cellSize, double offset, T defaultValue, T outOfBoundsValue){
+    pair<Quantity<T>*,Quantity<T>*> rawMesh = generate1DMesh<T>(cellCount, posDelta, cellSize, offset, defaultValue);
+    Quantity<T>* lBorder = new Quantity<T>(rawMesh.first->x() - posDelta, cellSize, outOfBoundsValue);
+    rawMesh.first->setNeighbour(X, L, *lBorder);
+    Quantity<T>* rBorder = new Quantity<T>(rawMesh.second->x() + posDelta, cellSize, outOfBoundsValue);
+    rawMesh.second->setNeighbour(X, R, *rBorder);
+    return *(rawMesh.first);
 }
 
 #endif //TRANSPORTEQUATION_QUANTITY_H

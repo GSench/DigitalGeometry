@@ -24,12 +24,12 @@ void TE1DGodunovStripMoveTest() {
     GodunovFlow<double> GFlow;
     TESolver1DParams<double, Velocity&> params(0.3, 0.1, 1.0, 8, 10, GFlow);
     TESolver1DOutput<double, Velocity&> output(TERMINAL, 1, 1, doublePrinter());
-    Quantity<double> f = generate1DMesh<double>(params.getCellCount(), params.getDx(), params.getDx()/2, 0.);
+    Quantity<double>& f = generate1DPeriodicMesh<double>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx()/2, 0.);
     f.fillQuantity(0, 4, 1.0);
     f.apply();
     Vector uVect(0.1);
     TimeStepVelocity uConst(uVect, uVect);
-    Quantity<Velocity&> u = generate1DMesh<Velocity&>(params.getCellCount()+1, params.getDx(), 0, uConst);
+    Quantity<Velocity&>& u = generate1DPeriodicMesh<Velocity&>(params.getCellCount()+1, params.getDx(), 0., 0., uConst);
     SolveTransportEquation1D(f, u, params, output);
     output.finish();
 }
