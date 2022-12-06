@@ -9,19 +9,29 @@
 #include <algorithm>
 
 #include "TransportEquation1Dtests.h"
-#include "../TransportEquationSolver/Tools/InterpolationFunctions.h"
 #include "../TransportEquationSolver/Solver1D/TESolver1D.h"
-#include "StandardSolver.h"
 #include "../configs.h"
 #include "Tests.h"
-#include "../Utils/FileUtils.h"
-#include "../TransportEquationSolver/Solver1D/TERBSolver1D.h"
-#include "../TransportEquationSolver/Solver1D/TERBJRSolver1D.h"
+#include "../TransportEquationSolver/Methods/GodunovFlow.h"
+#include "../TransportEquationSolver/Methods/TimeStepVelocity.h"
 
 using namespace std;
 
-void TE1DStripMovementTest() {
+void TE1DGodunovStripMoveTest() {
+    const string TEST_TITLE = "TE1DGodunovStripMoveTest";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
 
+    GodunovFlow<double> GFlow;
+    TESolver1DParams<double, Velocity&> params(0.3, 0.1, 1.0, 8, 10, GFlow);
+    TESolver1DOutput<double, Velocity&> output(TERMINAL, 1, 1, doublePrinter());
+    Quantity<double> f = generate1DMesh<double>(params.getCellCount(), params.getDx(), params.getDx()/2, 0.);
+    f.fillQuantity(0, 4, 1.0);
+    f.apply();
+    Vector uVect(0.1);
+    TimeStepVelocity uConst(uVect, uVect);
+    Quantity<Velocity&> u = generate1DMesh<Velocity&>(params.getCellCount()+1, params.getDx(), 0, uConst);
+    SolveTransportEquation1D(f, u, params, output);
+    output.finish();
 }
 /*
 void Solver1DStripMovementTest(){

@@ -2,7 +2,7 @@
 // Created by GSench on 14.12.2021.
 //
 
-void TE1DStripMovementTest();
+void TE1DGodunovStripMoveTest();
 /*
 void Solver1DStripMovementTest();
 void Solver1DStripBackMovementTest();

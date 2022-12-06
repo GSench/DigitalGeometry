@@ -40,12 +40,10 @@ set(PROJECT_SOURCES
         #source/Tests/EulerEquation2Dtests.cpp
         #source/Tests/EulerEquation2Dtests.h
         #source/Tests/StandardSolver.cpp source/Tests/StandardSolver.h
-        #source/Tests/Tests.cpp
-        #source/Tests/Tests.h
-        #source/Tests/TransportEquation1Dtests.cpp
-        #source/Tests/TransportEquation1Dtests.cpp
-        #source/Tests/TransportEquation1Dtests.h
-        #source/Tests/TransportEquation1Dtests.h
+        source/Tests/Tests.cpp
+        source/Tests/Tests.h
+        source/Tests/TransportEquation1Dtests.cpp
+        source/Tests/TransportEquation1Dtests.h
         #source/Tests/TransportEquation2Dtests.cpp
         #source/Tests/TransportEquation2Dtests.h
         #source/TransportEquationSolver/Instances/Area1D.cpp

@@ -47,7 +47,8 @@ public:
         neighbours(cellPos.dim*2),
         cellPos(cellPos),
         cellSize(cellSize),
-        quantity(quantity)
+        quantity(quantity),
+        newQuantity(quantity)
     {}
 
     explicit Quantity(Vector& cellPos, double dx, T quantity): // square, cube
@@ -55,7 +56,8 @@ public:
         neighbours(cellPos.dim*2),
         cellPos(cellPos),
         cellSize(vector<double>(cellPos.dim, dx)),
-        quantity(quantity)
+        quantity(quantity),
+        newQuantity(quantity)
     {}
 
     explicit Quantity(double cellPos, double dx, T quantity): // 1D
@@ -63,7 +65,8 @@ public:
             neighbours(2),
             cellPos(cellPos),
             cellSize(dx),
-            quantity(quantity)
+            quantity(quantity),
+            newQuantity(quantity)
     {}
 
     T getQuantity() const {
@@ -137,7 +140,7 @@ public:
     }
 
     void fillQuantity(int fromCell, int toCell, T q){
-        Quantity<T>* fIter = *this;
+        Quantity<T>* fIter = this;
         for(int i=0; i<fromCell; i++)
             fIter = fIter->next();
         for(int i=fromCell; i<toCell; i++){
@@ -149,6 +152,23 @@ public:
 };
 
 template<typename T>
-Quantity<T>& generate1DMesh(int cellCount, double dx, T defaultValue);
+Quantity<T>& generate1DMesh(int cellCount, double dx, double offset, T defaultValue){
+    Quantity<T>* mesh = new Quantity<T>(offset, dx, defaultValue);
+    mesh->markBorder();
+    Quantity<T>* meshIter = mesh;
+    for(int i=0; i<cellCount-2; i++){
+        Quantity<T>* nextCell = new Quantity<T>(meshIter->x()+dx, dx, defaultValue);
+        nextCell->setNeighbour(X, L, *meshIter);
+        meshIter->setNeighbour(X, R, *nextCell);
+        meshIter = meshIter->next();
+    }
+    Quantity<T>* finalCell = new Quantity<T>(meshIter->x()+dx, dx, defaultValue);
+    finalCell->markBorder();
+    finalCell->setNeighbour(X, L, *meshIter);
+    finalCell->setNeighbour(X, R, *mesh);
+    meshIter->setNeighbour(X, R, *finalCell);
+    mesh->setNeighbour(X, L, *finalCell);
+    return *mesh;
+}
 
 #endif //TRANSPORTEQUATION_QUANTITY_H

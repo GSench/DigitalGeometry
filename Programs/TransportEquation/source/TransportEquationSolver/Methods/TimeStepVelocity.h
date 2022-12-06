@@ -8,7 +8,7 @@
 #include "../../math/MathUtils.h"
 #include "Velocity.h"
 
-class TimeStepVelocity : Velocity {
+class TimeStepVelocity : public Velocity {
 private:
     Vector& u;
     Vector& uNext;

@@ -1,7 +1,7 @@
 #include <iostream>
-/*
+
 #include "Tests/TransportEquation1Dtests.h"
-#include "Tests/TransportEquation2Dtests.h"
+/*#include "Tests/TransportEquation2Dtests.h"
 #include "Tests/DigitalGeometryTests1D.h"
 #include "Tests/EulerEquation2Dtests.h"
 #include "Tests/DigitalGeometryTests2D.h"*/
@@ -20,7 +20,7 @@ void launchTests(){
     Solve2DWhiteBearMovementTest();
 }*/
 
-int main() {
+void test(){
 
     Quantity<double> q0(0.5, 1, 0);
     q0.markBorder();
@@ -51,6 +51,9 @@ int main() {
     cout << "q0 = " << q0.getQuantity() << endl;
     output.print(q0, 1);
     cout << "q0 = " << q0.getQuantity() << endl;
+}
 
+int main() {
+    TE1DGodunovStripMoveTest();
     return 0;
 }
