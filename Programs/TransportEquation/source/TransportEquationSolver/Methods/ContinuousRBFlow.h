@@ -21,8 +21,8 @@ public:
 
     double calc(Quantity<double>& l, Quantity<double>& r, double dt, Quantity<TimeStepVelocity&>& u) override {
         double x = l.xR();
-        double uCurr = abs(u.getQuantity().getU()[u.getDirection()]);
-        double uNext = abs(u.getQuantity().getUNext()[u.getDirection()]);
+        double uCurr = u.getQuantity().getU()[u.getDirection()];
+        double uNext = u.getQuantity().getUNext()[u.getDirection()];
         double transportDirection = u.getQuantity().direction()[u.getDirection()];
         Quantity<double>& transportQuantity = transportDirection > 0 ? l : r;
         F1D f = {
