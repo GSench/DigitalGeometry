@@ -12,24 +12,33 @@
 #include "../TransportEquationSolver/Solver1D/TESolver1D.h"
 #include "../configs.h"
 #include "Tests.h"
-#include "../TransportEquationSolver/Methods/GodunovFlow.h"
 #include "../TransportEquationSolver/Methods/TimeStepVelocity.h"
+#include "../TransportEquationSolver/Methods/ContinuousRBFlow.h"
+#include "../TransportEquationSolver/Tools/InterpolationFunctions.h"
+#include "../Utils/FileUtils.h"
 
 using namespace std;
 
-void TE1DGodunovStripMoveTest() {
-    const string TEST_TITLE = "TE1DGodunovStripMoveTest";
+void Solver1DStripMovementTest() {
+    const string TEST_TITLE = "Solver1DStripMovementTest";
     const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
-
-    GodunovFlow<double> GFlow;
-    TESolver1DParams<double, Velocity&> params(0.3, 0.1, 1.0, 8, 10, GFlow);
-    TESolver1DOutput<double, Velocity&> output(TERMINAL, 1, 1, doublePrinter());
-    Quantity<double>& f = generate1DPeriodicMesh<double>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx()/2, 0.);
-    f.fillQuantity(0, 4, 1.0);
+    const string resultFilePath = downDir(testDir, "GodunovSolver.txt");
+    cout << "result file: " << resultFilePath << endl;
+    int N = 64;
+    double CFL = 0.3;
+    double uVal = 0.1;
+    ContinuousRBFlow GFlow([=](F1D f1D, C1D c1D) -> function<double(double)> {
+        return PsyTHINCandGodunov(f1D, c1D, 3.5, 1e-4);
+    });
+    TESolver1DParams<double, TimeStepVelocity&> params(CFL, uVal, 1.0, N, round((double)N/CFL), GFlow);
+    TESolver1DOutput<double, TimeStepVelocity&> output(resultFilePath, params.getNTimeSteps(), 100, doublePrinter());
+    output.printHeader(params);
+    Quantity<double>& f = generate1DPeriodicMesh<double>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx()/2, 1.);
+    f.fillQuantity(N/4, N/4*3, 0.);
     f.apply();
-    Vector uVect(0.1);
+    Vector uVect(uVal);
     TimeStepVelocity uConst(uVect, uVect);
-    Quantity<Velocity&>& u = generate1DPeriodicMesh<Velocity&>(params.getCellCount()+1, params.getDx(), 0., 0., uConst);
+    Quantity<TimeStepVelocity&>& u = generate1DPeriodicMesh<TimeStepVelocity&>(params.getCellCount()+1, params.getDx(), 0., 0., uConst);
     SolveTransportEquation1D(f, u, params, output);
     output.finish();
 }

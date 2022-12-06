@@ -53,18 +53,16 @@ set(PROJECT_SOURCES
         #source/TransportEquationSolver/Instances/RBVectorField1D.h
         #source/TransportEquationSolver/Instances/RBVectorField2D.cpp
         #source/TransportEquationSolver/Instances/RBVectorField2D.h
-        #source/TransportEquationSolver/Instances/TESolver1DInstances.cpp
-        #source/TransportEquationSolver/Instances/TESolver1DInstances.h
+        source/TransportEquationSolver/Instances/TESolver1DInstances.cpp
+        source/TransportEquationSolver/Instances/TESolver1DInstances.h
         #source/TransportEquationSolver/Instances/VectorField1D.cpp
         #source/TransportEquationSolver/Instances/VectorField1D.h
         #source/TransportEquationSolver/Instances/VectorField2D.cpp
         #source/TransportEquationSolver/Instances/VectorField2D.h
         source/TransportEquationSolver/Methods/Flow.h
-        source/TransportEquationSolver/Methods/GodunovFlow.h
-        source/TransportEquationSolver/Methods/MUSCLFlow.h
+        source/TransportEquationSolver/Methods/ContinuousRBFlow.h
         source/TransportEquationSolver/Methods/Quantity.h
         source/TransportEquationSolver/Methods/TimeStepVelocity.h
-        source/TransportEquationSolver/Methods/Velocity.h
         #source/TransportEquationSolver/Solver1D/TERBJRSolver1D.cpp
         #source/TransportEquationSolver/Solver1D/TERBJRSolver1D.h
         #source/TransportEquationSolver/Solver1D/TERBSolver1D.cpp

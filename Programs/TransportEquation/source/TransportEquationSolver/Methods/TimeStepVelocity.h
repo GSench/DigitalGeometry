@@ -6,9 +6,8 @@
 #define TRANSPORTEQUATION_TIMESTEPVELOCITY_H
 
 #include "../../math/MathUtils.h"
-#include "Velocity.h"
 
-class TimeStepVelocity : public Velocity {
+class TimeStepVelocity {
 private:
     Vector& u;
     Vector& uNext;
@@ -23,7 +22,7 @@ public:
         return uNext;
     }
 
-    Vector direction() override {
+    Vector direction() {
         return u+uNext;
     }
 };

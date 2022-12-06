@@ -54,6 +54,6 @@ void test(){
 }
 
 int main() {
-    TE1DGodunovStripMoveTest();
+    Solver1DStripMovementTest();
     return 0;
 }

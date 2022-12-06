@@ -149,8 +149,11 @@ public:
             print2File("\n");
         }
 
-        if(printT)
-            print2File("t "); print2File(t); print2File("\n");
+        if(printT) {
+            print2File("t ");
+            print2File(t);
+            print2File("\n");
+        }
         if(printHorizontally) {
             if(printXAxes && !printXAxesOnes) {
                 printXAxes2File(f, "\t");

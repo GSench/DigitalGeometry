@@ -5,7 +5,6 @@
 #ifndef TRANSPORTEQUATION_FLOW_H
 #define TRANSPORTEQUATION_FLOW_H
 
-#include "Velocity.h"
 #include "Quantity.h"
 
 template<typename T, typename U>
