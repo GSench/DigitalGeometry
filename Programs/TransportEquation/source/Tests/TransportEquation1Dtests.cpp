@@ -2,11 +2,9 @@
 // Created by GSench on 14.12.2021.
 //
 
-#include <math.h>
+#include <cmath>
 #include <iostream>
-#include <vector>
 #include <functional>
-#include <algorithm>
 
 #include "TransportEquation1Dtests.h"
 #include "../TransportEquationSolver/Solver1D/TESolver1D.h"
@@ -16,7 +14,6 @@
 #include "../TransportEquationSolver/Methods/ContinuousRBFlow.h"
 #include "../TransportEquationSolver/Tools/InterpolationFunctions.h"
 #include "../Utils/FileUtils.h"
-#include "../Utils/TimeLogger.h"
 
 using namespace std;
 
