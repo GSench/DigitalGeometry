@@ -1,4 +1,5 @@
 #include "TESolver1DOutput.h"
+#include "../../Utils/TimeLogger.h"
 
 using namespace std;
 //TODO calculate flow over edge only once

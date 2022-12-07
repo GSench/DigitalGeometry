@@ -102,6 +102,6 @@ set(PROJECT_SOURCES
         source/math/VectorMeshTools.cpp
         source/math/VectorMeshTools.h
         source/stuff/CompilerDifferenceHighlighter.cpp
-        source/TransportEquationSolver/Methods/Quantity.cpp)
+        source/TransportEquationSolver/Methods/Quantity.cpp source/Utils/TimeLogger.cpp source/Utils/TimeLogger.h)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})

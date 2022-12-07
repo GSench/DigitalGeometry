@@ -16,6 +16,7 @@
 #include "../TransportEquationSolver/Methods/ContinuousRBFlow.h"
 #include "../TransportEquationSolver/Tools/InterpolationFunctions.h"
 #include "../Utils/FileUtils.h"
+#include "../Utils/TimeLogger.h"
 
 using namespace std;
 
@@ -24,6 +25,7 @@ void Solver1DStripMovementTest() {
     const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
     const string resultFilePath = downDir(testDir, "GodunovSolver.txt");
     cout << "result file: " << resultFilePath << endl;
+    logTime("Initializing");
     int N = 64;
     double CFL = 0.3;
     double uVal = 0.1;
@@ -39,7 +41,9 @@ void Solver1DStripMovementTest() {
     Vector uVect(uVal);
     TimeStepVelocity uConst(uVect, uVect);
     Quantity<TimeStepVelocity&>& u = generate1DPeriodicMesh<TimeStepVelocity&>(params.getCellCount()+1, params.getDx(), 0., 0., uConst);
+    logTime("Initializing finished; Starting solving");
     SolveTransportEquation1D(f, u, params, output);
+    logTime("Solved");
     output.finish();
 }
 /*
