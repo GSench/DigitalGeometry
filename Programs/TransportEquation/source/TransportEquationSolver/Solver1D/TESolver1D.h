@@ -1,7 +1,7 @@
 #include "TESolver1DOutput.h"
 
 using namespace std;
-
+//TODO calculate flow over edge only once
 template<typename F, typename U>
 void updateCell(Quantity<F> &f,
                 Quantity<U> &u,
