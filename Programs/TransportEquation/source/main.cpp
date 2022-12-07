@@ -45,12 +45,13 @@ void test(){
     cout << "q1: " << q1.prev()->next()->xL() << endl;
     cout << "q0: " << q0.next()->prev()->xR() << endl;
 
+    /*
     TESolver1DOutput<double, double> output(TERMINAL, 1, 1, doublePrinter());
 
     output.print(q0, 0);
     cout << "q0 = " << q0.getQuantity() << endl;
     output.print(q0, 1);
-    cout << "q0 = " << q0.getQuantity() << endl;
+    cout << "q0 = " << q0.getQuantity() << endl;*/
 }
 
 int main() {

@@ -33,7 +33,7 @@ void Solver1DStripMovementTest() {
         return PsyTHINCandGodunov(f1D, c1D, 3.5, 1e-4);
     });
     TESolver1DParams<double, TimeStepVelocity&> params(CFL, uVal, 1.0, N, round((double)N/CFL), GFlow);
-    TESolver1DOutput<double, TimeStepVelocity&> output(resultFilePath, params.getNTimeSteps(), 100, doublePrinter());
+    TESolver1DOutput<double, TimeStepVelocity&> output = minimal1DOutput<double, TimeStepVelocity&>(resultFilePath, params.getNTimeSteps(), 100, doublePrinter());
     output.printHeader(params);
     Quantity<double>& f = generate1DPeriodicMesh<double>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx()/2, 1.);
     f.fillQuantity(N/4, N/4*3, 0.);

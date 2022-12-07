@@ -109,25 +109,6 @@ public:
         }
     }
 
-    TESolver1DOutput():
-            printToFile(false),
-            printXAxes(false),
-            printT(false),
-            printHorizontally(false),
-            printXAxesOnes(false),
-            barePrint(false),
-            NTimeSteps(0),
-            realNTimeSteps(0),
-            printNStep(0),
-            allowPrintError(false),
-            T2String(nullptr),
-            U2String(nullptr)
-    {} // no output
-
-    TESolver1DOutput(const string& filePath, int NTimeSteps, int maxFrames, function<string(T)> T2String) : TESolver1DOutput(
-            true, false, false, true, false, filePath, true, NTimeSteps, maxFrames, false, T2String, nullptr
-            ){} // minimalistic output
-
     void printHeader(const TESolver1DParams<T, U> &params){
         print2File(params.getCellCount());print2File("\t");
         print2File(params.getDx()); print2File("\n");
@@ -185,5 +166,35 @@ public:
 };
 
 function<string(double)> doublePrinter();
-//TODO output prefabs here
+
+template<typename T, typename U>
+TESolver1DOutput<T, U> noOutput(){
+    return {false, false, false, false, false, "", false, 0, 0, false, nullptr, nullptr};
+}
+
+template<typename T, typename U>
+TESolver1DOutput<T,U> terminal1DOutput(int NTimeSteps, function<string(double)> T2String){
+    return {true, true, true, true, false, TERMINAL, false, NTimeSteps, 0, false, T2String, nullptr};
+}
+
+template<typename T, typename U>
+TESolver1DOutput<T,U> minimal1DOutput(const string& filePath, int NTimeSteps, int printTimeSteps, function<string(T)> T2String){
+        return {true, false, false, true, false, filePath, true, NTimeSteps, printTimeSteps, false, T2String, nullptr};
+    }
+
+template<typename T, typename U>
+TESolver1DOutput<T,U> maximal1DOutput(const string& filePath, int NTimeSteps, int printTimeSteps, function<string(T)> T2String){
+        return {true, false, false, true, false, filePath, true, NTimeSteps, printTimeSteps, false, T2String, nullptr};
+    }
+
+template<typename T, typename U>
+TESolver1DOutput<T,U> normal1DOutput(const string& filePath, int NTimeSteps, int printTimeSteps, function<string(T)> T2String){
+    return {true, true, true, true, true, filePath, true, NTimeSteps, printTimeSteps, true, T2String, nullptr};
+    }
+
+template<typename T, typename U>
+TESolver1DOutput<T,U> jupyter1DOutput(const string& filePath, int NTimeSteps, int printTimeSteps, function<string(T)> T2String){
+        return {true, true, true, false, false, filePath, true, NTimeSteps, printTimeSteps, true, T2String, doublePrinter()};
+}
+
 #endif //TRANSPORTEQUATION_TESOLVER1DOUTPUT_H
