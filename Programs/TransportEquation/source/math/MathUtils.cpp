@@ -1,5 +1,6 @@
 #include <cmath>
 #include <algorithm>
+#include <numeric>
 #include "MathUtils.h"
 
 using namespace std;

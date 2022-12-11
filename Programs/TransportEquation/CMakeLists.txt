@@ -110,6 +110,6 @@ set(PROJECT_SOURCES
         source/math/VectorMeshTools.cpp
         source/math/VectorMeshTools.h
         source/stuff/CompilerDifferenceHighlighter.cpp
-        source/TransportEquationSolver/Methods/Quantity.cpp source/Utils/TimeLogger.cpp source/Utils/TimeLogger.h source/TransportEquationSolver/Methods/GRBState.cpp source/TransportEquationSolver/Methods/GRBState.h)
+        source/TransportEquationSolver/Methods/Quantity.cpp source/Utils/TimeLogger.cpp source/Utils/TimeLogger.h source/TransportEquationSolver/Methods/GRBState.cpp source/TransportEquationSolver/Methods/GRBState.h source/TransportEquationSolver/Tools/RiemannProblem.cpp source/TransportEquationSolver/Tools/RiemannProblem.h)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})

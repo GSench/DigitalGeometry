@@ -12,3 +12,9 @@ function<double(double)> linearTransform(const function<double(double)> &f,
 function<double(double)> fInverseX(const function<double(double)> &f);
 function<double(double)> fMoveX(const function<double(double)> &f, double dx);
 double errorL2(vector<double> f, const vector<double>& fexact, double h);
+template <typename T> T avg(const vector<T>& vals){
+    if(vals.empty()) return T(0);
+    T sum = T(0);
+    for(T v: vals) sum+=v;
+    return sum / vals.size();
+}
