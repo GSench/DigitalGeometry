@@ -29,17 +29,16 @@ void Solver1DStripMovementTest() {
     ContinuousRBFlow GFlow([=](F1D f1D, C1D c1D) -> function<double(double)> {
         return PsyTHINCandGodunov(f1D, c1D, 3.5, 1e-4);
     });
-    TESolver1DParams<double, TimeStepVelocity&> params(CFL, uVal, 1.0, N, round((double)N/CFL), GFlow);
-    TESolver1DOutput<double, TimeStepVelocity&> output = minimal1DOutput<double, TimeStepVelocity&>(resultFilePath, params.getNTimeSteps(), 100, doublePrinter());
+    TESolver1DParams<RBState> params(CFL, uVal, 1.0, N, round((double)N/CFL));
+    TESolver1DOutput<RBState> output = minimal1DOutput<RBState>(resultFilePath, params.getNTimeSteps(), 100, rbStatePrinter());
     output.printHeader(params);
-    Quantity<double>& f = generate1DPeriodicMesh<double>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx()/2, 1.);
-    f.fillQuantity(N/4, N/4*3, 0.);
-    f.apply();
     Vector uVect(uVal);
     TimeStepVelocity uConst(uVect, uVect);
-    Quantity<TimeStepVelocity&>& u = generate1DPeriodicMesh<TimeStepVelocity&>(params.getCellCount()+1, params.getDx(), 0., 0., uConst);
+    Quantity<RBState>& f = generate1DPeriodicMesh<RBState>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx()/2, RBState(1.,{uConst, uConst}));
+    f.fillQuantity(N/4, N/4*3, RBState(0.,{uConst, uConst}));
+    f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, u, params, output);
+    SolveTransportEquation1D(f, params, GFlow, output);
     logTime("Solved");
     output.finish();
 }

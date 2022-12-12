@@ -9,3 +9,9 @@ function<string(double)> doublePrinter() {
         return to_string(f);
     };
 }
+
+function<string(RBState)> rbStatePrinter() {
+    return [=](RBState q) -> string {
+        return to_string(q.getVolumeFraction());
+    };
+}

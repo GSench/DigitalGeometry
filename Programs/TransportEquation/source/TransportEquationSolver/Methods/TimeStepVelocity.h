@@ -6,6 +6,7 @@
 #define TRANSPORTEQUATION_TIMESTEPVELOCITY_H
 
 #include "../../math/MathUtils.h"
+#include "../../math/Vector.h"
 
 class TimeStepVelocity {
 private:

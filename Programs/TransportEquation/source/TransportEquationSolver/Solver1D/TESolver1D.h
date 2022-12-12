@@ -3,40 +3,38 @@
 
 using namespace std;
 //TODO calculate flow over edge only once
-template<typename F, typename U>
-void updateCell(Quantity<F> &f,
-                Quantity<U> &u,
-                TESolver1DParams<F,U> &p){
-    F fL = p.getFlow().calc(*f.prev(), f, p.getDt(), u);
-    F fR = p.getFlow().calc(f, *f.next(), p.getDt(), *u.next());
-    F fNext = f.getQuantity() - 1. / f.dx() * (fR - fL);
+template<typename Q, typename F>
+void updateCell(Quantity<Q> &f,
+                TESolver1DParams<Q> &p,
+                OverEdgeFlow<Q,F>& flowCalculator){
+    F fL = flowCalculator.calc(*f.prev(), f, p.getDt());
+    F fR = flowCalculator.calc(f, *f.next(), p.getDt());
+    Q fNext = f.getQuantity() - (fR - fL)/f.dx();
     f.setQuantity(fNext);
 }
 
-template<typename F, typename U>
-void TESolverStep(Quantity<F>& f,
-                  Quantity<U>& u,
-                  TESolver1DParams<F,U>& p){
-    Quantity<F>* fIter = &f;
-    Quantity<U>* uIter = &u;
+template<typename Q, typename F>
+void TESolverStep(Quantity<Q>& f,
+                  TESolver1DParams<Q>& p,
+                  OverEdgeFlow<Q,F>& flowCalculator){
+    Quantity<Q>* fIter = &f;
     do {
-        updateCell<F,U>(*fIter, *uIter, p);
+        updateCell<Q,F>(*fIter, p, flowCalculator);
         fIter = fIter->next();
-        uIter = uIter->next();
     }
     while (!fIter->isBorder());
-    updateCell<F,U>(*fIter, *uIter, p);
+    updateCell<Q,F>(*fIter, p, flowCalculator);
 }
 
-template<typename F, typename U>
-void SolveTransportEquation1D(Quantity<F>& f,
-                              Quantity<U>& u,
-                              TESolver1DParams<F,U>& p,
-                              TESolver1DOutput<F,U> &output
+template<typename Q, typename F>
+void SolveTransportEquation1D(Quantity<Q>& f,
+                              TESolver1DParams<Q>& p,
+                              OverEdgeFlow<Q,F>& flowCalculator,
+                              TESolver1DOutput<Q> &output
 ) {
     output.print(f, 0);
     for (int n = 0; n < p.getNTimeSteps(); n++) {
-        TESolverStep<F,U>(f, u, p);
+        TESolverStep<Q,F>(f, p, flowCalculator);
         f.apply();
         output.print(f, n+1);
     }

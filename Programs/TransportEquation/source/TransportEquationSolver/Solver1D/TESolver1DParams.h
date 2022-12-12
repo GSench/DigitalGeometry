@@ -5,15 +5,14 @@
 #ifndef TRANSPORTEQUATION_TESOLVER1DPARAMS_H
 #define TRANSPORTEQUATION_TESOLVER1DPARAMS_H
 
-#include "../Methods/Flow.h"
+#include "../Methods/OverEdgeFlow.h"
 
-template<typename F, typename U>
+template<typename Q>
 class TESolver1DParams {
 private:
     double dx;
     double dt;
     int NTimeSteps;
-    Flow<F,U>& flow;
 
 protected:
     int cellCount;
@@ -21,26 +20,22 @@ public:
 
     TESolver1DParams(
             double dx, int cellCount,
-            double dt, int nTimeSteps,
-            Flow<F,U>& flow
+            double dt, int nTimeSteps
             ) :
             dx(dx),
             cellCount(cellCount),
             dt(dt),
-            NTimeSteps(nTimeSteps),
-            flow(flow)
+            NTimeSteps(nTimeSteps)
             {}
 
     TESolver1DParams(
             double CFL, double uPrimary,
-            double areaLength, int cellCount, int nTimeSteps,
-            Flow<F,U>& flow
+            double areaLength, int cellCount, int nTimeSteps
             ) :
             dx(areaLength/cellCount),
             cellCount(cellCount),
             dt(CFL *  /*dx=*/areaLength/cellCount  / uPrimary),
-            NTimeSteps(nTimeSteps),
-            flow(flow)
+            NTimeSteps(nTimeSteps)
     {}
     double getDx() const {
         return dx;
@@ -58,9 +53,6 @@ public:
         return NTimeSteps;
     }
 
-    Flow<F,U>& getFlow() {
-        return flow;
-    }
 };
 
 
