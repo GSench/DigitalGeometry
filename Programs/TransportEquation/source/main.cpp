@@ -1,12 +1,13 @@
 #include <iostream>
+#include "UnitTests/UnitTestsLauncher.h"
 
-#include "Tests/TransportEquation1Dtests.h"
+//#include "Tests/TransportEquation1Dtests.h"
 /*#include "Tests/TransportEquation2Dtests.h"
 #include "Tests/DigitalGeometryTests1D.h"
 #include "Tests/EulerEquation2Dtests.h"
 #include "Tests/DigitalGeometryTests2D.h"*/
 
-#include "TransportEquationSolver/Solver1D/TESolver1DOutput.h"
+//#include "TransportEquationSolver/Solver1D/TESolver1DOutput.h"
 
 /*
 void launchTests(){
@@ -20,6 +21,7 @@ void launchTests(){
     Solve2DWhiteBearMovementTest();
 }*/
 
+/*
 void test(){
 
     Quantity<double> q0(0.5, 1, 0);
@@ -51,10 +53,10 @@ void test(){
     output.print(q0, 0);
     cout << "q0 = " << q0.getQuantity() << endl;
     output.print(q0, 1);
-    cout << "q0 = " << q0.getQuantity() << endl;*/
+    cout << "q0 = " << q0.getQuantity() << endl;
 }
+*/
 
 int main() {
-    Solver1DStripMovementTest();
-    return 0;
+    return launchAllUnitTests();
 }

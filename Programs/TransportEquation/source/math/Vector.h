@@ -19,6 +19,7 @@ public:
     const int dim;
 
     explicit Vector(const vector<double>& vals): vals(vals), dim(vals.size()) {}
+
     Vector(double x, double y, double z) : vals(3), dim(3) {
         vals[X]=x; vals[Y]=y; vals[Z]=z;
     }
@@ -30,33 +31,45 @@ public:
     }
     explicit Vector(int dim) : vals(dim, 0), dim(dim) {}
 
+    Vector(int dim, double val) : vals(dim, val), dim(dim) {}
+
     double operator [](int i) const {
         if(i>=dim) return 0;
         return vals[i];
     }
 
-    Vector operator+(Vector& v) const {
+    // Vector operations
+
+    Vector operator+(const Vector& v) const {
         vector<double> r(max(dim, v.dim));
         for(int i=0; i<r.size(); i++) r[i] = (*this)[i]+v[i];
         return Vector(r);
     }
 
-    void operator+=(Vector& v) {
+    void operator+=(const Vector& v) {
         for(int i=0; i<dim; i++) vals[i]+=v[i];
     }
 
-    Vector operator-(Vector& v) const{
+    Vector operator-(const Vector& v) const {
         vector<double> r(max(dim, v.dim));
         for(int i=0; i<r.size(); i++) r[i] = (*this)[i]-v[i];
         return Vector(r);
     }
 
-    void operator-=(Vector& v) {
+    void operator-=(const Vector& v) {
         for(int i=0; i<dim; i++) vals[i]-=v[i];
     }
 
-    Vector operator*(double s) const{
+    // Scale operations
+
+    Vector operator*(double s) const {
         vector<double> r = vals;
+        for(double & x : r) x *= s;
+        return Vector(r);
+    }
+
+    friend Vector operator*(double s, const Vector& v) {
+        vector<double> r = v.vals;
         for(double & x : r) x *= s;
         return Vector(r);
     }
@@ -65,7 +78,7 @@ public:
         for(double & x : vals) x *= s;
     }
 
-    Vector operator/(double s) const{
+    Vector operator/(double s) const {
         vector<double> r = vals;
         for(double & x : r) x /= s;
         return Vector(r);
