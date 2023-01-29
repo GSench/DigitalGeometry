@@ -5,21 +5,25 @@
 #ifndef TRANSPORTEQUATION_TIMESTEPVELOCITY_H
 #define TRANSPORTEQUATION_TIMESTEPVELOCITY_H
 
-#include "../../math/MathUtils.h"
+#include <utility>
+
 #include "../../math/Vector.h"
 
 class TimeStepVelocity {
 private:
-    Vector& u;
-    Vector& uNext;
+    Vector u;
+    Vector uNext;
 public:
-    TimeStepVelocity(Vector& u, Vector& uNext) : u(u), uNext(uNext) {}
+    TimeStepVelocity(Vector u, Vector uNext) :
+        u(std::move(u)),
+        uNext(std::move(uNext))
+        {}
 
-    Vector& getU() const {
+    Vector& getU() {
         return u;
     }
 
-    Vector& getUNext() const {
+    Vector& getUNext() {
         return uNext;
     }
 

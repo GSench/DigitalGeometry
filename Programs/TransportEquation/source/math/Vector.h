@@ -90,4 +90,20 @@ public:
 
 };
 
+inline Vector zero(int dim){
+    return Vector(dim);
+}
+
+inline Vector zero(const Vector& dimVector){
+    return zero(dimVector.dim);
+}
+
+inline Vector unit(int dim){
+    return {dim, 1.0};
+}
+
+inline Vector unit(const Vector& dimVector){
+    return unit(dimVector.dim);
+}
+
 #endif //TRANSPORTEQUATION_VECTOR_H

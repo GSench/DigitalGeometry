@@ -70,7 +70,7 @@ set(PROJECT_SOURCES
         #source/TransportEquationSolver/Methods/OverEdgeFlow.h
         #source/TransportEquationSolver/Methods/ContinuousRBFlow.h
         #source/TransportEquationSolver/Methods/Quantity.h
-        #source/TransportEquationSolver/Methods/TimeStepVelocity.h
+        source/TransportEquationSolver/Methods/TimeStepVelocity.h
         ##source/TransportEquationSolver/Solver1D/TERBJRSolver1D.cpp
         ##source/TransportEquationSolver/Solver1D/TERBJRSolver1D.h
         ##source/TransportEquationSolver/Solver1D/TERBSolver1D.cpp
@@ -103,9 +103,9 @@ set(PROJECT_SOURCES
         #source/configs.cpp
         #source/configs.h
         source/main.cpp
-        #source/math/Constants.h
-        #source/math/MathUtils.cpp
-        #source/math/MathUtils.h
+        source/math/Constants.h
+        source/math/MathUtils.cpp
+        source/math/MathUtils.h
         source/math/Vector.h
         #source/math/VectorMeshTools.cpp
         #source/math/VectorMeshTools.h
@@ -120,6 +120,8 @@ set(PROJECT_SOURCES
         #source/TransportEquationSolver/Methods/RBFlow.h
         source/UnitTests/math/UTVector.cpp
         source/UnitTests/math/UTVector.h
-        source/math/VectorPrefabs.cpp source/math/VectorPrefabs.h source/UnitTests/UnitTestsLauncher.cpp source/UnitTests/UnitTestsLauncher.h)
+        source/UnitTests/UnitTestsLauncher.cpp
+        source/UnitTests/UnitTestsLauncher.h
+        )
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})

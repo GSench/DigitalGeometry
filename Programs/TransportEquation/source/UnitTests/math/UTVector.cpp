@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "UTVector.h"
-#include "../../math/VectorPrefabs.h"
+#include "../../math/Vector.h"
 #include "../UnitTestsLauncher.h"
 
 int testVector(){
@@ -40,6 +40,17 @@ int testVector(){
         errorTestMsg(testTitle);
         return 3;
     }
+    successTestMsg(testTitle);
+    return 0;
+}
+
+int testVectorCreation(){
+    string testTitle = "Vector Creation";
+    startTestMsg(testTitle);
+    Vector v1(1.0);
+    Vector v2(1.0, 2.0);
+    Vector v3(1.0, 2.0, 3.0);
+    Vector v4({1.0, 2.0, 3.0, 4.0});
     successTestMsg(testTitle);
     return 0;
 }

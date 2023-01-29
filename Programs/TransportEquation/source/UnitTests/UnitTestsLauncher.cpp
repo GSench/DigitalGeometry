@@ -9,7 +9,8 @@
 
 int launchAllUnitTests(){
     return
-        testVector()
+         testVector()
+        +testVectorCreation()
         //+someOtherTest()
     ;
 }

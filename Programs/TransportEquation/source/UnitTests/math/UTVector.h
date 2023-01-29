@@ -6,5 +6,6 @@
 #define TRANSPORTEQUATION_UTVECTOR_H
 
 int testVector();
+int testVectorCreation();
 
 #endif //TRANSPORTEQUATION_UTVECTOR_H
