@@ -5,6 +5,8 @@
 #ifndef TRANSPORTEQUATION_RBFLOW_H
 #define TRANSPORTEQUATION_RBFLOW_H
 
+#include "RBState.h"
+
 class RBFlow {
 private:
     double volumeFraction;
@@ -16,23 +18,37 @@ public:
         return volumeFraction;
     }
 
-    RBFlow operator+(RBFlow f) const {
+    // Flow operations
+
+    RBFlow operator+(RBFlow& f) const {
         return RBFlow(volumeFraction+f.volumeFraction);
     }
 
-    void operator+=(RBFlow f) {
+    void operator+=(RBFlow& f) {
         volumeFraction+=f.volumeFraction;
     }
 
-    RBFlow operator-(RBFlow f) const{
+    RBFlow operator-(RBFlow& f) const {
         return RBFlow(volumeFraction-f.volumeFraction);
     }
 
-    void operator-=(RBFlow f) {
+    void operator-=(RBFlow& f) {
         volumeFraction-=f.volumeFraction;
     }
 
-    RBFlow operator*(double s) const{
+    // State operations
+
+    RBState operator+(RBState& q) const {
+        return {volumeFraction+q.getVolumeFraction(), q.getVelocities()};
+    }
+
+    RBState operator-(RBState& q) const {
+        return {volumeFraction-q.getVolumeFraction(), q.getVelocities()};
+    }
+
+    // Scale operations
+
+    RBFlow operator*(double s) const {
         return RBFlow(volumeFraction*s);
     }
 
@@ -40,7 +56,7 @@ public:
         volumeFraction*=s;
     }
 
-    RBFlow operator/(double s) const{
+    RBFlow operator/(double s) const {
         return RBFlow(volumeFraction/s);
     }
 

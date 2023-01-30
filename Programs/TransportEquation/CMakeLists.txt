@@ -116,8 +116,8 @@ set(PROJECT_SOURCES
         #source/TransportEquationSolver/Methods/GRBState.h
         #source/TransportEquationSolver/Tools/RiemannProblem.cpp
         #source/TransportEquationSolver/Tools/RiemannProblem.h
-        #source/TransportEquationSolver/Methods/RBState.h
-        #source/TransportEquationSolver/Methods/RBFlow.h
+        source/TransportEquationSolver/Methods/RBState.h
+        source/TransportEquationSolver/Methods/RBFlow.h
         source/UnitTests/math/UTVector.cpp
         source/UnitTests/math/UTVector.h
         source/UnitTests/UnitTestsLauncher.cpp

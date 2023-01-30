@@ -15,8 +15,8 @@ private:
     double volumeFraction = 1;
     vector<TimeStepVelocity> transportVelocities;
 public:
-    RBState(double volumeFraction, vector<TimeStepVelocity>& transportVelocities) :
-            volumeFraction(volumeFraction), transportVelocities(transportVelocities)
+    RBState(double volumeFraction, vector<TimeStepVelocity> transportVelocities) :
+            volumeFraction(volumeFraction), transportVelocities(std::move(transportVelocities))
         {}
 
     double getVolumeFraction() const{
@@ -25,6 +25,10 @@ public:
 
     TimeStepVelocity velocity(int dir, int lr){
         return transportVelocities[dir*2+lr];
+    }
+
+    vector<TimeStepVelocity> getVelocities(){
+        return transportVelocities;
     }
 
     double currVelocityDir(int dir, int lr){
@@ -37,7 +41,7 @@ public:
 
     // State operations
 
-    RBState operator+(RBState& q) {
+    RBState operator+(RBState& q) const {
         return {volumeFraction+q.volumeFraction, transportVelocities};
     }
 
@@ -45,7 +49,7 @@ public:
         volumeFraction+=q.volumeFraction;
     }
 
-    RBState operator-(RBState& q) {
+    RBState operator-(RBState& q) const {
         return {volumeFraction-q.volumeFraction, transportVelocities};
     }
 
@@ -56,25 +60,25 @@ public:
 
     // Flow operations
 
-    RBState operator+(RBFlow f) {
+    RBState operator+(RBFlow& f) const {
         return {volumeFraction+f.getVolumeFraction(), transportVelocities};
     }
 
-    void operator+=(RBFlow f) {
+    void operator+=(RBFlow& f) {
         volumeFraction+=f.getVolumeFraction();
     }
 
-    RBState operator-(RBFlow f) {
+    RBState operator-(RBFlow& f) const {
         return {volumeFraction-f.getVolumeFraction(), transportVelocities};
     }
 
-    void operator-=(RBFlow f) {
+    void operator-=(RBFlow& f) {
         volumeFraction-=f.getVolumeFraction();
     }
 
     // Scale operations
 
-    RBState operator*(double s) {
+    RBState operator*(double s) const {
         return {volumeFraction*s, transportVelocities};
     }
 
@@ -82,7 +86,7 @@ public:
         volumeFraction*=s;
     }
 
-    RBState operator/(double s) {
+    RBState operator/(double s) const {
         return {volumeFraction/s, transportVelocities};
     }
 
