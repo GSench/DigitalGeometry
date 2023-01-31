@@ -11,6 +11,7 @@
 #include <functional>
 #include "TESolver1DParams.h"
 #include "../Methods/RBState.h"
+#include "../Methods/Quantity.h"
 
 using namespace std;
 
@@ -107,7 +108,7 @@ public:
         }
     }
 
-    void printHeader(const TESolver1DParams<T> &params){
+    void printHeader(const TESolver1DParams& params){
         print2File(params.getCellCount());print2File("\t");
         print2File(params.getDx()); print2File("\n");
         print2File(params.getNTimeSteps()); print2File("\t");
