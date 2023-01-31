@@ -6,6 +6,7 @@
 #include "UnitTestsLauncher.h"
 #include "math/UTVector.h"
 #include "TransportEquationSolver/Methods/UTRBStateFlow.h"
+#include "TransportEquationSolver/Methods/UTQuantity.h"
 
 
 int launchAllUnitTests(){
@@ -13,6 +14,7 @@ int launchAllUnitTests(){
          testVector()
         +testVectorCreation()
         +testRBStateFlow()
+        +testQuantityNeighbours()
         //+someOtherTest()
     ;
 }
@@ -27,9 +29,9 @@ void startTestMsg(const string& testName){
 }
 
 void successTestMsg(const string& testName){
-    cout << "success: " << testName << endl;
+    cout << "SUCCESS: " << testName << endl;
 }
 
 void errorTestMsg(const string& testName){
-    cout << "error: " << testName << endl;
+    cout << "00000000000000000000000 ERROR: " << testName << endl;
 }

@@ -69,7 +69,7 @@ set(PROJECT_SOURCES
         ##source/TransportEquationSolver/Instances/VectorField2D.h
         #source/TransportEquationSolver/Methods/OverEdgeFlow.h
         #source/TransportEquationSolver/Methods/ContinuousRBFlow.h
-        #source/TransportEquationSolver/Methods/Quantity.h
+        source/TransportEquationSolver/Methods/Quantity.h
         source/TransportEquationSolver/Methods/TimeStepVelocity.h
         ##source/TransportEquationSolver/Solver1D/TERBJRSolver1D.cpp
         ##source/TransportEquationSolver/Solver1D/TERBJRSolver1D.h
@@ -122,6 +122,10 @@ set(PROJECT_SOURCES
         source/UnitTests/math/UTVector.h
         source/UnitTests/UnitTestsLauncher.cpp
         source/UnitTests/UnitTestsLauncher.h
-        source/UnitTests/TransportEquationSolver/Methods/UTRBStateFlow.cpp source/UnitTests/TransportEquationSolver/Methods/UTRBStateFlow.h)
+        source/UnitTests/TransportEquationSolver/Methods/UTRBStateFlow.cpp
+        source/UnitTests/TransportEquationSolver/Methods/UTRBStateFlow.h
+        source/UnitTests/TransportEquationSolver/Methods/UTQuantity.cpp
+        source/UnitTests/TransportEquationSolver/Methods/UTQuantity.h
+        )
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})
