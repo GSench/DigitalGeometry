@@ -13,6 +13,7 @@
 #include "../Instances/TESolver1DInstances.h"
 #include "RBState.h"
 #include "RBFlow.h"
+#include "../../math/MathUtils.h"
 
 class ContinuousRBFlow : public OverEdgeFlow<RBState, RBFlow> {
 private:

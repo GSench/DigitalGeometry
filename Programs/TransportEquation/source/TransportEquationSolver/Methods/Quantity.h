@@ -89,19 +89,19 @@ public:
         neighbours[dir*2+lr] = &n;
     }
 
-    double x(){
+    double x() const {
         return cellPos[direction];
     }
 
-    double dx(){
+    double dx() const {
         return cellSize[direction];
     }
 
-    double xL(){
+    double xL() const {
         return cellPos[direction]-cellSize[direction]/2;
     }
 
-    double xR(){
+    double xR() const {
         return cellPos[direction]+cellSize[direction]/2;
     }
 

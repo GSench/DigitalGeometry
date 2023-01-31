@@ -5,9 +5,6 @@
 #ifndef TRANSPORTEQUATION_TESOLVER1DPARAMS_H
 #define TRANSPORTEQUATION_TESOLVER1DPARAMS_H
 
-#include "../Methods/OverEdgeFlow.h"
-
-template<typename Q>
 class TESolver1DParams {
 private:
     double dx;

@@ -67,8 +67,8 @@ set(PROJECT_SOURCES
         ##source/TransportEquationSolver/Instances/VectorField1D.h
         ##source/TransportEquationSolver/Instances/VectorField2D.cpp
         ##source/TransportEquationSolver/Instances/VectorField2D.h
-        #source/TransportEquationSolver/Methods/OverEdgeFlow.h
-        #source/TransportEquationSolver/Methods/ContinuousRBFlow.h
+        source/TransportEquationSolver/Methods/OverEdgeFlow.h
+        source/TransportEquationSolver/Methods/ContinuousRBFlow.h
         source/TransportEquationSolver/Methods/Quantity.h
         source/TransportEquationSolver/Methods/TimeStepVelocity.h
         ##source/TransportEquationSolver/Solver1D/TERBJRSolver1D.cpp
@@ -79,7 +79,7 @@ set(PROJECT_SOURCES
         #source/TransportEquationSolver/Solver1D/TESolver1D.h
         #source/TransportEquationSolver/Solver1D/TESolver1DOutput.cpp
         #source/TransportEquationSolver/Solver1D/TESolver1DOutput.h
-        #source/TransportEquationSolver/Solver1D/TESolver1DParams.h
+        source/TransportEquationSolver/Solver1D/TESolver1DParams.h
         ##source/TransportEquationSolver/Solver2D/TERBJRSolver2D.cpp
         ##source/TransportEquationSolver/Solver2D/TERBJRSolver2D.h
         ##source/TransportEquationSolver/Solver2D/TERBSolver2D.cpp
@@ -90,18 +90,18 @@ set(PROJECT_SOURCES
         ##source/TransportEquationSolver/Solver2D/TESolver2DOutput.h
         ##source/TransportEquationSolver/Solver2D/TESolver2DParams.cpp
         ##source/TransportEquationSolver/Solver2D/TESolver2DParams.h
-        #source/TransportEquationSolver/Tools/InterpolationFunctions.cpp
-        #source/TransportEquationSolver/Tools/InterpolationFunctions.h
-        #source/TransportEquationSolver/Tools/JRUtils.cpp
-        #source/TransportEquationSolver/Tools/JRUtils.h
-        #source/TransportEquationSolver/Tools/THINCUtils.cpp
-        #source/TransportEquationSolver/Tools/THINCUtils.h
-        #source/Utils/ArrayUtils.cpp
-        #source/Utils/ArrayUtils.h
-        #source/Utils/FileUtils.cpp
-        #source/Utils/FileUtils.h
-        #source/configs.cpp
-        #source/configs.h
+        source/TransportEquationSolver/Tools/InterpolationFunctions.cpp
+        source/TransportEquationSolver/Tools/InterpolationFunctions.h
+        source/TransportEquationSolver/Tools/JRUtils.cpp
+        source/TransportEquationSolver/Tools/JRUtils.h
+        source/TransportEquationSolver/Tools/THINCUtils.cpp
+        source/TransportEquationSolver/Tools/THINCUtils.h
+        source/Utils/ArrayUtils.cpp
+        source/Utils/ArrayUtils.h
+        source/Utils/FileUtils.cpp
+        source/Utils/FileUtils.h
+        source/configs.cpp
+        source/configs.h
         source/main.cpp
         source/math/Constants.h
         source/math/MathUtils.cpp
@@ -110,9 +110,9 @@ set(PROJECT_SOURCES
         #source/math/VectorMeshTools.cpp
         #source/math/VectorMeshTools.h
         #source/stuff/CompilerDifferenceHighlighter.cpp
-        #source/TransportEquationSolver/Methods/Quantity.cpp
-        #source/Utils/TimeLogger.cpp
-        #source/Utils/TimeLogger.h
+        source/TransportEquationSolver/Methods/Quantity.cpp
+        source/Utils/TimeLogger.cpp
+        source/Utils/TimeLogger.h
         #source/TransportEquationSolver/Methods/GRBState.h
         #source/TransportEquationSolver/Tools/RiemannProblem.cpp
         #source/TransportEquationSolver/Tools/RiemannProblem.h
