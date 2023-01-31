@@ -122,6 +122,6 @@ set(PROJECT_SOURCES
         source/UnitTests/math/UTVector.h
         source/UnitTests/UnitTestsLauncher.cpp
         source/UnitTests/UnitTestsLauncher.h
-        )
+        source/UnitTests/TransportEquationSolver/Methods/UTRBStateFlow.cpp source/UnitTests/TransportEquationSolver/Methods/UTRBStateFlow.h)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})

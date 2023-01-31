@@ -8,7 +8,6 @@
 #include <utility>
 
 #include "TimeStepVelocity.h"
-#include "RBFlow.h"
 
 class RBState {
 private:
@@ -27,7 +26,7 @@ public:
         return transportVelocities[dir*2+lr];
     }
 
-    vector<TimeStepVelocity> getVelocities(){
+    vector<TimeStepVelocity> getVelocities() const {
         return transportVelocities;
     }
 
@@ -41,39 +40,21 @@ public:
 
     // State operations
 
-    RBState operator+(RBState& q) const {
+    RBState operator+(const RBState& q) const {
         return {volumeFraction+q.volumeFraction, transportVelocities};
     }
 
-    void operator+=(RBState& q) {
+    void operator+=(const RBState& q) {
         volumeFraction+=q.volumeFraction;
     }
 
-    RBState operator-(RBState& q) const {
+    RBState operator-(const RBState& q) const {
         return {volumeFraction-q.volumeFraction, transportVelocities};
     }
 
 
-    void operator-=(RBState& q) {
+    void operator-=(const RBState& q) {
         volumeFraction-=q.volumeFraction;
-    }
-
-    // Flow operations
-
-    RBState operator+(RBFlow& f) const {
-        return {volumeFraction+f.getVolumeFraction(), transportVelocities};
-    }
-
-    void operator+=(RBFlow& f) {
-        volumeFraction+=f.getVolumeFraction();
-    }
-
-    RBState operator-(RBFlow& f) const {
-        return {volumeFraction-f.getVolumeFraction(), transportVelocities};
-    }
-
-    void operator-=(RBFlow& f) {
-        volumeFraction-=f.getVolumeFraction();
     }
 
     // Scale operations

@@ -20,30 +20,38 @@ public:
 
     // Flow operations
 
-    RBFlow operator+(RBFlow& f) const {
+    RBFlow operator+(const RBFlow& f) const {
         return RBFlow(volumeFraction+f.volumeFraction);
     }
 
-    void operator+=(RBFlow& f) {
+    void operator+=(const RBFlow& f) {
         volumeFraction+=f.volumeFraction;
     }
 
-    RBFlow operator-(RBFlow& f) const {
+    RBFlow operator-(const RBFlow& f) const {
         return RBFlow(volumeFraction-f.volumeFraction);
     }
 
-    void operator-=(RBFlow& f) {
+    void operator-=(const RBFlow& f) {
         volumeFraction-=f.volumeFraction;
     }
 
     // State operations
 
-    RBState operator+(RBState& q) const {
+    RBState operator+(const RBState& q) const {
         return {volumeFraction+q.getVolumeFraction(), q.getVelocities()};
     }
 
-    RBState operator-(RBState& q) const {
+    RBState friend operator+(const RBState& q, const RBFlow& f) {
+        return {q.getVolumeFraction()+f.getVolumeFraction(), q.getVelocities()};
+    }
+
+    RBState operator-(const RBState& q) const {
         return {volumeFraction-q.getVolumeFraction(), q.getVelocities()};
+    }
+
+    RBState friend operator-(const RBState& q, const RBFlow& f) {
+        return {q.getVolumeFraction()-f.getVolumeFraction(), q.getVelocities()};
     }
 
     // Scale operations

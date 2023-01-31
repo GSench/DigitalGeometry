@@ -5,12 +5,14 @@
 #include <iostream>
 #include "UnitTestsLauncher.h"
 #include "math/UTVector.h"
+#include "TransportEquationSolver/Methods/UTRBStateFlow.h"
 
 
 int launchAllUnitTests(){
     return
          testVector()
         +testVectorCreation()
+        +testRBStateFlow()
         //+someOtherTest()
     ;
 }
