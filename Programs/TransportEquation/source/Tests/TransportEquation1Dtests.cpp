@@ -10,7 +10,7 @@
 #include "../TransportEquationSolver/Solver1D/TESolver1D.h"
 #include "../configs.h"
 #include "Tests.h"
-#include "../TransportEquationSolver/Methods/ContinuousRBFlow.h"
+#include "../TransportEquationSolver/Methods/ContinuousSolidFlow.h"
 #include "../TransportEquationSolver/Tools/InterpolationFunctions.h"
 #include "../Utils/FileUtils.h"
 
@@ -25,7 +25,7 @@ void Solver1DStripMovementTest() {
     int N = 64;
     double CFL = 0.3;
     double uVal = 0.1;
-    ContinuousRBFlow GFlow([=](F1D f1D, C1D c1D) -> function<double(double)> {
+    ContinuousSolidFlow GFlow([=](F1D f1D, C1D c1D) -> function<double(double)> {
         return PsyTHINCandGodunov(f1D, c1D, 3.5, 1e-4);
     });
     TESolver1DParams params(CFL, uVal, 1.0, N, round((double)N/CFL));

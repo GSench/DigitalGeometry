@@ -68,7 +68,7 @@ set(PROJECT_SOURCES
         ##source/TransportEquationSolver/Instances/VectorField2D.cpp
         ##source/TransportEquationSolver/Instances/VectorField2D.h
         source/TransportEquationSolver/Methods/OverEdgeFlow.h
-        source/TransportEquationSolver/Methods/ContinuousRBFlow.h
+        source/TransportEquationSolver/Methods/ContinuousSolidFlow.h
         source/TransportEquationSolver/Methods/Mesh.h
         source/TransportEquationSolver/Methods/TimeStepVelocity.h
         ##source/TransportEquationSolver/Solver1D/TERBJRSolver1D.cpp

@@ -2,8 +2,8 @@
 // Created by grigoriy.senchenok on 18.11.2022.
 //
 
-#ifndef TRANSPORTEQUATION_CONTINUOUSRBFLOW_H
-#define TRANSPORTEQUATION_CONTINUOUSRBFLOW_H
+#ifndef TRANSPORTEQUATION_CONTINUOUSSOLIDFLOW_H
+#define TRANSPORTEQUATION_CONTINUOUSSOLIDFLOW_H
 
 
 #include "OverEdgeFlow.h"
@@ -15,11 +15,11 @@
 #include "SFlow.h"
 #include "../../math/MathUtils.h"
 
-class ContinuousRBFlow : public OverEdgeFlow<SQuantity, SFlow> {
+class ContinuousSolidFlow : public OverEdgeFlow<SQuantity, SFlow> {
 private:
     function<function<double(double)>(F1D f, C1D c)> FlowInterpolationFunction;
 public:
-    explicit ContinuousRBFlow(function<function<double(double)>(F1D, C1D)> flowInterpolationFunction)
+    explicit ContinuousSolidFlow(function<function<double(double)>(F1D, C1D)> flowInterpolationFunction)
             : FlowInterpolationFunction(std::move(flowInterpolationFunction)) {}
 
     SFlow calc(Mesh<SQuantity>& l, Mesh<SQuantity>& r, double dt) override {
@@ -50,4 +50,4 @@ public:
 };
 
 
-#endif //TRANSPORTEQUATION_CONTINUOUSRBFLOW_H
+#endif //TRANSPORTEQUATION_CONTINUOUSSOLIDFLOW_H
