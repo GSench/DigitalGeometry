@@ -22,12 +22,12 @@ public:
     explicit ContinuousRBFlow(function<function<double(double)>(F1D, C1D)> flowInterpolationFunction)
             : FlowInterpolationFunction(std::move(flowInterpolationFunction)) {}
 
-    RBFlow calc(Quantity<RBState>& l, Quantity<RBState>& r, double dt) override {
+    RBFlow calc(Mesh<RBState>& l, Mesh<RBState>& r, double dt) override {
         double x = l.xR();
         double uCurr = l.getQuantity().currVelocityDir(l.getDirection(), R);
         double uNext = l.getQuantity().nextVelocityDir(l.getDirection(), R);
         double transportDirection = l.getQuantity().velocity(l.getDirection(), R).direction()[l.getDirection()];
-        Quantity<RBState>& transportQuantity = transportDirection > 0 ? l : r;
+        Mesh<RBState>& transportQuantity = transportDirection > 0 ? l : r;
         F1D f = {
                 transportQuantity.getQuantity().getVolumeFraction(),
                 transportQuantity.prev()->getQuantity().getVolumeFraction(),

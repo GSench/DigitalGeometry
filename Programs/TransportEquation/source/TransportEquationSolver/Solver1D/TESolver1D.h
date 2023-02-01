@@ -5,7 +5,7 @@
 using namespace std;
 //TODO calculate flow over edge only once
 template<typename Q, typename F>
-void updateCell(Quantity<Q> &f,
+void updateCell(Mesh<Q> &f,
                 TESolver1DParams &p,
                 OverEdgeFlow<Q,F>& flowCalculator){
     F fL = flowCalculator.calc(*f.prev(), f, p.getDt());
@@ -15,10 +15,10 @@ void updateCell(Quantity<Q> &f,
 }
 
 template<typename Q, typename F>
-void TESolverStep(Quantity<Q>& f,
+void TESolverStep(Mesh<Q>& f,
                   TESolver1DParams& p,
                   OverEdgeFlow<Q,F>& flowCalculator){
-    Quantity<Q>* fIter = &f;
+    Mesh<Q>* fIter = &f;
     do {
         updateCell<Q,F>(*fIter, p, flowCalculator);
         fIter = fIter->next();
@@ -28,7 +28,7 @@ void TESolverStep(Quantity<Q>& f,
 }
 
 template<typename Q, typename F>
-void SolveTransportEquation1D(Quantity<Q>& f,
+void SolveTransportEquation1D(Mesh<Q>& f,
                               TESolver1DParams& p,
                               OverEdgeFlow<Q,F>& flowCalculator,
                               TESolver1DOutput<Q> &output

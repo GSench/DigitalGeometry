@@ -11,7 +11,7 @@
 #include <functional>
 #include "TESolver1DParams.h"
 #include "../Methods/RBState.h"
-#include "../Methods/Quantity.h"
+#include "../Methods/Mesh.h"
 
 using namespace std;
 
@@ -46,8 +46,8 @@ private:
         if(useTerminal) cout << to_string(d);
         else resultFile << to_string(d);
     }
-    void printXAxes2File(Quantity<T>& f, const string& separator){
-        Quantity<T>* fIter = &f;
+    void printXAxes2File(Mesh<T>& f, const string& separator){
+        Mesh<T>* fIter = &f;
         do {
             print2File(fIter->x()); print2File(separator);
             fIter = fIter->next();
@@ -55,8 +55,8 @@ private:
         while (!fIter->isBorder());
         print2File(fIter->x()); print2File(separator);
     }
-    void printQuantity2File(Quantity<T>& f, const string& separator){
-        Quantity<T>* fIter = &f;
+    void printQuantity2File(Mesh<T>& f, const string& separator){
+        Mesh<T>* fIter = &f;
         do {
             print2File(T2String(fIter->getQuantity())); print2File(separator);
             fIter = fIter->next();
@@ -64,8 +64,8 @@ private:
         while (!fIter->isBorder());
         print2File(T2String(fIter->getQuantity())); print2File(separator);
     }
-    void printQuantityWithXAxes2File(Quantity<T>& f, const string& separatorBetween, const string& separatorEnd){
-        Quantity<T>* fIter = &f;
+    void printQuantityWithXAxes2File(Mesh<T>& f, const string& separatorBetween, const string& separatorEnd){
+        Mesh<T>* fIter = &f;
         do {
             print2File(fIter->x()); print2File(separatorBetween);
             print2File(T2String(fIter->getQuantity())); print2File(separatorEnd);
@@ -116,7 +116,7 @@ public:
         print2File(params.getDt()); print2File("\n");
     }
 
-    void print(Quantity<T> &f, int t){
+    void print(Mesh<T> &f, int t){
         if(!printToFile) return;
 
         if(barePrint)

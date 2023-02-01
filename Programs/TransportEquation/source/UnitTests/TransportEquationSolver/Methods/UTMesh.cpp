@@ -2,24 +2,24 @@
 // Created by grigoriy.senchenok on 31.01.2023.
 //
 
-#include "UTQuantity.h"
+#include "UTMesh.h"
 
 #include "../../UnitTestsLauncher.h"
-#include "../../../TransportEquationSolver/Methods/Quantity.h"
+#include "../../../TransportEquationSolver/Methods/Mesh.h"
 #include "../../../TransportEquationSolver/Methods/RBState.h"
 
 #include <string>
 #include <iostream>
 
-int testQuantityNeighbours(){
+int testMeshNeighbours(){
 
     string testTitle = "QuantityNeighbours";
     startTestMsg(testTitle);
 
-    Quantity<double> q0(0.5, 1.0, 0.0);
+    Mesh<double> q0(0.5, 1.0, 0.0);
     q0.markBorder();
 
-    Quantity<double> q1(1.5, 1.0, 1.0);
+    Mesh<double> q1(1.5, 1.0, 1.0);
     q1.markBorder();
 
     q0.setNeighbour(X, R, q1);
@@ -66,7 +66,7 @@ int testQuantityNeighbours(){
     return 0;
 }
 
-int testQuantityUpdate(){
+int testMeshUpdate(){
 
     string testTitle = "QuantityUpdate";
     startTestMsg(testTitle);
@@ -79,7 +79,7 @@ int testQuantityUpdate(){
             TimeStepVelocity(Vector(1.0),Vector(1.0)),
             TimeStepVelocity(Vector(1.0),Vector(1.0))
     });
-    Quantity<RBState> q(0.5, 1.0, init);
+    Mesh<RBState> q(0.5, 1.0, init);
     q.setQuantity(final);
     q.apply();
 

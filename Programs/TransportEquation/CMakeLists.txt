@@ -69,7 +69,7 @@ set(PROJECT_SOURCES
         ##source/TransportEquationSolver/Instances/VectorField2D.h
         source/TransportEquationSolver/Methods/OverEdgeFlow.h
         source/TransportEquationSolver/Methods/ContinuousRBFlow.h
-        source/TransportEquationSolver/Methods/Quantity.h
+        source/TransportEquationSolver/Methods/Mesh.h
         source/TransportEquationSolver/Methods/TimeStepVelocity.h
         ##source/TransportEquationSolver/Solver1D/TERBJRSolver1D.cpp
         ##source/TransportEquationSolver/Solver1D/TERBJRSolver1D.h
@@ -110,7 +110,7 @@ set(PROJECT_SOURCES
         #source/math/VectorMeshTools.cpp
         #source/math/VectorMeshTools.h
         #source/stuff/CompilerDifferenceHighlighter.cpp
-        source/TransportEquationSolver/Methods/Quantity.cpp
+        source/TransportEquationSolver/Methods/Mesh.cpp
         source/Utils/TimeLogger.cpp
         source/Utils/TimeLogger.h
         #source/TransportEquationSolver/Methods/GRBState.h
@@ -124,8 +124,8 @@ set(PROJECT_SOURCES
         source/UnitTests/UnitTestsLauncher.h
         source/UnitTests/TransportEquationSolver/Methods/UTRBStateFlow.cpp
         source/UnitTests/TransportEquationSolver/Methods/UTRBStateFlow.h
-        source/UnitTests/TransportEquationSolver/Methods/UTQuantity.cpp
-        source/UnitTests/TransportEquationSolver/Methods/UTQuantity.h
+        source/UnitTests/TransportEquationSolver/Methods/UTMesh.cpp
+        source/UnitTests/TransportEquationSolver/Methods/UTMesh.h
         )
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})

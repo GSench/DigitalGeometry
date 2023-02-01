@@ -35,7 +35,8 @@ void test(){
 */
 
 int main() {
+    int unitTestsResult = launchAllUnitTests();
+    if(unitTestsResult!=0) return unitTestsResult;
     Solver1DStripMovementTest();
-    return launchAllUnitTests();
-
+    return 0;
 }

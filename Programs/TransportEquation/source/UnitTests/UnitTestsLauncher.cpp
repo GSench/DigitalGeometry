@@ -6,16 +6,16 @@
 #include "UnitTestsLauncher.h"
 #include "math/UTVector.h"
 #include "TransportEquationSolver/Methods/UTRBStateFlow.h"
-#include "TransportEquationSolver/Methods/UTQuantity.h"
+#include "TransportEquationSolver/Methods/UTMesh.h"
 
 
 int launchAllUnitTests(){
     return
-         testVector()
-        +testVectorCreation()
-        +testRBStateFlow()
-        +testQuantityNeighbours()
-        +testQuantityUpdate()
+             testVector()
+            + testVectorCreation()
+            + testRBStateFlow()
+            + testMeshNeighbours()
+            + testMeshUpdate()
         //+someOtherTest()
     ;
 }
