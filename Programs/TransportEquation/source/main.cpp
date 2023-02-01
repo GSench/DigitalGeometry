@@ -1,8 +1,7 @@
 #include <iostream>
 #include "UnitTests/UnitTestsLauncher.h"
-#include "TransportEquationSolver/Methods/TimeStepVelocity.h"
 
-//#include "Tests/TransportEquation1Dtests.h"
+#include "Tests/TransportEquation1Dtests.h"
 /*#include "Tests/TransportEquation2Dtests.h"
 #include "Tests/DigitalGeometryTests1D.h"
 #include "Tests/EulerEquation2Dtests.h"
@@ -36,7 +35,7 @@ void test(){
 */
 
 int main() {
-    TimeStepVelocity(Vector(1.0), Vector(1.0));
+    Solver1DStripMovementTest();
     return launchAllUnitTests();
 
 }
