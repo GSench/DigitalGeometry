@@ -5,15 +5,15 @@
 #include <iostream>
 #include "UnitTestsLauncher.h"
 #include "math/UTVector.h"
-#include "TransportEquationSolver/Methods/UTRBStateFlow.h"
+#include "TransportEquationSolver/Methods/UTSQuantityFlow.h"
 #include "TransportEquationSolver/Methods/UTMesh.h"
 
 
 int launchAllUnitTests(){
     return
-             testVector()
+            testVector()
             + testVectorCreation()
-            + testRBStateFlow()
+            + testSQuantityFlow()
             + testMeshNeighbours()
             + testMeshUpdate()
         //+someOtherTest()

@@ -10,8 +10,8 @@ function<string(double)> doublePrinter() {
     };
 }
 
-function<string(RBState)> rbStatePrinter() {
-    return [=](RBState q) -> string {
+function<string(SQuantity)> rbStatePrinter() {
+    return [=](SQuantity q) -> string {
         return to_string(q.getVolumeFraction());
     };
 }

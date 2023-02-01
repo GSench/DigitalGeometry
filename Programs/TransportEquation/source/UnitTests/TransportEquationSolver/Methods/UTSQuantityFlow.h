@@ -1,0 +1,10 @@
+//
+// Created by grigoriy.senchenok on 31.01.2023.
+//
+
+#ifndef TRANSPORTEQUATION_UTSQUANTITYFLOW_H
+#define TRANSPORTEQUATION_UTSQUANTITYFLOW_H
+
+int testSQuantityFlow();
+
+#endif //TRANSPORTEQUATION_UTSQUANTITYFLOW_H

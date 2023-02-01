@@ -10,7 +10,7 @@
 #include <vector>
 #include <functional>
 #include "TESolver1DParams.h"
-#include "../Methods/RBState.h"
+#include "../Methods/SQuantity.h"
 #include "../Methods/Mesh.h"
 
 using namespace std;
@@ -166,7 +166,7 @@ public:
 
 function<string(double)> doublePrinter();
 
-function<string(RBState)> rbStatePrinter();
+function<string(SQuantity)> rbStatePrinter();
 
 template<typename T>
 TESolver1DOutput<T> noOutput(){

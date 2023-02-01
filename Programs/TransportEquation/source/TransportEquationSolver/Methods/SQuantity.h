@@ -2,19 +2,19 @@
 // Created by grigoriy.senchenok on 12.12.2022.
 //
 
-#ifndef TRANSPORTEQUATION_RBSTATE_H
-#define TRANSPORTEQUATION_RBSTATE_H
+#ifndef TRANSPORTEQUATION_SQUANTITY_H
+#define TRANSPORTEQUATION_SQUANTITY_H
 
 #include <utility>
 
 #include "TimeStepVelocity.h"
 
-class RBState {
+class SQuantity {
 private:
     double volumeFraction = 1;
     vector<TimeStepVelocity> transportVelocities;
 public:
-    RBState(double volumeFraction, vector<TimeStepVelocity> transportVelocities) :
+    SQuantity(double volumeFraction, vector<TimeStepVelocity> transportVelocities) :
             volumeFraction(volumeFraction), transportVelocities(std::move(transportVelocities))
         {}
 
@@ -40,26 +40,26 @@ public:
 
     // State operations
 
-    RBState operator+(const RBState& q) const {
+    SQuantity operator+(const SQuantity& q) const {
         return {volumeFraction+q.volumeFraction, transportVelocities};
     }
 
-    void operator+=(const RBState& q) {
+    void operator+=(const SQuantity& q) {
         volumeFraction+=q.volumeFraction;
     }
 
-    RBState operator-(const RBState& q) const {
+    SQuantity operator-(const SQuantity& q) const {
         return {volumeFraction-q.volumeFraction, transportVelocities};
     }
 
 
-    void operator-=(const RBState& q) {
+    void operator-=(const SQuantity& q) {
         volumeFraction-=q.volumeFraction;
     }
 
     // Scale operations
 
-    RBState operator*(double s) const {
+    SQuantity operator*(double s) const {
         return {volumeFraction*s, transportVelocities};
     }
 
@@ -67,7 +67,7 @@ public:
         volumeFraction*=s;
     }
 
-    RBState operator/(double s) const {
+    SQuantity operator/(double s) const {
         return {volumeFraction/s, transportVelocities};
     }
 
@@ -77,4 +77,4 @@ public:
 };
 
 
-#endif //TRANSPORTEQUATION_RBSTATE_H
+#endif //TRANSPORTEQUATION_SQUANTITY_H

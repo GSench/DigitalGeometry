@@ -6,7 +6,7 @@
 
 #include "../../UnitTestsLauncher.h"
 #include "../../../TransportEquationSolver/Methods/Mesh.h"
-#include "../../../TransportEquationSolver/Methods/RBState.h"
+#include "../../../TransportEquationSolver/Methods/SQuantity.h"
 
 #include <string>
 #include <iostream>
@@ -71,15 +71,15 @@ int testMeshUpdate(){
     string testTitle = "QuantityUpdate";
     startTestMsg(testTitle);
 
-    RBState init(0.0, {
+    SQuantity init(0.0, {
         TimeStepVelocity(Vector(1.0),Vector(1.0)),
         TimeStepVelocity(Vector(1.0),Vector(1.0))
     });
-    RBState final(1.0, {
+    SQuantity final(1.0, {
             TimeStepVelocity(Vector(1.0),Vector(1.0)),
             TimeStepVelocity(Vector(1.0),Vector(1.0))
     });
-    Mesh<RBState> q(0.5, 1.0, init);
+    Mesh<SQuantity> q(0.5, 1.0, init);
     q.setQuantity(final);
     q.apply();
 

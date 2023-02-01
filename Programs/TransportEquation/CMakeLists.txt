@@ -116,14 +116,14 @@ set(PROJECT_SOURCES
         #source/TransportEquationSolver/Methods/GRBState.h
         #source/TransportEquationSolver/Tools/RiemannProblem.cpp
         #source/TransportEquationSolver/Tools/RiemannProblem.h
-        source/TransportEquationSolver/Methods/RBState.h
-        source/TransportEquationSolver/Methods/RBFlow.h
+        source/TransportEquationSolver/Methods/SQuantity.h
+        source/TransportEquationSolver/Methods/SFlow.h
         source/UnitTests/math/UTVector.cpp
         source/UnitTests/math/UTVector.h
         source/UnitTests/UnitTestsLauncher.cpp
         source/UnitTests/UnitTestsLauncher.h
-        source/UnitTests/TransportEquationSolver/Methods/UTRBStateFlow.cpp
-        source/UnitTests/TransportEquationSolver/Methods/UTRBStateFlow.h
+        source/UnitTests/TransportEquationSolver/Methods/UTSQuantityFlow.cpp
+        source/UnitTests/TransportEquationSolver/Methods/UTSQuantityFlow.h
         source/UnitTests/TransportEquationSolver/Methods/UTMesh.cpp
         source/UnitTests/TransportEquationSolver/Methods/UTMesh.h
         )
