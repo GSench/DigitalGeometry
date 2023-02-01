@@ -14,9 +14,8 @@ using namespace std;
 class Vector {
 private:
     vector<double> vals;
+    int dim;
 public:
-
-    const int dim;
 
     explicit Vector(const vector<double>& vals): vals(vals), dim(vals.size()) {}
 
@@ -33,6 +32,10 @@ public:
 
     Vector(int dim, double val) : vals(dim, val), dim(dim) {}
 
+    int getDim() const {
+        return dim;
+    }
+
     double operator [](int i) const {
         if(i>=dim) return 0;
         return vals[i];
@@ -41,7 +44,7 @@ public:
     // Vector operations
 
     Vector operator+(const Vector& v) const {
-        vector<double> r(max(dim, v.dim));
+        vector<double> r(max(dim, v.getDim()));
         for(int i=0; i<r.size(); i++) r[i] = (*this)[i]+v[i];
         return Vector(r);
     }
@@ -51,7 +54,7 @@ public:
     }
 
     Vector operator-(const Vector& v) const {
-        vector<double> r(max(dim, v.dim));
+        vector<double> r(max(dim, v.getDim()));
         for(int i=0; i<r.size(); i++) r[i] = (*this)[i]-v[i];
         return Vector(r);
     }
@@ -95,7 +98,7 @@ inline Vector zero(int dim){
 }
 
 inline Vector zero(const Vector& dimVector){
-    return zero(dimVector.dim);
+    return zero(dimVector.getDim());
 }
 
 inline Vector unit(int dim){
@@ -103,7 +106,7 @@ inline Vector unit(int dim){
 }
 
 inline Vector unit(const Vector& dimVector){
-    return unit(dimVector.dim);
+    return unit(dimVector.getDim());
 }
 
 #endif //TRANSPORTEQUATION_VECTOR_H

@@ -81,7 +81,7 @@ int testQuantityUpdate(){
     });
     Quantity<RBState> q(0.5, 1.0, init);
     q.setQuantity(final);
-    //q.apply();
+    q.apply();
 
     if(q.getQuantity().getVolumeFraction() != 1.0){
         cout << "VolumeFraction = "<<q.getQuantity().getVolumeFraction()<<" != 1.0"<<endl;

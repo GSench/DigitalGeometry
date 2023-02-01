@@ -18,24 +18,24 @@ int testVector(){
     c+=unit(c);
     if(c[X]!=3.0){
         cout << "c[X]!=3.0; c[X]=" << c[X] << endl;
-        cout << "c.dim = " << c.dim << endl;
-        for(int i=0; i<c.dim; i++) cout << "c["<<i<<"]="<<c[i]<<";  ";
+        cout << "c.getDim() = " << c.getDim() << endl;
+        for(int i=0; i<c.getDim(); i++) cout << "c["<<i<<"]="<<c[i]<<";  ";
         cout << endl;
         errorTestMsg(testTitle);
         return 1;
     }
     if(c[Y]!=3.0){
         cout << "c[Y]!=3.0; c[Y]=" << c[Y] << endl;
-        cout << "c.dim = " << c.dim << endl;
-        for(int i=0; i<c.dim; i++) cout << "c["<<i<<"]="<<c[i]<<";  ";
+        cout << "c.getDim() = " << c.getDim() << endl;
+        for(int i=0; i<c.getDim(); i++) cout << "c["<<i<<"]="<<c[i]<<";  ";
         cout << endl;
         errorTestMsg(testTitle);
         return 2;
     }
     if(c[Z]!=3.0){
         cout << "c[Z]!=3.0; c[Z]=" << c[Z] << endl;
-        cout << "c.dim = " << c.dim << endl;
-        for(int i=0; i<c.dim; i++) cout << "c["<<i<<"]="<<c[i]<<";  ";
+        cout << "c.getDim() = " << c.getDim() << endl;
+        for(int i=0; i<c.getDim(); i++) cout << "c["<<i<<"]="<<c[i]<<";  ";
         cout << endl;
         errorTestMsg(testTitle);
         return 3;
@@ -51,6 +51,9 @@ int testVectorCreation(){
     Vector v2(1.0, 2.0);
     Vector v3(1.0, 2.0, 3.0);
     Vector v4({1.0, 2.0, 3.0, 4.0});
+
+    Vector v = v2;
+    v = v3; // Vector must be assignable!
     successTestMsg(testTitle);
     return 0;
 }
