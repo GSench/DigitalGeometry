@@ -34,13 +34,12 @@ void Solver1DStripMovementTest() {
     Vector uVect(uVal);
     TimeStepVelocity uConst(uVect, uVect);
     Quantity<RBState>& f = generate1DPeriodicMesh<RBState>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx()/2, RBState(1.,{uConst, uConst}));
-    /*f.fillQuantity(N/4, N/4*3, RBState(0.,{uConst, uConst}));
+    f.fillQuantity(N/4, N/4*3, RBState(0.,{uConst, uConst}));
     f.apply();
     logTime("Initialization finished; Start solving");
     SolveTransportEquation1D(f, params, GFlow, output);
     logTime("Solved");
     output.finish();
-     */
 }
 /*
 void Solver1DStripMovementTest(){

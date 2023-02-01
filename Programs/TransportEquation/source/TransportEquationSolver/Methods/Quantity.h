@@ -38,13 +38,14 @@ private:
             version=newVersion;
             quantity = newQuantity;
             for(Quantity* q: neighbours)
-                q->apply(version);
+                if(q != NULL)
+                    q->apply(version);
         }
     }
 public:
     explicit Quantity(Vector& cellPos, Vector& cellSize, T quantity):
-        dimensions(cellPos.dim),
-        neighbours(cellPos.dim*2),
+        dimensions(cellPos.getDim()),
+        neighbours(cellPos.getDim()*2),
         cellPos(cellPos),
         cellSize(cellSize),
         quantity(quantity),
@@ -52,10 +53,10 @@ public:
     {}
 
     explicit Quantity(Vector& cellPos, double dx, T quantity): // square, cube
-        dimensions(cellPos.dim),
-        neighbours(cellPos.dim*2),
+        dimensions(cellPos.getDim()),
+        neighbours(cellPos.getDim()*2),
         cellPos(cellPos),
-        cellSize(vector<double>(cellPos.dim, dx)),
+        cellSize(vector<double>(cellPos.getDim(), dx)),
         quantity(quantity),
         newQuantity(quantity)
     {}
