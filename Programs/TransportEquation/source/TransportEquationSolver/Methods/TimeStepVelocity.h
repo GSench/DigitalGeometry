@@ -19,11 +19,11 @@ public:
         uNext(std::move(uNext))
         {}
 
-    Vector& getU() {
+    Vector getU() {
         return u;
     }
 
-    Vector& getUNext() {
+    Vector getUNext() {
         return uNext;
     }
 

@@ -48,10 +48,10 @@ set(PROJECT_SOURCES
         ##source/Tests/EulerEquation2Dtests.cpp
         ##source/Tests/EulerEquation2Dtests.h
         ##source/Tests/StandardSolver.cpp source/Tests/StandardSolver.h
-        #source/Tests/Tests.cpp
-        #source/Tests/Tests.h
-        #source/Tests/TransportEquation1Dtests.cpp
-        #source/Tests/TransportEquation1Dtests.h
+        source/Tests/Tests.cpp
+        source/Tests/Tests.h
+        source/Tests/TransportEquation1Dtests.cpp
+        source/Tests/TransportEquation1Dtests.h
         ##source/Tests/TransportEquation2Dtests.cpp
         ##source/Tests/TransportEquation2Dtests.h
         ##source/TransportEquationSolver/Instances/Area1D.cpp
@@ -61,8 +61,8 @@ set(PROJECT_SOURCES
         ##source/TransportEquationSolver/Instances/RBVectorField1D.h
         ##source/TransportEquationSolver/Instances/RBVectorField2D.cpp
         ##source/TransportEquationSolver/Instances/RBVectorField2D.h
-        #source/TransportEquationSolver/Instances/TESolver1DInstances.cpp
-        #source/TransportEquationSolver/Instances/TESolver1DInstances.h
+        source/TransportEquationSolver/Instances/TESolver1DInstances.cpp
+        source/TransportEquationSolver/Instances/TESolver1DInstances.h
         ##source/TransportEquationSolver/Instances/VectorField1D.cpp
         ##source/TransportEquationSolver/Instances/VectorField1D.h
         ##source/TransportEquationSolver/Instances/VectorField2D.cpp
@@ -75,8 +75,8 @@ set(PROJECT_SOURCES
         ##source/TransportEquationSolver/Solver1D/TERBJRSolver1D.h
         ##source/TransportEquationSolver/Solver1D/TERBSolver1D.cpp
         ##source/TransportEquationSolver/Solver1D/TERBSolver1D.h
-        #source/TransportEquationSolver/Solver1D/TESolver1D.cpp
-        #source/TransportEquationSolver/Solver1D/TESolver1D.h
+        source/TransportEquationSolver/Solver1D/TESolver1D.cpp
+        source/TransportEquationSolver/Solver1D/TESolver1D.h
         source/TransportEquationSolver/Solver1D/TESolver1DOutput.cpp
         source/TransportEquationSolver/Solver1D/TESolver1DOutput.h
         source/TransportEquationSolver/Solver1D/TESolver1DParams.h

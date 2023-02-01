@@ -6,5 +6,6 @@
 #define TRANSPORTEQUATION_UTQUANTITY_H
 
 int testQuantityNeighbours();
+int testQuantityUpdate();
 
 #endif //TRANSPORTEQUATION_UTQUANTITY_H

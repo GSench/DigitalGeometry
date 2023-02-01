@@ -10,7 +10,6 @@
 #include "../TransportEquationSolver/Solver1D/TESolver1D.h"
 #include "../configs.h"
 #include "Tests.h"
-#include "../TransportEquationSolver/Methods/TimeStepVelocity.h"
 #include "../TransportEquationSolver/Methods/ContinuousRBFlow.h"
 #include "../TransportEquationSolver/Tools/InterpolationFunctions.h"
 #include "../Utils/FileUtils.h"
@@ -29,18 +28,19 @@ void Solver1DStripMovementTest() {
     ContinuousRBFlow GFlow([=](F1D f1D, C1D c1D) -> function<double(double)> {
         return PsyTHINCandGodunov(f1D, c1D, 3.5, 1e-4);
     });
-    TESolver1DParams<RBState> params(CFL, uVal, 1.0, N, round((double)N/CFL));
+    TESolver1DParams params(CFL, uVal, 1.0, N, round((double)N/CFL));
     TESolver1DOutput<RBState> output = minimal1DOutput<RBState>(resultFilePath, params.getNTimeSteps(), 100, rbStatePrinter());
     output.printHeader(params);
     Vector uVect(uVal);
     TimeStepVelocity uConst(uVect, uVect);
     Quantity<RBState>& f = generate1DPeriodicMesh<RBState>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx()/2, RBState(1.,{uConst, uConst}));
-    f.fillQuantity(N/4, N/4*3, RBState(0.,{uConst, uConst}));
+    /*f.fillQuantity(N/4, N/4*3, RBState(0.,{uConst, uConst}));
     f.apply();
     logTime("Initialization finished; Start solving");
     SolveTransportEquation1D(f, params, GFlow, output);
     logTime("Solved");
     output.finish();
+     */
 }
 /*
 void Solver1DStripMovementTest(){

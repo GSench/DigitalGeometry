@@ -15,6 +15,7 @@ int launchAllUnitTests(){
         +testVectorCreation()
         +testRBStateFlow()
         +testQuantityNeighbours()
+        +testQuantityUpdate()
         //+someOtherTest()
     ;
 }

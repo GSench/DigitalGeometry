@@ -6,6 +6,7 @@
 
 #include "../../UnitTestsLauncher.h"
 #include "../../../TransportEquationSolver/Methods/Quantity.h"
+#include "../../../TransportEquationSolver/Methods/RBState.h"
 
 #include <string>
 #include <iostream>
@@ -61,6 +62,32 @@ int testQuantityNeighbours(){
         return 3;
     }
 
+    successTestMsg(testTitle);
+    return 0;
+}
+
+int testQuantityUpdate(){
+
+    string testTitle = "QuantityUpdate";
+    startTestMsg(testTitle);
+
+    RBState init(0.0, {
+        TimeStepVelocity(Vector(1.0),Vector(1.0)),
+        TimeStepVelocity(Vector(1.0),Vector(1.0))
+    });
+    RBState final(1.0, {
+            TimeStepVelocity(Vector(1.0),Vector(1.0)),
+            TimeStepVelocity(Vector(1.0),Vector(1.0))
+    });
+    Quantity<RBState> q(0.5, 1.0, init);
+    q.setQuantity(final);
+    //q.apply();
+
+    if(q.getQuantity().getVolumeFraction() != 1.0){
+        cout << "VolumeFraction = "<<q.getQuantity().getVolumeFraction()<<" != 1.0"<<endl;
+        errorTestMsg(testTitle);
+        return 1;
+    }
     successTestMsg(testTitle);
     return 0;
 }

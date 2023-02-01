@@ -1,11 +1,12 @@
 #include "TESolver1DOutput.h"
+#include "../Methods/OverEdgeFlow.h"
 #include "../../Utils/TimeLogger.h"
 
 using namespace std;
 //TODO calculate flow over edge only once
 template<typename Q, typename F>
 void updateCell(Quantity<Q> &f,
-                TESolver1DParams<Q> &p,
+                TESolver1DParams &p,
                 OverEdgeFlow<Q,F>& flowCalculator){
     F fL = flowCalculator.calc(*f.prev(), f, p.getDt());
     F fR = flowCalculator.calc(f, *f.next(), p.getDt());
@@ -15,7 +16,7 @@ void updateCell(Quantity<Q> &f,
 
 template<typename Q, typename F>
 void TESolverStep(Quantity<Q>& f,
-                  TESolver1DParams<Q>& p,
+                  TESolver1DParams& p,
                   OverEdgeFlow<Q,F>& flowCalculator){
     Quantity<Q>* fIter = &f;
     do {
@@ -28,7 +29,7 @@ void TESolverStep(Quantity<Q>& f,
 
 template<typename Q, typename F>
 void SolveTransportEquation1D(Quantity<Q>& f,
-                              TESolver1DParams<Q>& p,
+                              TESolver1DParams& p,
                               OverEdgeFlow<Q,F>& flowCalculator,
                               TESolver1DOutput<Q> &output
 ) {
