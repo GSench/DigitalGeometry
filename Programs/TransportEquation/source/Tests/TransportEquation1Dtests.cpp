@@ -49,7 +49,7 @@ void Gas1DTest() {
     const string resultFilePath = downDir(testDir, "Gas.txt");
     cout << "result file: " << resultFilePath << endl;
     logTime("Initialization");
-    int N = 8;
+    int N = 64;
     double CFL = 0.3;
     double uVal = 1.0;
     GasSolidFlow GFlow;

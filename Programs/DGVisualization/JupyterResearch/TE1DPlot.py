@@ -11,14 +11,14 @@ def xCells(cellCount, dx):
 
 def plotArea1D(cellCount, dx, frame, plotTitle, plotOutPath, showPic):
     fig = plt.figure(figsize=(24, 8))
-    ax = plt.axes(xlim=(0, dx*cellCount), ylim=(-0.1, 1.25))
+    ax = plt.axes(xlim=(0, dx*cellCount), ylim=(-0.1, 3))
     ax.grid()
     ax.set(xlabel='x', ylabel='f')
 
     x = xCells(cellCount, dx)
     y = frame
 
-    plt.bar(x, y, color = ['cornflowerblue'], width = dx)
+    plt.plot(x, y, 'b-')
 
     if cellCount < 100:
         plt.plot(x, y, 'ro')
@@ -34,7 +34,7 @@ def plotArea1D(cellCount, dx, frame, plotTitle, plotOutPath, showPic):
 
 def animation1D(cellCount, dx, NTimeSteps, realNTimeSteps, dt, frames, slowmo, plotTitle, plotOutPath):
     fig = plt.figure(figsize=(24, 9))
-    ax = plt.axes(xlim=(0, dx*cellCount), ylim=(-0.1, 1.25))
+    ax = plt.axes(xlim=(0, dx*cellCount), ylim=(-0.1, 3))
     ax.grid()
     
     x = xCells(cellCount, dx)
@@ -42,7 +42,7 @@ def animation1D(cellCount, dx, NTimeSteps, realNTimeSteps, dt, frames, slowmo, p
     camera = Camera(fig)
     for frame in frames:
         y = frame
-        plt.bar(x, y, color = ['cornflowerblue'], width = dx)
+        plt.plot(x, y, 'b-')
         if cellCount < 100:
             plt.plot(x, y, 'ro')
             for i,j in zip(x,y):
