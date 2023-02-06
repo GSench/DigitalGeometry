@@ -6,7 +6,7 @@
 #define TRANSPORTEQUATION_RIEMANNPROBLEM_H
 
 #include <vector>
-#include "../Methods/GRBState.h"
+#include "../Methods/GSQuantity.h"
 
 using namespace std;
 

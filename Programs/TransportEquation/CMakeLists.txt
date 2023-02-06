@@ -113,7 +113,8 @@ set(PROJECT_SOURCES
         source/TransportEquationSolver/Methods/Mesh.cpp
         source/Utils/TimeLogger.cpp
         source/Utils/TimeLogger.h
-        #source/TransportEquationSolver/Methods/GRBState.h
+        source/TransportEquationSolver/Methods/GSQuantity.h
+        source/TransportEquationSolver/Methods/GSFlow.h
         #source/TransportEquationSolver/Tools/RiemannProblem.cpp
         #source/TransportEquationSolver/Tools/RiemannProblem.h
         source/TransportEquationSolver/Methods/SQuantity.h
