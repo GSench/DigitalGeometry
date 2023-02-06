@@ -12,6 +12,7 @@
 #include "TESolver1DParams.h"
 #include "../Methods/SQuantity.h"
 #include "../Methods/Mesh.h"
+#include "../Methods/GSQuantity.h"
 
 using namespace std;
 
@@ -168,13 +169,16 @@ function<string(double)> doublePrinter();
 
 function<string(SQuantity)> rbStatePrinter();
 
+function<string(GSQuantity)> gsQuantityPrinter();
+
+
 template<typename T>
 TESolver1DOutput<T> noOutput(){
     return {false, false, false, false, false, "", false, 0, 0, false, nullptr};
 }
 
 template<typename T>
-TESolver1DOutput<T> terminal1DOutput(int NTimeSteps, function<string(double)> T2String){
+TESolver1DOutput<T> terminal1DOutput(int NTimeSteps, function<string(T)> T2String){
     return {true, true, true, true, false, TERMINAL, false, NTimeSteps, 0, false, T2String};
 }
 

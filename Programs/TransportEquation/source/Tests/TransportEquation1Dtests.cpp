@@ -13,6 +13,7 @@
 #include "../TransportEquationSolver/Methods/ContinuousSolidFlow.h"
 #include "../TransportEquationSolver/Tools/InterpolationFunctions.h"
 #include "../Utils/FileUtils.h"
+#include "../TransportEquationSolver/Methods/GasSolidFlow.h"
 
 using namespace std;
 
@@ -35,6 +36,31 @@ void Solver1DStripMovementTest() {
     TimeStepVelocity uConst(uVect, uVect);
     Mesh<SQuantity>& f = generate1DPeriodicMesh<SQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, SQuantity(1., {uConst, uConst}));
     f.fillQuantity(N/4, N/4*3, SQuantity(0., {uConst, uConst}));
+    f.apply();
+    logTime("Initialization finished; Start solving");
+    SolveTransportEquation1D(f, params, GFlow, output);
+    logTime("Solved");
+    output.finish();
+}
+
+void Gas1DTest() {
+    const string TEST_TITLE = "Gas1DTest";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
+    const string resultFilePath = downDir(testDir, "Gas.txt");
+    cout << "result file: " << resultFilePath << endl;
+    logTime("Initialization");
+    int N = 8;
+    double CFL = 0.3;
+    double uVal = 0.1;
+    GasSolidFlow GFlow;
+    TESolver1DParams params(CFL, uVal, 1.0, N, round((double)N/CFL));
+    TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
+    //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
+    output.printHeader(params);
+    GSQuantity defGas(1.0, 0.1, 0.0, 1.0, 1.4, Vector(0.0));
+    GSQuantity denseGas(1.0, 0.11, 0.0, 1.0, 1.4, Vector(0.0));
+    Mesh<GSQuantity>& f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
+    f.fillQuantity(N/4, N/4*3, denseGas);
     f.apply();
     logTime("Initialization finished; Start solving");
     SolveTransportEquation1D(f, params, GFlow, output);

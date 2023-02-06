@@ -3,6 +3,7 @@
 //
 
 void Solver1DStripMovementTest();
+void Gas1DTest();
 /*
 void Solver1DStripMovementTest();
 void Solver1DStripBackMovementTest();

@@ -14,18 +14,33 @@ class GSFlow {
 private:
     Vector gasSolidState;
     double gamma = 1;
+    Vector solidVelocity;
 public:
-    GSFlow(Vector gasSolidState, double gamma) : gasSolidState(std::move(gasSolidState)), gamma(gamma) {}
+    GSFlow(Vector gasSolidState, double gamma, Vector solidVelocity) :
+        gasSolidState(std::move(gasSolidState)),
+        gamma(gamma),
+        solidVelocity(std::move(solidVelocity))
+    {}
 
-    GSFlow(double volumeFraction, double density, double velocity, double pressure, double gamma):
+    GSFlow(double volumeFraction, double density, double velocity, double pressure, double gamma, Vector solidVelocity):
             gasSolidState({
-                volumeFraction,
-                volumeFraction*density,
+                volumeFraction*solidVelocity[0], //TODO 1D stub
                 volumeFraction*density*velocity,
-                volumeFraction*density*(pow(velocity,2)/2.+pressure/density/(gamma-1))
+                volumeFraction*density*velocity*velocity + pressure,
+                volumeFraction*density*(pow(velocity,2)/2.+pressure/density/(gamma-1)+pressure/density)
             }),
-            gamma(gamma)
-            {}
+            gamma(gamma),
+            solidVelocity(std::move(solidVelocity))
+    {}
+
+    explicit GSFlow(const GSQuantity& q):
+            GSFlow(q.volumeFraction(),
+                   q.density(),
+                   q.velocity(),
+                   q.pressure(),
+                   q.getGamma(),
+                   q.getSolidVelocity())
+                   {}
 
     double volumeFraction(){
         return gasSolidState[0];
@@ -48,47 +63,55 @@ public:
         return gamma;
     }
 
+    Vector getSolidVelocity() const {
+        return solidVelocity;
+    }
+
     // Flow operations
 
-    GSFlow operator+(const GSFlow& q) const {
-        return {q.getGasSolidState() + gasSolidState, gamma};
+    GSFlow operator+(const GSFlow& f) const {
+        return {f.getGasSolidState() + gasSolidState, gamma, solidVelocity};
     }
 
-    void operator+=(const GSFlow& q) {
-        gasSolidState+=q.getGasSolidState();
+    void operator+=(const GSFlow& f) {
+        gasSolidState+=f.getGasSolidState();
     }
 
-    GSFlow operator-(const GSFlow& q) const {
-        return {gasSolidState - q.getGasSolidState(), gamma};
+    GSFlow operator-(const GSFlow& f) const {
+        return {gasSolidState - f.getGasSolidState(), gamma, solidVelocity};
     }
 
-    void operator-=(const GSFlow& q) {
-        gasSolidState-=q.getGasSolidState();
+    void operator-=(const GSFlow& f) {
+        gasSolidState-=f.getGasSolidState();
     }
 
     // State operations
 
 
     GSQuantity operator+(const GSQuantity& q) const {
-        return {gasSolidState+q.getGasSolidState(), gamma};
+        return {gasSolidState+q.getGasSolidState(), gamma, q.getSolidVelocity()};
     }
 
     GSQuantity friend operator+(const GSQuantity& q, const GSFlow& f) {
-        return {q.getGasSolidState()+f.getGasSolidState(), q.getGamma()};
+        return {q.getGasSolidState()+f.getGasSolidState(), q.getGamma(), q.getSolidVelocity()};
     }
 
     GSQuantity operator-(const GSQuantity& q) const {
-        return {gasSolidState-q.getGasSolidState(), gamma};
+        return {gasSolidState-q.getGasSolidState(), gamma, q.getSolidVelocity()};
     }
 
     GSQuantity friend operator-(const GSQuantity& q, const GSFlow& f) {
-        return {q.getGasSolidState()-f.getGasSolidState(), q.getGamma()};
+        return {q.getGasSolidState()-f.getGasSolidState(), q.getGamma(), q.getSolidVelocity()};
     }
 
     // Scale operations
 
     GSFlow operator*(double s) const {
-        return {gasSolidState * s, gamma};
+        return {gasSolidState * s, gamma, solidVelocity};
+    }
+
+    GSFlow friend operator*(double s, const GSFlow& f) {
+        return {f.gasSolidState * s, f.gamma, f.solidVelocity};
     }
 
     void operator*=(double s) {
@@ -96,7 +119,11 @@ public:
     }
 
     GSFlow operator/(double s) const {
-        return {gasSolidState / s, gamma};
+        return {gasSolidState / s, gamma, solidVelocity};
+    }
+
+    GSFlow friend operator/(double s, const GSFlow& f) {
+        return {f.gasSolidState / s, f.gamma, f.solidVelocity};
     }
 
     void operator/=(double s) {
@@ -104,5 +131,8 @@ public:
     }
 };
 
+inline GSFlow convertQuantity(const GSQuantity& q){
+    return {q.getGasSolidState(), q.getGamma(), q.getSolidVelocity()};
+}
 
 #endif //TRANSPORTEQUATION_GSFLOW_H

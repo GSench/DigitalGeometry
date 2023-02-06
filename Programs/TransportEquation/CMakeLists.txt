@@ -115,8 +115,8 @@ set(PROJECT_SOURCES
         source/Utils/TimeLogger.h
         source/TransportEquationSolver/Methods/GSQuantity.h
         source/TransportEquationSolver/Methods/GSFlow.h
-        #source/TransportEquationSolver/Tools/RiemannProblem.cpp
-        #source/TransportEquationSolver/Tools/RiemannProblem.h
+        source/TransportEquationSolver/Tools/RiemannProblem.cpp
+        source/TransportEquationSolver/Tools/RiemannProblem.h
         source/TransportEquationSolver/Methods/SQuantity.h
         source/TransportEquationSolver/Methods/SFlow.h
         source/UnitTests/math/UTVector.cpp
@@ -127,6 +127,6 @@ set(PROJECT_SOURCES
         source/UnitTests/TransportEquationSolver/Methods/UTSQuantityFlow.h
         source/UnitTests/TransportEquationSolver/Methods/UTMesh.cpp
         source/UnitTests/TransportEquationSolver/Methods/UTMesh.h
-        )
+        source/TransportEquationSolver/Methods/GasSolidFlow.h)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})
