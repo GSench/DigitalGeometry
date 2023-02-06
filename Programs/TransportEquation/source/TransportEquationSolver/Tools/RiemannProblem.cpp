@@ -22,8 +22,6 @@ GSFlow RP(const GSQuantity& QL, const GSQuantity& QR, double dt){
     pair<double,double> slr = RPWaves(QL.velocity(), QL.velocity(), QL.soundSpeed(), QR.soundSpeed());
     double sl = slr.first;
     double sr = slr.second;
-    if(sl>0) return FL;
-    if(sr<0) return FR;
-    GSFlow FDiscontinuity = (sl*FL - sl*FR + sl*sr*convertQuantity(QR-QL))/(sr-sl);
+    GSFlow FDiscontinuity = (sr*FL - sl*FR + sl * sr * toFlow(QR - QL)) / (sr - sl);
     return FDiscontinuity*dt;
 }

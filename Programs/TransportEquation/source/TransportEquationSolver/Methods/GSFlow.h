@@ -131,7 +131,7 @@ public:
     }
 };
 
-inline GSFlow convertQuantity(const GSQuantity& q){
+inline GSFlow toFlow(const GSQuantity& q){
     return {q.getGasSolidState(), q.getGamma(), q.getSolidVelocity()};
 }
 

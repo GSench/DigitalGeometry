@@ -37,7 +37,7 @@ void test(){
 int main() {
     int unitTestsResult = launchAllUnitTests();
     if(unitTestsResult!=0) return unitTestsResult;
-    Solver1DStripMovementTest();
+    //Solver1DStripMovementTest();
     Gas1DTest();
     return 0;
 }
