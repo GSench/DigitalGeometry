@@ -36,17 +36,18 @@ public:
         return gasSolidState[0];
     }
     double density() const {
-        return gasSolidState[1] / gasSolidState[0];
+        return gasSolidState[0] < 1e-10 ? 0 : gasSolidState[1] / gasSolidState[0];
     }
     double velocity() const {
-        return gasSolidState[2] / gasSolidState[1];
+        return gasSolidState[0] < 1e-10 ? 0 : gasSolidState[2] / gasSolidState[1];
     }
     double pressure() const {
-        return (gasSolidState[3] / gasSolidState[1] - 0.5 * pow(velocity(), 2)) * density() * (gamma - 1);
+        return gasSolidState[0] < 1e-10 ? 0 :
+               (gasSolidState[3] / gasSolidState[1] - 0.5 * pow(velocity(), 2)) * density() * (gamma - 1);
     }
 
     double energy() const {
-        return gasSolidState[3] / gasSolidState[1];
+        return gasSolidState[0] < 1e-10 ? 0 : gasSolidState[3] / gasSolidState[1];
     }
 
     bool isSolid(double eps) const {

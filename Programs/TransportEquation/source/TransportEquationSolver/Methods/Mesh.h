@@ -140,6 +140,13 @@ public:
         apply(version+1);
     }
 
+    void setQuantity(int cell, T q){
+        Mesh<T>* fIter = this;
+        for(int i=0; i<cell; i++)
+            fIter = fIter->next();
+        fIter->setQuantity(q);
+    }
+
     void fillQuantity(int fromCell, int toCell, T q){
         Mesh<T>* fIter = this;
         for(int i=0; i<fromCell; i++)

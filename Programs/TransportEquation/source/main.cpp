@@ -38,7 +38,8 @@ int main() {
     int unitTestsResult = launchAllUnitTests();
     if(unitTestsResult!=0) return unitTestsResult;
     //Solver1DStripMovementTest();
-    //Gas1DTest();
-    GasSolid1DTest();
+    Gas1DTest();
+    GasSolid1DStaticTest();
+    GasSolid1DTransportTest();
     return 0;
 }

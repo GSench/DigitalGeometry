@@ -46,7 +46,7 @@ void Solver1DStripMovementTest() {
 void Gas1DTest() {
     const string TEST_TITLE = "Gas1DTest";
     const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
-    const string resultFilePath = downDir(testDir, "Gas.txt");
+    const string resultFilePath = downDir(testDir, "Gas1DTest.txt");
     cout << "result file: " << resultFilePath << endl;
     logTime("Initialization");
     int N = 64;
@@ -68,10 +68,37 @@ void Gas1DTest() {
     output.finish();
 }
 
-void GasSolid1DTest() {
-    const string TEST_TITLE = "GasSolid1DTest";
+void GasSolid1DStaticTest() {
+    const string TEST_TITLE = "GasSolid1DStaticTest";
     const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
-    const string resultFilePath = downDir(testDir, "GasSolid.txt");
+    const string resultFilePath = downDir(testDir, "GasSolid1DStaticTest.txt");
+    cout << "result file: " << resultFilePath << endl;
+    logTime("Initialization");
+    int N = 8;
+    double uVal = 0.0;
+    GasSolidFlow GFlow;
+    TESolver1DParams params(1.0/N, N, 1.0, 10);
+    TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
+    //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
+    output.printHeader(params);
+    GSQuantity defGas(1.0, 1.0, uVal, 1.0, 1.4, uVal);
+    GSQuantity solid(0.0, 0.0, 0.0, 0.0, 1.4, uVal);
+    GSQuantity inter(0.5, 1.0, uVal, 1.0, 1.4, uVal);
+    Mesh<GSQuantity>& f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
+    f.fillQuantity(N/4, 3*N/4, solid);
+    f.setQuantity(N/4, inter);
+    f.setQuantity(3*N/4-1, inter);
+    f.apply();
+    logTime("Initialization finished; Start solving");
+    SolveTransportEquation1D(f, params, GFlow, output);
+    logTime("Solved");
+    output.finish();
+}
+
+void GasSolid1DTransportTest() {
+    const string TEST_TITLE = "GasSolid1DTransportTest";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
+    const string resultFilePath = downDir(testDir, "GasSolid1DTransportTest.txt");
     cout << "result file: " << resultFilePath << endl;
     logTime("Initialization");
     int N = 8;
@@ -84,8 +111,11 @@ void GasSolid1DTest() {
     output.printHeader(params);
     GSQuantity defGas(1.0, 1.0, uVal, 1.0, 1.4, uVal);
     GSQuantity solid(0.0, 0.0, 0.0, 0.0, 1.4, uVal);
+    GSQuantity inter(0.5, 1.0, uVal, 1.0, 1.4, uVal);
     Mesh<GSQuantity>& f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
     f.fillQuantity(N/4, 3*N/4, solid);
+    f.setQuantity(N/4, inter);
+    f.setQuantity(3*N/4-1, inter);
     f.apply();
     logTime("Initialization finished; Start solving");
     SolveTransportEquation1D(f, params, GFlow, output);
