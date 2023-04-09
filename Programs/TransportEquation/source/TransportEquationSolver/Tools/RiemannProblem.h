@@ -11,8 +11,6 @@
 
 using namespace std;
 
-pair<double, double> RPWaves(double ul, double ur, double al, double ar);
-double RPRBWave(double ul, double al, double vs);
 GSFlow RP(const GSQuantity& QL, const GSQuantity& QR, double dt);
 
 #endif //TRANSPORTEQUATION_RIEMANNPROBLEM_H

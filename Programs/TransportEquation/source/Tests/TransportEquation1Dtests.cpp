@@ -57,8 +57,8 @@ void Gas1DTest() {
     TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
     //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
     output.printHeader(params);
-    GSQuantity defGas(1.0, 1.0, 1.0, 1.0, 1.4, Vector(0.0));
-    GSQuantity denseGas(1.0, 2.0, 1.0, 1.0, 1.4, Vector(0.0));
+    GSQuantity defGas(1.0, 1.0, 1.0, 1.0, 1.4, 0.0);
+    GSQuantity denseGas(1.0, 2.0, 1.0, 1.0, 1.4, 0.0);
     Mesh<GSQuantity>& f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
     f.fillQuantity(0, N/2, denseGas);
     f.apply();

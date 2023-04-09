@@ -12,16 +12,16 @@
 class GSQuantity {
 private:
     Vector gasSolidState;
-    Vector solidVelocity;
+    double solidVelocity;
     double gamma = 1.4;
 public:
-    GSQuantity(Vector gasSolidState, double gamma, Vector solidVelocity) :
+    GSQuantity(Vector gasSolidState, double gamma, double solidVelocity) :
         gasSolidState(std::move(gasSolidState)),
         gamma(gamma),
-        solidVelocity(std::move(solidVelocity))
+        solidVelocity(solidVelocity)
         {}
 
-    GSQuantity(double volumeFraction, double density, double velocity, double pressure, double gamma, Vector solidVelocity):
+    GSQuantity(double volumeFraction, double density, double velocity, double pressure, double gamma, double solidVelocity):
             gasSolidState({
                 volumeFraction,
                 volumeFraction*density,
@@ -29,7 +29,7 @@ public:
                 volumeFraction*density*(pow(velocity,2)/2.+pressure/density/(gamma-1))
             }),
             gamma(gamma),
-            solidVelocity(std::move(solidVelocity))
+            solidVelocity(solidVelocity)
     {}
 
     double volumeFraction() const {
@@ -45,6 +45,27 @@ public:
         return (gasSolidState[3] / gasSolidState[1] - 0.5 * pow(velocity(), 2)) * density() * (gamma - 1);
     }
 
+    double energy() const {
+        return gasSolidState[3] / gasSolidState[1];
+    }
+
+    bool isSolid(double eps) const {
+        return abs(gasSolidState[0]) < eps;
+    }
+
+    bool isGas(double eps) const {
+        return abs(gasSolidState[0]-1) < eps;
+    }
+
+    bool isDiscontinuous(double eps) const {
+        return !isGas(eps) && !isSolid(eps);
+    }
+
+    void inverse() {
+        gasSolidState = Vector({gasSolidState[0], gasSolidState[1], -gasSolidState[2], gasSolidState[3]});
+        solidVelocity = -solidVelocity;
+    }
+
     Vector getGasSolidState() const {
         return gasSolidState;
     }
@@ -53,7 +74,7 @@ public:
         return gamma;
     }
 
-    Vector getSolidVelocity() const {
+    double getSolidVelocity() const {
         return solidVelocity;
     }
 

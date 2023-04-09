@@ -14,23 +14,23 @@ class GSFlow {
 private:
     Vector gasSolidState;
     double gamma = 1;
-    Vector solidVelocity;
+    double solidVelocity;
 public:
-    GSFlow(Vector gasSolidState, double gamma, Vector solidVelocity) :
+    GSFlow(Vector gasSolidState, double gamma, double solidVelocity) :
         gasSolidState(std::move(gasSolidState)),
         gamma(gamma),
-        solidVelocity(std::move(solidVelocity))
+        solidVelocity(solidVelocity)
     {}
 
-    GSFlow(double volumeFraction, double density, double velocity, double pressure, double gamma, Vector solidVelocity):
+    GSFlow(double volumeFraction, double density, double velocity, double pressure, double gamma, double solidVelocity):
             gasSolidState({
-                volumeFraction*solidVelocity[0], //TODO 1D stub
+                volumeFraction*solidVelocity,
                 volumeFraction*density*velocity,
                 volumeFraction*density*velocity*velocity + pressure,
                 volumeFraction*density*(pow(velocity,2)/2.+pressure/density/(gamma-1)+pressure/density)
             }),
             gamma(gamma),
-            solidVelocity(std::move(solidVelocity))
+            solidVelocity(solidVelocity)
     {}
 
     explicit GSFlow(const GSQuantity& q):
@@ -63,7 +63,7 @@ public:
         return gamma;
     }
 
-    Vector getSolidVelocity() const {
+    double getSolidVelocity() const {
         return solidVelocity;
     }
 

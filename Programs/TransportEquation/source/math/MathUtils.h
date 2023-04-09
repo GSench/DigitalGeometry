@@ -18,3 +18,14 @@ template <typename T> T avg(const vector<T>& vals){
     for(T v: vals) sum+=v;
     return sum / vals.size();
 }
+template <typename T> T wavg(const vector<T>& vals, const vector<double>& weights){
+    if(vals.empty() || vals.size() != weights.size()) return T(0);
+    T sum = T(0);
+    double totalWeight = 0;
+    for(int i=0; i<vals.size(); i++){
+        sum+=vals[i] * weights[i];
+        totalWeight += weights[i];
+    }
+    if(totalWeight==0) return T(0);
+    return sum / totalWeight;
+}
