@@ -27,7 +27,7 @@ public:
                 volumeFraction*solidVelocity,
                 volumeFraction*density*velocity,
                 volumeFraction*density*velocity*velocity + pressure,
-                volumeFraction*density*(pow(velocity,2)/2.+pressure/density/(gamma-1)+pressure/density)
+                volumeFraction*density*velocity*(velocity*velocity/2.+pressure/density/(gamma-1)+pressure/density)
             }),
             gamma(gamma),
             solidVelocity(solidVelocity)
@@ -41,9 +41,10 @@ public:
                    q.getGamma(),
                    q.getSolidVelocity())
                    {}
-
+/*
+ // Incorrect
     double volumeFraction(){
-        return gasSolidState[0];
+        return gasSolidState[0] / solidVelocity;
     }
     double density(){
         return gasSolidState[1] / gasSolidState[0];
@@ -52,7 +53,12 @@ public:
         return gasSolidState[2] / gasSolidState[1];
     }
     double pressure(){
-        return (gasSolidState[3] / gasSolidState[1] - 0.5 * pow(velocity(), 2)) * density() * (gamma - 1);
+        return (gasSolidState[3] / gasSolidState[1] - velocity() * velocity() / 2.0) * density() * (gamma - 1);
+    }
+*/
+    void inverse() {
+        gasSolidState = Vector({-gasSolidState[0], -gasSolidState[1], gasSolidState[2], -gasSolidState[3]});
+        solidVelocity = -solidVelocity;
     }
 
     Vector getGasSolidState() const {
@@ -133,6 +139,10 @@ public:
 
 inline GSFlow toFlow(const GSQuantity& q){
     return {q.getGasSolidState(), q.getGamma(), q.getSolidVelocity()};
+}
+
+inline GSFlow zero(const GSQuantity& q){
+    return {0,0,0,0,q.getGamma(), q.getSolidVelocity()};
 }
 
 #endif //TRANSPORTEQUATION_GSFLOW_H

@@ -22,7 +22,7 @@ public:
     explicit ContinuousSolidFlow(function<function<double(double)>(F1D, C1D)> flowInterpolationFunction)
             : FlowInterpolationFunction(std::move(flowInterpolationFunction)) {}
 
-    SFlow calc(Mesh<SQuantity>& l, Mesh<SQuantity>& r, double dt) override {
+    SFlow calc(Mesh<SQuantity>& l, Mesh<SQuantity>& r, double dt, double dx) override {
         double x = l.xR();
         double uCurr = l.getQuantity().currVelocityDir(l.getDirection(), R);
         double uNext = l.getQuantity().nextVelocityDir(l.getDirection(), R);

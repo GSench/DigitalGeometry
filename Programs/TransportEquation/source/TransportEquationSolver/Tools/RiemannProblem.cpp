@@ -76,7 +76,7 @@ GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, dou
     double xs = (solidCase(config) ? QLCalc.volumeFraction() - 1 : QRCalc.volumeFraction()) * dx;
     double vs = QRCalc.getSolidVelocity();
     double t1 = -xs/vs;
-    double tau1 = t1>=0 && t1<=dt ? t1/dt : 1;
+    double tau1 = t1>=0 && t1<=dt ? t1/dt : 1.0;
 
     GSQuantity QL_avg = gasCase(config) ?
             QLCalc :
@@ -87,7 +87,7 @@ GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, dou
     double al = QL_avg.soundSpeed();
     double sl = CRPSWave(ul, al, vs);
     double t2 = -xs/sl;
-    double tau2 = t2>=0 && t2<=dt ? t2/dt : 1;
+    double tau2 = t2>=0 && t2<=dt ? t2/dt : 1.0;
 
     double rhoL = QL_avg.density();
     double pL = QL_avg.pressure();
@@ -106,8 +106,17 @@ GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, dou
     );
     GSFlow FStar = GSFlow(QL_avg) + sl * toFlow(QStar - QL_avg);
 
-    GSFlow GR = (FStar - vs* toFlow(QStar))*tau2 * dt;
-    GSFlow GL = (FStar - vs* toFlow(QStar))*(1-tau2) * dt;
+    GSFlow FBorder = solidCase(config) ?
+            (toFlow(QL_avg)*(1.0-tau2) + FStar * (tau2 - tau1))*dt :
+            (toFlow(QL_avg)*tau2 + FStar * (tau1 - tau2))*dt ;
 
-    return FStar;
+    //GSFlow GL = (FStar - vs* toFlow(QStar))*(solidCase(config) ? tau1 : 1 - tau1) * dt;
+    GSFlow GPlus = (FStar - vs* toFlow(QStar))*(solidCase(config) ? 1 - tau1 : tau1) * dt;
+
+    GSFlow flow = FBorder + GPlus;
+
+    if(rightDiscontinuousCase(config))
+        flow.inverse();
+
+    return flow;
 }
