@@ -26,7 +26,7 @@ public:
             gasSolidState({
                 volumeFraction*solidVelocity,
                 volumeFraction*density*velocity,
-                volumeFraction*density*velocity*velocity + pressure,
+                volumeFraction*(density*velocity*velocity + pressure),
                 volumeFraction*density*velocity*(velocity*velocity/2.+pressure/density/(gamma-1)+pressure/density)
             }),
             gamma(gamma),
