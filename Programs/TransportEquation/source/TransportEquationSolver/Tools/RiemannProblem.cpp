@@ -137,23 +137,15 @@ GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, dou
     GSQuantity QLCalc = QL;
     GSQuantity QRCalc = QR;
     // Reconfiguring discontinuity right to left
-    if(rightDiscontinuousCase(config) || config == SG){
+    if(rightDiscontinuousCase(config)){
         QLCalc.inverse();
         QRCalc.inverse();
         swap(QLCalc, QRCalc);
         dirLR = inverseDirLR(dirLR);
     }
 
-    // only SL, GL cases are considered (+ GS)
+    // only SL, GL cases are considered
     double xs = (solidCase(config) ? QLCalc.volumeFraction() - 1 : QRCalc.volumeFraction()) * dx;
-    if(config==GS) {
-        xs = -eps;
-        config = SL;
-    }
-    if(config==SG) {
-        xs = -eps;
-        config = SR;
-    }
     double vs = QRCalc.getSolidVelocity();
     double t1 = -xs/ifZero(vs, eps);
     double tau1 = t1>=0 && t1<=dt ? t1/dt : 1.0;
@@ -184,7 +176,7 @@ GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, dou
                 uv*(rhoL*El + (ul-vs)*(pL/ifZero(ul-sl, eps) - rhoL*vs))
             }),
             QL_avg.getGamma(),
-            0
+            vs
     );
     GSFlow FStar = GSFlow(QL_avg) + sl * toFlow(QStar - QL_avg);
 
@@ -270,7 +262,7 @@ GSFlow CRPMastering(const GSQuantity& QL, const GSQuantity& QR, double dt, doubl
                            uv*(rhoL*El + (ul-vs)*(pL/ifZero(ul-sl, eps) - rhoL*vs))
                    }),
             QL_avg.getGamma(),
-            0
+            vs
     );
     GSFlow FStar = GSFlow(QL_avg) + sl * toFlow(QStar - QL_avg);
 
