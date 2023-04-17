@@ -186,11 +186,11 @@ Mesh<T>& generate1DPeriodicMesh(int cellCount, double posDelta, double cellSize,
 }
 
 template<typename T>
-Mesh<T>& generate1DBorderedMesh(int cellCount, double posDelta, double cellSize, double offset, T defaultValue, T outOfBoundsValue){
+Mesh<T>& generate1DBorderedMesh(int cellCount, double posDelta, double cellSize, double offset, T defaultValue, T outOfBoundsValueL, T outOfBoundsValueR){
     pair<Mesh<T>*,Mesh<T>*> rawMesh = generate1DMesh<T>(cellCount, posDelta, cellSize, offset, defaultValue);
-    Mesh<T>* lBorder = new Mesh<T>(rawMesh.first->x() - posDelta, cellSize, outOfBoundsValue);
+    Mesh<T>* lBorder = new Mesh<T>(rawMesh.first->x() - posDelta, cellSize, outOfBoundsValueL);
     rawMesh.first->setNeighbour(X, L, *lBorder);
-    Mesh<T>* rBorder = new Mesh<T>(rawMesh.second->x() + posDelta, cellSize, outOfBoundsValue);
+    Mesh<T>* rBorder = new Mesh<T>(rawMesh.second->x() + posDelta, cellSize, outOfBoundsValueR);
     rawMesh.second->setNeighbour(X, R, *rBorder);
     return *(rawMesh.first);
 }

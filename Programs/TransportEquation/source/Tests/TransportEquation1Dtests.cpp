@@ -68,6 +68,78 @@ void Gas1DTest() {
     output.finish();
 }
 
+void SodTest() {
+    const string TEST_TITLE = "SodTest";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
+    const string resultFilePath = downDir(testDir, "SodTest.txt");
+    cout << "result file: " << resultFilePath << endl;
+    logTime("Initialization");
+    int N = 200;
+    int T = 200;
+    GasSolidFlow GFlow;
+    TESolver1DParams params(1.0/N, N, 0.25/T, T);
+    TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
+    //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
+    output.printHeader(params);
+    GSQuantity defGas(1.0, 1.0, 0.0, 1.0, 1.4, 0.0);
+    GSQuantity rareGas(1.0, 0.125, 0.0, 0.1, 1.4, 0.0);
+    Mesh<GSQuantity>& f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas, defGas, rareGas);
+    f.fillQuantity(N/2, N, rareGas);
+    f.apply();
+    logTime("Initialization finished; Start solving");
+    SolveTransportEquation1D(f, params, GFlow, output);
+    logTime("Solved");
+    output.finish();
+}
+
+void GasTest2() {
+    const string TEST_TITLE = "GasTest2";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
+    const string resultFilePath = downDir(testDir, "GasTest2.txt");
+    cout << "result file: " << resultFilePath << endl;
+    logTime("Initialization");
+    int N = 200;
+    int T = 5000;
+    GasSolidFlow GFlow;
+    TESolver1DParams params(1.0/N, N, 0.15/T, T);
+    TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
+    //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
+    output.printHeader(params);
+    GSQuantity leftGas(1.0, 1.0, -2.0, 0.4, 1.4, 0.0);
+    GSQuantity rightGas(1.0, 1.0, 2.0, 0.4, 1.4, 0.0);
+    Mesh<GSQuantity>& f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, leftGas, leftGas, rightGas);
+    f.fillQuantity(N/2, N, rightGas);
+    f.apply();
+    logTime("Initialization finished; Start solving");
+    SolveTransportEquation1D(f, params, GFlow, output);
+    logTime("Solved");
+    output.finish();
+}
+
+void GasTest3() {
+    const string TEST_TITLE = "GasTest3";
+    const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
+    const string resultFilePath = downDir(testDir, "GasTest3.txt");
+    cout << "result file: " << resultFilePath << endl;
+    logTime("Initialization");
+    int N = 200;
+    int T = 1000;
+    GasSolidFlow GFlow;
+    TESolver1DParams params(1.0/N, N, 0.012/T, T);
+    TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
+    //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
+    output.printHeader(params);
+    GSQuantity leftGas(1.0, 1.0, 0.0, 1000.0, 1.4, 0.0);
+    GSQuantity rightGas(1.0, 1.0, 0.0, 0.01, 1.4, 0.0);
+    Mesh<GSQuantity>& f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, leftGas, leftGas, rightGas);
+    f.fillQuantity(N/2, N, rightGas);
+    f.apply();
+    logTime("Initialization finished; Start solving");
+    SolveTransportEquation1D(f, params, GFlow, output);
+    logTime("Solved");
+    output.finish();
+}
+
 void GasSolid1DStaticTest() {
     const string TEST_TITLE = "GasSolid1DStaticTest";
     const string testDir = initTest(TEST_TITLE, CALCULATION_TE1D_OUTPUT_PATH);
