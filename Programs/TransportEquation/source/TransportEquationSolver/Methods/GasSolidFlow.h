@@ -18,8 +18,8 @@ public:
         GSQuantity QL = l.getQuantity();
         GSQuantity QR = r.getQuantity();
         double eps = 1e-10;
-        //if(QL.isSolid(eps) && QR.isGas(eps) || QR.isSolid(eps) && QL.isGas(eps))
-        //    return CRPnoPadding(QL, QR, dt, eps, dirLR);
+        if(QL.isSolid(eps) && QR.isGas(eps) || QR.isSolid(eps) && QL.isGas(eps))
+            return CRPnoPadding(QL, QR, dt, eps, dirLR);
         if(QL.isDiscontinuous(eps) || QR.isDiscontinuous(eps)||QL.isSolid(eps) && QR.isGas(eps) || QR.isSolid(eps) && QL.isGas(eps))
             return CRP(QL, QR, dt, l.dx(), eps, dirLR);
         if(QL.isSolid(eps) && QR.isSolid(eps))

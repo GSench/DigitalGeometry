@@ -64,7 +64,7 @@ bool centerDiscontinuousCase(int config){
 GSFlow RP(const GSQuantity& QL, const GSQuantity& QR, double dt){
     GSFlow FL(QL);
     GSFlow FR(QR);
-    pair<double,double> slr = RPWaves(QL.velocity(), QL.velocity(), QL.soundSpeed(), QR.soundSpeed());
+    pair<double,double> slr = RPWaves(QL.velocity(), QR.velocity(), QL.soundSpeed(), QR.soundSpeed());
     double sl = slr.first;
     double sr = slr.second;
     GSFlow FDiscontinuity = (sr*FL - sl*FR + sl * sr * toFlow(QR - QL)) / (sr - sl);
@@ -102,7 +102,7 @@ GSFlow CRPnoPadding(const GSQuantity& QL, const GSQuantity& QR, double dt, doubl
                            uv*(rhoL*El + (ul-vs)*(pL/ifZero(ul-sl, eps) - rhoL*vs))
                    }),
             QLCalc.getGamma(),
-            0
+            vs
     );
     GSFlow FStar = GSFlow(QLCalc) + sl * toFlow(QStar - QLCalc);
 
@@ -112,6 +112,7 @@ GSFlow CRPnoPadding(const GSQuantity& QL, const GSQuantity& QR, double dt, doubl
                 GSFlow(QLCalc) //    |/sl/vs
             ) :
             zero(QRCalc); //    sl\vs\|
+    FBorder *= dt;
 
     GSFlow flow = FBorder;
 

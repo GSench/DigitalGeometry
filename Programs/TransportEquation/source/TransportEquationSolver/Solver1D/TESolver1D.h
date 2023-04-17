@@ -10,6 +10,7 @@ void updateCell(Mesh<Q> &f,
                 OverEdgeFlow<Q,F>& flowCalculator){
     F fL = flowCalculator.calc(*f.prev(), f, p.getDt(), L);
     F fR = flowCalculator.calc(f, *f.next(), p.getDt(), R);
+    F resultFlow = fL - fR;
     Q fNext = f.getQuantity() - (fR - fL)/f.dx();
     f.setQuantity(fNext);
 }
