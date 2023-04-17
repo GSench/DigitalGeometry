@@ -22,6 +22,14 @@ double ifZero(double val, double caseValIsZero){
     return abs(val) <= 1e-14? (val < 0 ? -caseValIsZero : caseValIsZero) : val;
 }
 
+double H(double x){
+    return x>=0.0 || x==-0.0? 1 : 0;
+}
+
+double H0(double x){
+    return x>0.0? 1 : 0;
+}
+
 function<double(double)> linearTransform(const function<double(double)> &f,
                                          double dx, double kx, double dy, double ky){
     return [=](double x)->double {

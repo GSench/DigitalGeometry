@@ -150,7 +150,7 @@ GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, dou
         config = SL;
     }
     if(config==SG) {
-        xs = eps;
+        xs = -eps;
         config = SR;
     }
     double vs = QRCalc.getSolidVelocity();
@@ -216,6 +216,81 @@ GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, dou
             else
                 flow -= GMinus;
         }
+    }
+
+    if(rightDiscontinuousCase(config))
+        flow.inverse();
+
+    return flow;
+}
+
+GSFlow CRPMastering(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, double eps, int dirLR){
+
+    int config = defineConfig(QL, QR, eps);
+    GSQuantity QLCalc = QL;
+    GSQuantity QRCalc = QR;
+    // Reconfiguring discontinuity right to left
+    if(rightDiscontinuousCase(config)){
+        QLCalc.inverse();
+        QRCalc.inverse();
+        swap(QLCalc, QRCalc);
+        dirLR = inverseDirLR(dirLR);
+    }
+
+    // only SL, GL cases are considered
+    double xs = (solidCase(config) ? QLCalc.volumeFraction() - 1 : QRCalc.volumeFraction()) * dx;
+    double vs = QRCalc.getSolidVelocity();
+    double t2 = -xs/ifZero(vs, eps);
+    double tau2 = t2>=0 && t2<=dt ? t2/dt : 0.0;
+
+    GSQuantity QL_avg = gasCase(config) ?
+                        QLCalc :
+                        (QLCalc + QRCalc) / (QLCalc.volumeFraction() + QRCalc.volumeFraction());
+
+
+    double ul = QL_avg.velocity();
+    double al = QL_avg.soundSpeed();
+    double sl = CRPSWave(ul, al, vs);
+    double t1 = -xs/ifZero(sl, eps);
+    double tau1 = t1>=0 && t1<=dt ? t1/dt : 0.0;
+
+    double rhoL = QL_avg.density();
+    double pL = QL_avg.pressure();
+    double El = QL_avg.energy();
+
+    double denominatorUV = ifZero(vs-sl, eps);
+    double uv = ifZero(ul-sl, eps);
+    uv/=denominatorUV;
+    GSQuantity QStar(
+            Vector({
+                           1,
+                           uv*rhoL,
+                           uv*rhoL*vs,
+                           uv*(rhoL*El + (ul-vs)*(pL/ifZero(ul-sl, eps) - rhoL*vs))
+                   }),
+            QL_avg.getGamma(),
+            0
+    );
+    GSFlow FStar = GSFlow(QL_avg) + sl * toFlow(QStar - QL_avg);
+
+    GSFlow FBorder = (
+            FStar * (tau2 - tau1) * (1.0 - 2 * H(-xs))
+            + GSFlow(QL_avg)*(1.0-tau2+(2.0*tau2-1.0)* H(-xs))
+            )*dt;
+
+    GSFlow G = -1.0 * (FStar - vs* toFlow(QStar));
+    GSFlow GMinus = G * (tau1 + (1.0-2.0*tau1)*H(-xs)) * dt;
+    GSFlow GPlus = G * (1.0 - tau1 + (2.0*tau1 - 1.0)*H(-xs)) * dt;
+
+    GSFlow flow = FBorder;
+    if(solidCase(config)){
+        GMinus = zero(QRCalc);
+    }
+
+    if(dirLR == R){
+        flow -= GMinus;
+    } else {
+        flow += GPlus;
     }
 
     if(rightDiscontinuousCase(config))

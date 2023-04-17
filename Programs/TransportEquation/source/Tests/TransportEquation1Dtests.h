@@ -6,6 +6,7 @@ void Solver1DStripMovementTest();
 void Gas1DTest();
 void GasSolid1DStaticTest();
 void GasSolid1DTransportTest();
+void GasSolid1DMoveTest();
 /*
 void Solver1DStripMovementTest();
 void Solver1DStripBackMovementTest();

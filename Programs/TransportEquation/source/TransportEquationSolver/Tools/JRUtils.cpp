@@ -3,11 +3,7 @@
 //
 
 #include "JRUtils.h"
-
-double H(double x){
-    if(x>=0) return 1;
-    else return 0;
-}
+#include "../../math/MathUtils.h"
 
 std::function<double(double)> FiJR(double gamma, double xiavg) {
     return [=](double x)->double {

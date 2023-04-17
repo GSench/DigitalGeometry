@@ -6,6 +6,8 @@ using namespace std;
 
 double clamp(double x,double lower,double upper);
 double ifZero(double val, double caseValIsZero);
+double H(double x);
+double H0(double x);
 double minmod(double x,double y);
 template<typename T>int sgn(T val);
 function<double(double)> linearTransform(const function<double(double)> &f,
