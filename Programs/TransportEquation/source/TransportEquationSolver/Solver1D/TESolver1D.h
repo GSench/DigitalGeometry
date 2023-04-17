@@ -8,8 +8,8 @@ template<typename Q, typename F>
 void updateCell(Mesh<Q> &f,
                 TESolver1DParams &p,
                 OverEdgeFlow<Q,F>& flowCalculator){
-    F fL = flowCalculator.calc(*f.prev(), f, p.getDt(), p.getDx());
-    F fR = flowCalculator.calc(f, *f.next(), p.getDt(), p.getDx());
+    F fL = flowCalculator.calc(*f.prev(), f, p.getDt(), L);
+    F fR = flowCalculator.calc(f, *f.next(), p.getDt(), R);
     Q fNext = f.getQuantity() - (fR - fL)/f.dx();
     f.setQuantity(fNext);
 }

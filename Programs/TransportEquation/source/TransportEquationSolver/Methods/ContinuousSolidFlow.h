@@ -13,7 +13,6 @@
 #include "../Instances/TESolver1DInstances.h"
 #include "SQuantity.h"
 #include "SFlow.h"
-#include "../../math/MathUtils.h"
 
 class ContinuousSolidFlow : public OverEdgeFlow<SQuantity, SFlow> {
 private:
@@ -22,7 +21,7 @@ public:
     explicit ContinuousSolidFlow(function<function<double(double)>(F1D, C1D)> flowInterpolationFunction)
             : FlowInterpolationFunction(std::move(flowInterpolationFunction)) {}
 
-    SFlow calc(Mesh<SQuantity>& l, Mesh<SQuantity>& r, double dt, double dx) override {
+    SFlow calc(Mesh<SQuantity>& l, Mesh<SQuantity>& r, double dt, int dirLR) override {
         double x = l.xR();
         double uCurr = l.getQuantity().currVelocityDir(l.getDirection(), R);
         double uNext = l.getQuantity().nextVelocityDir(l.getDirection(), R);

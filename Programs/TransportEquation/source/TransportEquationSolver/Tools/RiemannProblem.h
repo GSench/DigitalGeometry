@@ -12,6 +12,7 @@
 using namespace std;
 
 GSFlow RP(const GSQuantity& QL, const GSQuantity& QR, double dt);
-GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, double eps);
+GSFlow CRPnoPadding(const GSQuantity& QL, const GSQuantity& QR, double dt, double eps, int dirLR);
+GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, double eps, int dirLR);
 
 #endif //TRANSPORTEQUATION_RIEMANNPROBLEM_H

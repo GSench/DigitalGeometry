@@ -3,12 +3,14 @@
 //
 
 #include "RiemannProblem.h"
-#include "../../math/MathUtils.h"
+#include "../Methods/Mesh.h"
 
 const int SL = 0;
 const int SR = 1;
 const int GL = 2;
 const int GR = 3;
+const int GS = 4;
+const int SG = 5;
 
 pair<double, double> RPWaves(double ul, double ur, double al, double ar){
     return {
@@ -22,16 +24,21 @@ double CRPSWave(double ul, double al, double vs){
 }
 
 int defineConfig(const GSQuantity& QL, const GSQuantity& QR, double eps){
-    if(QL.isDiscontinuous(eps))
-        if(QR.isSolid(eps))
+    if(QL.isDiscontinuous(eps)) {
+        if (QR.isSolid(eps))
             return SL;
-        else
+        else if (QR.isGas(eps))
             return GR;
-    else
-        if(QL.isSolid(eps))
+    } else if(QR.isDiscontinuous(eps)) {
+        if (QL.isSolid(eps))
             return SR;
-        else
+        else if (QL.isGas(eps))
             return GL;
+    } else if(QL.isGas(eps) && QR.isSolid(eps))
+        return GS;
+    else if(QR.isGas(eps) && QL.isSolid(eps))
+        return SG;
+    return -1;
 }
 
 bool solidCase(int config){
@@ -50,6 +57,10 @@ bool rightDiscontinuousCase(int config){
     return config == SR || config == GR;
 }
 
+bool centerDiscontinuousCase(int config){
+    return config == SG || config == GS;
+}
+
 GSFlow RP(const GSQuantity& QL, const GSQuantity& QR, double dt){
     GSFlow FL(QL);
     GSFlow FR(QR);
@@ -60,22 +71,90 @@ GSFlow RP(const GSQuantity& QL, const GSQuantity& QR, double dt){
     return FDiscontinuity*dt;
 }
 
-GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, double eps){
+GSFlow CRPnoPadding(const GSQuantity& QL, const GSQuantity& QR, double dt, double eps, int dirLR){
+    GSQuantity QLCalc = QL;
+    GSQuantity QRCalc = QR;
+    if(QL.isSolid(eps)){
+        QLCalc.inverse();
+        QRCalc.inverse();
+        swap(QLCalc, QRCalc);
+        dirLR = inverseDirLR(dirLR);
+    }
+
+    double vs = QRCalc.getSolidVelocity();
+    double ul = QLCalc.velocity();
+    double al = QLCalc.soundSpeed();
+    double sl = CRPSWave(ul, al, vs);
+
+
+    double rhoL = QLCalc.density();
+    double pL = QLCalc.pressure();
+    double El = QLCalc.energy();
+
+    double denominatorUV = ifZero(vs-sl, eps);
+    double uv = ifZero(ul-sl, eps);
+    uv/=denominatorUV;
+    GSQuantity QStar(
+            Vector({
+                           1,
+                           uv*rhoL,
+                           uv*rhoL*vs,
+                           uv*(rhoL*El + (ul-vs)*(pL/ifZero(ul-sl, eps) - rhoL*vs))
+                   }),
+            QLCalc.getGamma(),
+            0
+    );
+    GSFlow FStar = GSFlow(QLCalc) + sl * toFlow(QStar - QLCalc);
+
+    GSFlow FBorder = vs > 0.0 ?
+            (sl < 0.0 ?
+                FStar : //    sl\|/vs
+                GSFlow(QLCalc) //    |/sl/vs
+            ) :
+            zero(QRCalc); //    sl\vs\|
+
+    GSFlow flow = FBorder;
+
+    GSFlow G = (FStar - vs* toFlow(QStar)) * dt;
+    if(vs >= 0.0){
+        if(dirLR == L)
+            flow -= G;
+    } else if(vs < 0.0) {
+        if(dirLR == R)
+            flow += G;
+    }
+
+    if(QL.isSolid(eps))
+        flow.inverse();
+
+    return flow;
+}
+
+GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, double eps, int dirLR){
 
     int config = defineConfig(QL, QR, eps);
     GSQuantity QLCalc = QL;
     GSQuantity QRCalc = QR;
     // Reconfiguring discontinuity right to left
-    if(rightDiscontinuousCase(config)){
+    if(rightDiscontinuousCase(config) || config == SG){
         QLCalc.inverse();
         QRCalc.inverse();
         swap(QLCalc, QRCalc);
+        dirLR = inverseDirLR(dirLR);
     }
 
-    // only SL, GL cases are considered
+    // only SL, GL cases are considered (+ GS)
     double xs = (solidCase(config) ? QLCalc.volumeFraction() - 1 : QRCalc.volumeFraction()) * dx;
+    if(config==GS) {
+        xs = -eps;
+        config = SL;
+    }
+    if(config==SG) {
+        xs = eps;
+        config = SR;
+    }
     double vs = QRCalc.getSolidVelocity();
-    double t1 = -xs/vs;
+    double t1 = -xs/ifZero(vs, eps);
     double tau1 = t1>=0 && t1<=dt ? t1/dt : 1.0;
 
     GSQuantity QL_avg = gasCase(config) ?
@@ -86,20 +165,22 @@ GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, dou
     double ul = QL_avg.velocity();
     double al = QL_avg.soundSpeed();
     double sl = CRPSWave(ul, al, vs);
-    double t2 = -xs/sl;
+    double t2 = -xs/ifZero(sl, eps);
     double tau2 = t2>=0 && t2<=dt ? t2/dt : 1.0;
 
     double rhoL = QL_avg.density();
     double pL = QL_avg.pressure();
     double El = QL_avg.energy();
 
-    double uv = (ul-sl)/(vs-sl);
+    double denominatorUV = ifZero(vs-sl, eps);
+    double uv = ifZero(ul-sl, eps);
+    uv/=denominatorUV;
     GSQuantity QStar(
             Vector({
                 1,
                 uv*rhoL,
                 uv*rhoL*vs,
-                uv*(rhoL*El + (ul-vs)*(pL/(ul-sl) - rhoL*vs))
+                uv*(rhoL*El + (ul-vs)*(pL/ifZero(ul-sl, eps) - rhoL*vs))
             }),
             QL_avg.getGamma(),
             0
@@ -107,13 +188,35 @@ GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, dou
     GSFlow FStar = GSFlow(QL_avg) + sl * toFlow(QStar - QL_avg);
 
     GSFlow FBorder = solidCase(config) ?
-            (toFlow(QL_avg)*(1.0-tau2) + FStar * (tau2 - tau1))*dt :
-            (toFlow(QL_avg)*tau2 + FStar * (tau1 - tau2))*dt ;
+            (GSFlow(QL_avg)*(1.0-tau2) + FStar * (tau2 - tau1))*dt :
+            (GSFlow(QL_avg)*tau2 + FStar * (tau1 - tau2))*dt ;
 
-    //GSFlow GL = (FStar - vs* toFlow(QStar))*(solidCase(config) ? tau1 : 1 - tau1) * dt;
-    GSFlow GPlus = (FStar - vs* toFlow(QStar))*(solidCase(config) ? 1 - tau1 : tau1) * dt;
+    GSFlow flow = FBorder;
 
-    GSFlow flow = FBorder + GPlus;
+    if(t1 >= dt){
+        GSFlow G = (FStar - vs* toFlow(QStar)) * dt;
+        if(vs >= 0.0){
+            if(dirLR == R)
+                flow += G;
+        } else if(vs < 0.0) {
+            if(dirLR == L)
+                flow -= G;
+        }
+    } else if(t1 >= 0.0) {
+        GSFlow GMinus = (FStar - vs* toFlow(QStar))*t1;
+        GSFlow GPlus = (FStar - vs* toFlow(QStar))*(dt-t1);
+        if(vs >= 0.0){
+            if(dirLR == R)
+                flow += GMinus;
+            else
+                flow -= GPlus;
+        } else {
+            if(dirLR == R)
+                flow += GPlus;
+            else
+                flow -= GMinus;
+        }
+    }
 
     if(rightDiscontinuousCase(config))
         flow.inverse();

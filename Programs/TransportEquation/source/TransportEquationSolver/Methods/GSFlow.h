@@ -27,7 +27,7 @@ public:
                 volumeFraction*solidVelocity,
                 volumeFraction*density*velocity,
                 volumeFraction*(density*velocity*velocity + pressure),
-                volumeFraction*density*velocity*(velocity*velocity/2.+pressure/density/(gamma-1)+pressure/density)
+                volumeFraction*density*velocity*(velocity*velocity/2.+pressure/ifZero(density, 1e-10)/(gamma-1)+pressure/ifZero(density, 1e-10))
             }),
             gamma(gamma),
             solidVelocity(solidVelocity)

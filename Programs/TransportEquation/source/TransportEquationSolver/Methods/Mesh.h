@@ -195,4 +195,8 @@ Mesh<T>& generate1DBorderedMesh(int cellCount, double posDelta, double cellSize,
     return *(rawMesh.first);
 }
 
+inline int inverseDirLR(int dir){
+    return (1-(dir*2-1))/2;
+}
+
 #endif //TRANSPORTEQUATION_MESH_H

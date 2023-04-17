@@ -8,6 +8,7 @@
 #include <cmath>
 #include <utility>
 #include "../../math/Vector.h"
+#include "../../math/MathUtils.h"
 
 class GSQuantity {
 private:
@@ -26,7 +27,7 @@ public:
                 volumeFraction,
                 volumeFraction*density,
                 volumeFraction*density*velocity,
-                volumeFraction*density*(pow(velocity,2)/2.+pressure/density/(gamma-1))
+                volumeFraction*density*(velocity*velocity/2.+pressure/ifZero(density, 1e-10)/(gamma-1))
             }),
             gamma(gamma),
             solidVelocity(solidVelocity)

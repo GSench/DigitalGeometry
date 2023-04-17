@@ -18,6 +18,10 @@ double clamp(double x, double lower, double upper) {
     return min(upper, max(x, lower));
 }
 
+double ifZero(double val, double caseValIsZero){
+    return abs(val) <= 1e-14? (val < 0 ? -caseValIsZero : caseValIsZero) : val;
+}
+
 function<double(double)> linearTransform(const function<double(double)> &f,
                                          double dx, double kx, double dy, double ky){
     return [=](double x)->double {
