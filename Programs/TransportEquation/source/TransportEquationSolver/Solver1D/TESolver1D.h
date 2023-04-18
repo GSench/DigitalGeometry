@@ -28,15 +28,31 @@ void TESolverStep(Mesh<Q>& f,
     updateCell<Q,F>(*fIter, p, flowCalculator);
 }
 
+template<typename Q>
+void TESolverPostProcessStep(Mesh<Q>& f,
+                  //TESolver1DParams& p,
+                  const function<void(Mesh<Q>&)>& postProcess){
+    Mesh<Q>* fIter = &f;
+    do {
+        postProcess(*fIter);
+        fIter = fIter->next();
+    }
+    while (!fIter->isBorder());
+    postProcess(*fIter);
+}
+
 template<typename Q, typename F>
 void SolveTransportEquation1D(Mesh<Q>& f,
                               TESolver1DParams& p,
                               OverEdgeFlow<Q,F>& flowCalculator,
-                              TESolver1DOutput<Q> &output
+                              TESolver1DOutput<Q> &output,
+                              const function<void(Mesh<Q>&)>& postProcess
 ) {
     output.print(f, 0);
     for (int n = 0; n < p.getNTimeSteps(); n++) {
         TESolverStep<Q,F>(f, p, flowCalculator);
+        f.apply();
+        TESolverPostProcessStep<Q>(f, postProcess);
         f.apply();
         output.print(f, n+1);
     }

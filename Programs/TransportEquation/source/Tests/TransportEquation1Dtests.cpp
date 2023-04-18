@@ -14,6 +14,7 @@
 #include "../TransportEquationSolver/Tools/InterpolationFunctions.h"
 #include "../Utils/FileUtils.h"
 #include "../TransportEquationSolver/Methods/GasSolidFlow.h"
+#include "../TransportEquationSolver/Methods/PostProcessors.h"
 
 using namespace std;
 
@@ -38,7 +39,7 @@ void Solver1DStripMovementTest() {
     f.fillQuantity(N/4, N/4*3, SQuantity(0., {uConst, uConst}));
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output);
+    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -63,7 +64,7 @@ void Gas1DTest() {
     f.fillQuantity(0, N/2, denseGas);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output);
+    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -87,7 +88,7 @@ void SodTest() {
     f.fillQuantity(N/2, N, rareGas);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output);
+    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -111,7 +112,7 @@ void GasTest2() {
     f.fillQuantity(N/2, N, rightGas);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output);
+    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -135,7 +136,7 @@ void GasTest3() {
     f.fillQuantity(N/2, N, rightGas);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output);
+    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -162,7 +163,7 @@ void GasSolid1DStaticTest() {
     f.setQuantity(3*N/4-1, inter);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output);
+    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -190,7 +191,7 @@ void GasSolid1DTransportTest() {
     f.setQuantity(3*N/4-1, inter);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output);
+    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -218,7 +219,7 @@ void GasSolid1DMoveTest() {
     f.setQuantity(N*6/10-1, inter);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output);
+    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessGSQuantity());//postProcessGSQuantity(1e-4));
     logTime("Solved");
     output.finish();
 }

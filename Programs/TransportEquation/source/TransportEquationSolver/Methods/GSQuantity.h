@@ -36,19 +36,23 @@ public:
     double volumeFraction() const {
         return gasSolidState[0];
     }
+    void applyVolumeFraction(double volumeFraction){
+        if(gasSolidState[0]==0.0 || gasSolidState[0]==-0.0) return;
+        gasSolidState = gasSolidState/gasSolidState[0]*volumeFraction;
+    }
     double density() const {
         return gasSolidState[0] < 1e-10 ? 0 : gasSolidState[1] / gasSolidState[0];
     }
     double velocity() const {
-        return gasSolidState[0] < 1e-10 ? 0 : gasSolidState[2] / gasSolidState[1];
+        return gasSolidState[1] < 1e-10 ? 0 : gasSolidState[2] / gasSolidState[1];
     }
     double pressure() const {
-        return gasSolidState[0] < 1e-10 ? 0 :
+        return gasSolidState[1] < 1e-10 ? 0 :
                (gasSolidState[3] / gasSolidState[1] - 0.5 * pow(velocity(), 2)) * density() * (gamma - 1);
     }
 
     double energy() const {
-        return gasSolidState[0] < 1e-10 ? 0 : gasSolidState[3] / gasSolidState[1];
+        return gasSolidState[1] < 1e-10 ? 0 : gasSolidState[3] / gasSolidState[1];
     }
 
     bool isSolid(double eps) const {
@@ -56,7 +60,7 @@ public:
     }
 
     bool isGas(double eps) const {
-        return abs(gasSolidState[0]-1) < eps;
+        return abs(gasSolidState[0]-1.0) < eps;
     }
 
     bool isDiscontinuous(double eps) const {
@@ -78,6 +82,10 @@ public:
 
     double getSolidVelocity() const {
         return solidVelocity;
+    }
+
+    void setSolidVelocity(double vs) {
+        solidVelocity = vs;
     }
 
     double soundSpeed() const {
