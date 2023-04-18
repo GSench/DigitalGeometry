@@ -99,7 +99,7 @@ void GasTest2() {
     cout << "result file: " << resultFilePath << endl;
     logTime("Initialization");
     int N = 200;
-    int T = 5000;
+    int T = 50000;
     GasSolidFlow GFlow;
     TESolver1DParams params(1.0/N, N, 0.15/T, T);
     TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
@@ -202,10 +202,10 @@ void GasSolid1DMoveTest() {
     cout << "result file: " << resultFilePath << endl;
     logTime("Initialization");
     int N = 128;
-    int T = 1000;
-    double uVal = 2.0;
+    int T = 5000;
+    double uVal = 1.0;
     GasSolidFlow GFlow;
-    TESolver1DParams params(1.0/N, N, 0.1/T, T);
+    TESolver1DParams params(1.0/N, N, 0.5/T, T);
     TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
     //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
     output.printHeader(params);

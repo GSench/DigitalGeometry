@@ -18,12 +18,12 @@ function<string(SQuantity)> rbStatePrinter() {
 
 function<string(GSQuantity)> gsQuantityPrinter() {
     return [=](GSQuantity q) -> string {
-        return to_string(q.density());
-        /*return '{'
-            + to_string(q.volumeFraction()) + ','
+        //return to_string(q.density());
+        return
+              to_string(q.volumeFraction()) + ','
             + to_string(q.velocity()) + ','
             + to_string(q.density()) + ','
             + to_string(q.pressure())
-            +'}';*/
+            ;
     };
 }
