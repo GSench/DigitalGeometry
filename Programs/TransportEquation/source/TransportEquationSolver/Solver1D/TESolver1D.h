@@ -13,7 +13,7 @@ void updateCell(Mesh<Q> &f,
 ){
     vector<F> fL = flowCalculator.calc(*(f.prev()), f, p.getDt(), L);
     vector<F> fR = flowCalculator.calc(f, *(f.next()), p.getDt(), R);
-    Q fNext = flowMachine.calculateCell(f.getQuantity(), fL,fR, p);
+    Q fNext = flowMachine.calculateCell(f, fL,fR, p);
     f.setQuantity(fNext);
 }
 

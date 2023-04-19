@@ -12,12 +12,12 @@
 class SolidFlowMachine : public FlowMachine<SQuantity, SFlow> {
 public:
     SQuantity calculateCell(
-            const SQuantity& currQ,
+            const Mesh<SQuantity>& currMeshQ,
             const vector<SFlow>& FlowsLeft,
             const vector<SFlow>& FlowsRight,
             const TESolver1DParams& p
     ) const override {
-        SQuantity qResult = currQ - (FlowsRight[0] - FlowsLeft[0])/p.getDx();
+        SQuantity qResult = currMeshQ.getQuantity() - (FlowsRight[0] - FlowsLeft[0])/p.getDx();
         return qResult;
     }
 };

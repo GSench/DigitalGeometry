@@ -12,12 +12,12 @@
 class GasSolidFlowMachine : public FlowMachine<GSQuantity, GSFlow> {
 public:
     GSQuantity calculateCell(
-            const GSQuantity& currQ,
+            const Mesh<GSQuantity>& currMeshQ,
             const vector<GSFlow>& FlowsLeft,
             const vector<GSFlow>& FlowsRight,
             const TESolver1DParams& p
     ) const override {
-        GSQuantity qResult = currQ - (FlowsRight[0] - FlowsLeft[0])/p.getDx();
+        GSQuantity qResult = currMeshQ.getQuantity() - (FlowsRight[0] - FlowsLeft[0])/p.getDx();
         return qResult;
     }
 };
