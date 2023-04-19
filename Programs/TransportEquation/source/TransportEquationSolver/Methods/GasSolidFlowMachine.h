@@ -17,8 +17,13 @@ public:
             const vector<GSFlow>& FlowsRight,
             const TESolver1DParams& p
     ) const override {
-        GSQuantity qResult = currMeshQ.getQuantity() - (FlowsRight[0] - FlowsLeft[0])/p.getDx();
-        return qResult;
+        GSFlow FR = FlowsRight[0];
+        GSFlow FL = FlowsLeft[0];
+        GSFlow GRMinus = FlowsRight[1];
+        GSFlow GLPlus = FlowsLeft[2];
+        GSQuantity QCurr = currMeshQ.getQuantity();
+        GSQuantity QNext = QCurr - ((FR - GRMinus) - (FL - GLPlus))/p.getDx();
+        return QNext;
     }
 };
 

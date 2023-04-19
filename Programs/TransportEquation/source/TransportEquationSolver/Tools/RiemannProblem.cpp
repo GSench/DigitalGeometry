@@ -61,17 +61,17 @@ bool centerDiscontinuousCase(int config){
     return config == SG || config == GS;
 }
 
-GSFlow RP(const GSQuantity& QL, const GSQuantity& QR, double dt){
+vector<GSFlow> RP(const GSQuantity& QL, const GSQuantity& QR, double dt){
     GSFlow FL(QL);
     GSFlow FR(QR);
     pair<double,double> slr = RPWaves(QL.velocity(), QR.velocity(), QL.soundSpeed(), QR.soundSpeed());
     double sl = slr.first;
     double sr = slr.second;
     GSFlow FDiscontinuity = (sr*FL - sl*FR + sl * sr * toFlow(QR - QL)) / (sr - sl);
-    return FDiscontinuity*dt;
+    return {FDiscontinuity*dt, zero(QL), zero(QL)};
 }
 
-GSFlow CRPnoPadding(const GSQuantity& QL, const GSQuantity& QR, double dt, double eps, int dirLR){
+vector<GSFlow> CRPnoPadding(const GSQuantity& QL, const GSQuantity& QR, double dt, double eps, int dirLR){
     GSQuantity QLCalc = QL;
     GSQuantity QRCalc = QR;
     if(QL.isSolid(eps)){
@@ -116,22 +116,26 @@ GSFlow CRPnoPadding(const GSQuantity& QL, const GSQuantity& QR, double dt, doubl
 
     GSFlow flow = FBorder;
 
-    GSFlow G = (FStar - vs* toFlow(QStar)) * dt;
+    GSFlow G = -1.0 * (FStar - vs* toFlow(QStar)) * dt;
+    GSFlow GMinus = G;
+    GSFlow GPlus = G;
     if(vs >= 0.0){
-        if(dirLR == L)
-            flow -= G;
+        GPlus = zero(QLCalc);
     } else if(vs < 0.0) {
-        if(dirLR == R)
-            flow += G;
+        GMinus = zero(QLCalc);
     }
 
-    if(QL.isSolid(eps))
+    if(QL.isSolid(eps)) {
         flow.inverse();
+        GMinus.inverse();
+        GPlus.inverse();
+        swap(GMinus, GPlus);
+    }
 
-    return flow;
+    return {flow, GMinus, GPlus};
 }
 
-GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, double eps, int dirLR){
+vector<GSFlow> CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, double eps, int dirLR){
 
     int config = defineConfig(QL, QR, eps);
     GSQuantity QLCalc = QL;
@@ -186,35 +190,21 @@ GSFlow CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, dou
 
     GSFlow flow = FBorder;
 
-    if(t1 >= dt){
-        GSFlow G = (FStar - vs* toFlow(QStar)) * dt;
-        if(vs >= 0.0){
-            if(dirLR == R)
-                flow += G;
-        } else if(vs < 0.0) {
-            if(dirLR == L)
-                flow -= G;
-        }
-    } else if(t1 >= 0.0) {
-        GSFlow GMinus = (FStar - vs* toFlow(QStar))*t1;
-        GSFlow GPlus = (FStar - vs* toFlow(QStar))*(dt-t1);
-        if(vs >= 0.0){
-            if(dirLR == R)
-                flow += GMinus;
-            else
-                flow -= GPlus;
-        } else {
-            if(dirLR == R)
-                flow += GPlus;
-            else
-                flow -= GMinus;
-        }
+    GSFlow GMinus = -1.0 * (FStar - vs* toFlow(QStar))*t1;
+    GSFlow GPlus = -1.0 * (FStar - vs* toFlow(QStar))*(dt-t1);
+
+    if(solidCase(config)){
+        GMinus *= 0.0;
     }
 
-    if(rightDiscontinuousCase(config))
+    if(QL.isSolid(eps)) {
         flow.inverse();
+        GMinus.inverse();
+        GPlus.inverse();
+        swap(GMinus, GPlus);
+    }
 
-    return flow;
+    return {flow, GMinus, GPlus};
 }
 
 GSFlow CRPMastering(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, double eps, int dirLR){

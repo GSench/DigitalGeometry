@@ -18,16 +18,16 @@ public:
         GSQuantity QL = l.getQuantity();
         GSQuantity QR = r.getQuantity();
         double eps = 1e-10;
-        GSFlow result = zero(QL);
+        vector<GSFlow> result = {zero(QL), zero(QL), zero(QL)};
         if(QL.isSolid(eps) && QR.isGas(eps) || QR.isSolid(eps) && QL.isGas(eps))
             result = CRPnoPadding(QL, QR, dt, eps, dirLR);
         else if(QL.isDiscontinuous(eps) || QR.isDiscontinuous(eps))
             result = CRP(QL, QR, dt, l.dx(), eps, dirLR);
         else if(QL.isSolid(eps) && QR.isSolid(eps))
-            result = zero(QL);
+            result = {zero(QL), zero(QL), zero(QL)};
         else // gas ->|-> gas case
             result = RP(QL, QR, dt);
-        return {result};
+        return result;
     }
 
 };
