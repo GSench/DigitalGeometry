@@ -38,7 +38,7 @@ void Solver1DStripMovementTest() {
     output.printHeader(params);
     Vector uVect(uVal);
     TimeStepVelocity uConst(uVect, uVect);
-    Mesh<SQuantity> f = generate1DPeriodicMesh<SQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, SQuantity(1., {uConst, uConst}));
+    Mesh<SQuantity>& f = generate1DPeriodicMesh<SQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, SQuantity(1., {uConst, uConst}));
     f.fillQuantity(N/4, N/4*3, SQuantity(0., {uConst, uConst}));
     f.apply();
     logTime("Initialization finished; Start solving");
@@ -64,7 +64,7 @@ void Gas1DTest() {
     output.printHeader(params);
     GSQuantity defGas(1.0, 1.0, 1.0, 1.0, 1.4, 0.0);
     GSQuantity denseGas(1.0, 2.0, 1.0, 1.0, 1.4, 0.0);
-    Mesh<GSQuantity> f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
+    Mesh<GSQuantity>& f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
     f.fillQuantity(0, N/2, denseGas);
     f.apply();
     logTime("Initialization finished; Start solving");
@@ -89,7 +89,7 @@ void SodTest() {
     output.printHeader(params);
     GSQuantity defGas(1.0, 1.0, 0.0, 1.0, 1.4, 0.0);
     GSQuantity rareGas(1.0, 0.125, 0.0, 0.1, 1.4, 0.0);
-    Mesh<GSQuantity> f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas, defGas, rareGas);
+    Mesh<GSQuantity>& f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas, defGas, rareGas);
     f.fillQuantity(N/2, N, rareGas);
     f.apply();
     logTime("Initialization finished; Start solving");
@@ -114,7 +114,7 @@ void GasTest2() {
     output.printHeader(params);
     GSQuantity leftGas(1.0, 1.0, -2.0, 0.4, 1.4, 0.0);
     GSQuantity rightGas(1.0, 1.0, 2.0, 0.4, 1.4, 0.0);
-    Mesh<GSQuantity> f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, leftGas, leftGas, rightGas);
+    Mesh<GSQuantity>& f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, leftGas, leftGas, rightGas);
     f.fillQuantity(N/2, N, rightGas);
     f.apply();
     logTime("Initialization finished; Start solving");
@@ -139,7 +139,7 @@ void GasTest3() {
     output.printHeader(params);
     GSQuantity leftGas(1.0, 1.0, 0.0, 1000.0, 1.4, 0.0);
     GSQuantity rightGas(1.0, 1.0, 0.0, 0.01, 1.4, 0.0);
-    Mesh<GSQuantity> f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, leftGas, leftGas, rightGas);
+    Mesh<GSQuantity>& f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, leftGas, leftGas, rightGas);
     f.fillQuantity(N/2, N, rightGas);
     f.apply();
     logTime("Initialization finished; Start solving");
@@ -165,7 +165,7 @@ void GasSolid1DStaticTest() {
     GSQuantity defGas(1.0, 1.0, uVal, 1.0, 1.4, uVal);
     GSQuantity solid(0.0, 0.0, 0.0, 0.0, 1.4, uVal);
     GSQuantity inter(0.5, 1.0, uVal, 1.0, 1.4, uVal);
-    Mesh<GSQuantity> f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
+    Mesh<GSQuantity>& f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
     f.fillQuantity(N/4, 3*N/4, solid);
     f.setQuantity(N/4, inter);
     f.setQuantity(3*N/4-1, inter);
@@ -194,7 +194,7 @@ void GasSolid1DTransportTest() {
     GSQuantity defGas(1.0, 1.0, uVal, 1.0, 1.4, uVal);
     GSQuantity solid(0.0, 0.0, 0.0, 0.0, 1.4, uVal);
     GSQuantity inter(0.5, 1.0, uVal, 1.0, 1.4, uVal);
-    Mesh<GSQuantity> f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
+    Mesh<GSQuantity>& f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
     f.fillQuantity(N/4, 3*N/4, solid);
     f.setQuantity(N/4, inter);
     f.setQuantity(3*N/4-1, inter);
@@ -223,7 +223,7 @@ void GasSolid1DMoveTest() {
     GSQuantity defGas(1.0, 1.0, 0.0, 1.0, 1.4, vs);
     GSQuantity solid(0.0, 0.0, 0.0, 0.0, 1.4, vs);
     GSQuantity inter(0.5, 1.0, 0.0, 1.0, 1.4, vs);
-    Mesh<GSQuantity> f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas, defGas, defGas);
+    Mesh<GSQuantity>& f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas, defGas, defGas);
     f.fillQuantity(N*4/10, N*6/10, solid);
     f.setQuantity(N*4/10, inter);
     f.setQuantity(N*6/10-1, inter);

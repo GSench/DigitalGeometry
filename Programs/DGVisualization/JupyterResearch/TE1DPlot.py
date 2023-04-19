@@ -11,6 +11,7 @@ def xCells(cellCount, dx):
 
 def plotArea1D(cellCount, dx, frame, plotTitle, plotOutPath, showPic, yMin, yMax):
     fig = plt.figure(figsize=(12, 4))
+    plt.rcParams.update({'font.size': 10})
     ax = plt.axes(xlim=(0, dx*cellCount), ylim=(yMin, yMax))
     ax.grid()
     ax.set(xlabel='x', ylabel='f')
@@ -34,6 +35,7 @@ def plotArea1D(cellCount, dx, frame, plotTitle, plotOutPath, showPic, yMin, yMax
 
 def animation1D(cellCount, dx, NTimeSteps, realNTimeSteps, dt, frames, slowmo, plotTitle, plotOutPath, minY, maxY):
     fig = plt.figure(figsize=(12, 4))
+    plt.rcParams.update({'font.size': 10})
     ax = plt.axes(xlim=(0, dx*cellCount), ylim=(minY, maxY))
     ax.grid()
     
