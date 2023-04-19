@@ -39,7 +39,7 @@ void Solver1DStripMovementTest() {
     f.fillQuantity(N/4, N/4*3, SQuantity(0., {uConst, uConst}));
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessSQuantity());
+    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -64,7 +64,7 @@ void Gas1DTest() {
     f.fillQuantity(0, N/2, denseGas);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessGSQuantity());
+    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -88,7 +88,7 @@ void SodTest() {
     f.fillQuantity(N/2, N, rareGas);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessGSQuantity());
+    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -112,7 +112,7 @@ void GasTest2() {
     f.fillQuantity(N/2, N, rightGas);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessGSQuantity());
+    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -136,7 +136,7 @@ void GasTest3() {
     f.fillQuantity(N/2, N, rightGas);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessGSQuantity());
+    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -163,7 +163,7 @@ void GasSolid1DStaticTest() {
     f.setQuantity(3*N/4-1, inter);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessGSQuantity());
+    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -191,7 +191,7 @@ void GasSolid1DTransportTest() {
     f.setQuantity(3*N/4-1, inter);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessGSQuantity());
+    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -204,22 +204,22 @@ void GasSolid1DMoveTest() {
     logTime("Initialization");
     int N = 128;
     int T = 5000;
-    double uVal = 1.0;
+    double vs = 1.0;
     GasSolidFlow GFlow;
     TESolver1DParams params(1.0/N, N, 0.5/T, T);
     TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
     //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
     output.printHeader(params);
-    GSQuantity defGas(1.0, 1.0, 0.0, 1.0, 1.4, uVal);
-    GSQuantity solid(0.0, 0.0, 0.0, 0.0, 1.4, uVal);
-    GSQuantity inter(0.5, 1.0, 0.0, 1.0, 1.4, uVal);
+    GSQuantity defGas(1.0, 1.0, 0.0, 1.0, 1.4, vs);
+    GSQuantity solid(0.0, 0.0, 0.0, 0.0, 1.4, vs);
+    GSQuantity inter(0.5, 1.0, 0.0, 1.0, 1.4, vs);
     Mesh<GSQuantity>& f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas, defGas, defGas);
     f.fillQuantity(N*4/10, N*6/10, solid);
     f.setQuantity(N*4/10, inter);
     f.setQuantity(N*6/10-1, inter);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, noPostProcessGSQuantity());//postProcessGSQuantity(1e-4));
+    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessGSQuantity());//postProcessGSQuantity(1e-4));
     logTime("Solved");
     output.finish();
 }

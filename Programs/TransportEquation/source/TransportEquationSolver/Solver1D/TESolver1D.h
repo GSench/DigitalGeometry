@@ -46,14 +46,17 @@ void SolveTransportEquation1D(Mesh<Q>& f,
                               TESolver1DParams& p,
                               OverEdgeFlow<Q,F>& flowCalculator,
                               TESolver1DOutput<Q> &output,
+                              bool usePostProcess,
                               const function<void(Mesh<Q>&)>& postProcess
 ) {
     output.print(f, 0);
     for (int n = 0; n < p.getNTimeSteps(); n++) {
         TESolverStep<Q,F>(f, p, flowCalculator);
         f.apply();
-        TESolverPostProcessStep<Q>(f, postProcess);
-        f.apply();
+        if(usePostProcess) {
+            TESolverPostProcessStep<Q>(f, postProcess);
+            f.apply();
+        }
         output.print(f, n+1);
     }
 }
