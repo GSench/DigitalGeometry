@@ -15,6 +15,8 @@
 #include "../Utils/FileUtils.h"
 #include "../TransportEquationSolver/Methods/GasSolidFlow.h"
 #include "../TransportEquationSolver/Methods/PostProcessors.h"
+#include "../TransportEquationSolver/Methods/SolidFlowMachine.h"
+#include "../TransportEquationSolver/Methods/GasSolidFlowMachine.h"
 
 using namespace std;
 
@@ -30,16 +32,17 @@ void Solver1DStripMovementTest() {
     ContinuousSolidFlow GFlow([=](F1D f1D, C1D c1D) -> function<double(double)> {
         return PsyTHINCandGodunov(f1D, c1D, 3.5, 1e-4);
     });
+    SolidFlowMachine flowMachine;
     TESolver1DParams params(CFL, uVal, 1.0, N, round((double)N/CFL));
     TESolver1DOutput<SQuantity> output = minimal1DOutput<SQuantity>(resultFilePath, params.getNTimeSteps(), 100, rbStatePrinter());
     output.printHeader(params);
     Vector uVect(uVal);
     TimeStepVelocity uConst(uVect, uVect);
-    Mesh<SQuantity>& f = generate1DPeriodicMesh<SQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, SQuantity(1., {uConst, uConst}));
+    Mesh<SQuantity> f = generate1DPeriodicMesh<SQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, SQuantity(1., {uConst, uConst}));
     f.fillQuantity(N/4, N/4*3, SQuantity(0., {uConst, uConst}));
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessSQuantity());
+    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, false, noPostProcessSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -54,17 +57,18 @@ void Gas1DTest() {
     double CFL = 0.3;
     double uVal = 1.0;
     GasSolidFlow GFlow;
+    GasSolidFlowMachine flowMachine;
     TESolver1DParams params(CFL, uVal, 1.0, N, round((double)N/CFL));
     TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
     //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
     output.printHeader(params);
     GSQuantity defGas(1.0, 1.0, 1.0, 1.0, 1.4, 0.0);
     GSQuantity denseGas(1.0, 2.0, 1.0, 1.0, 1.4, 0.0);
-    Mesh<GSQuantity>& f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
+    Mesh<GSQuantity> f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
     f.fillQuantity(0, N/2, denseGas);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessGSQuantity());
+    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, false, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -78,17 +82,18 @@ void SodTest() {
     int N = 200;
     int T = 200;
     GasSolidFlow GFlow;
+    GasSolidFlowMachine flowMachine;
     TESolver1DParams params(1.0/N, N, 0.25/T, T);
     TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
     //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
     output.printHeader(params);
     GSQuantity defGas(1.0, 1.0, 0.0, 1.0, 1.4, 0.0);
     GSQuantity rareGas(1.0, 0.125, 0.0, 0.1, 1.4, 0.0);
-    Mesh<GSQuantity>& f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas, defGas, rareGas);
+    Mesh<GSQuantity> f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas, defGas, rareGas);
     f.fillQuantity(N/2, N, rareGas);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessGSQuantity());
+    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, false, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -102,17 +107,18 @@ void GasTest2() {
     int N = 200;
     int T = 50000;
     GasSolidFlow GFlow;
+    GasSolidFlowMachine flowMachine;
     TESolver1DParams params(1.0/N, N, 0.15/T, T);
     TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
     //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
     output.printHeader(params);
     GSQuantity leftGas(1.0, 1.0, -2.0, 0.4, 1.4, 0.0);
     GSQuantity rightGas(1.0, 1.0, 2.0, 0.4, 1.4, 0.0);
-    Mesh<GSQuantity>& f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, leftGas, leftGas, rightGas);
+    Mesh<GSQuantity> f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, leftGas, leftGas, rightGas);
     f.fillQuantity(N/2, N, rightGas);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessGSQuantity());
+    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, false, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -126,17 +132,18 @@ void GasTest3() {
     int N = 200;
     int T = 1000;
     GasSolidFlow GFlow;
+    GasSolidFlowMachine flowMachine;
     TESolver1DParams params(1.0/N, N, 0.012/T, T);
     TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
     //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
     output.printHeader(params);
     GSQuantity leftGas(1.0, 1.0, 0.0, 1000.0, 1.4, 0.0);
     GSQuantity rightGas(1.0, 1.0, 0.0, 0.01, 1.4, 0.0);
-    Mesh<GSQuantity>& f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, leftGas, leftGas, rightGas);
+    Mesh<GSQuantity> f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, leftGas, leftGas, rightGas);
     f.fillQuantity(N/2, N, rightGas);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessGSQuantity());
+    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, false, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -150,6 +157,7 @@ void GasSolid1DStaticTest() {
     int N = 8;
     double uVal = 0.0;
     GasSolidFlow GFlow;
+    GasSolidFlowMachine flowMachine;
     TESolver1DParams params(1.0/N, N, 1.0, 10);
     TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
     //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
@@ -157,13 +165,13 @@ void GasSolid1DStaticTest() {
     GSQuantity defGas(1.0, 1.0, uVal, 1.0, 1.4, uVal);
     GSQuantity solid(0.0, 0.0, 0.0, 0.0, 1.4, uVal);
     GSQuantity inter(0.5, 1.0, uVal, 1.0, 1.4, uVal);
-    Mesh<GSQuantity>& f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
+    Mesh<GSQuantity> f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
     f.fillQuantity(N/4, 3*N/4, solid);
     f.setQuantity(N/4, inter);
     f.setQuantity(3*N/4-1, inter);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessGSQuantity());
+    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, false, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -178,6 +186,7 @@ void GasSolid1DTransportTest() {
     double CFL = 0.3;
     double uVal = 1.0;
     GasSolidFlow GFlow;
+    GasSolidFlowMachine flowMachine;
     TESolver1DParams params(CFL, uVal, 1.0, N, round((double)N/CFL));
     TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
     //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
@@ -185,13 +194,13 @@ void GasSolid1DTransportTest() {
     GSQuantity defGas(1.0, 1.0, uVal, 1.0, 1.4, uVal);
     GSQuantity solid(0.0, 0.0, 0.0, 0.0, 1.4, uVal);
     GSQuantity inter(0.5, 1.0, uVal, 1.0, 1.4, uVal);
-    Mesh<GSQuantity>& f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
+    Mesh<GSQuantity> f = generate1DPeriodicMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas);
     f.fillQuantity(N/4, 3*N/4, solid);
     f.setQuantity(N/4, inter);
     f.setQuantity(3*N/4-1, inter);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessGSQuantity());
+    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, false, noPostProcessGSQuantity());
     logTime("Solved");
     output.finish();
 }
@@ -206,6 +215,7 @@ void GasSolid1DMoveTest() {
     int T = 5000;
     double vs = 1.0;
     GasSolidFlow GFlow;
+    GasSolidFlowMachine flowMachine;
     TESolver1DParams params(1.0/N, N, 0.5/T, T);
     TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
     //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
@@ -213,13 +223,13 @@ void GasSolid1DMoveTest() {
     GSQuantity defGas(1.0, 1.0, 0.0, 1.0, 1.4, vs);
     GSQuantity solid(0.0, 0.0, 0.0, 0.0, 1.4, vs);
     GSQuantity inter(0.5, 1.0, 0.0, 1.0, 1.4, vs);
-    Mesh<GSQuantity>& f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas, defGas, defGas);
+    Mesh<GSQuantity> f = generate1DBorderedMesh<GSQuantity>(params.getCellCount(), params.getDx(), params.getDx(), params.getDx() / 2, defGas, defGas, defGas);
     f.fillQuantity(N*4/10, N*6/10, solid);
     f.setQuantity(N*4/10, inter);
     f.setQuantity(N*6/10-1, inter);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, output, false, noPostProcessGSQuantity());//postProcessGSQuantity(1e-4));
+    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, false, noPostProcessGSQuantity());//postProcessGSQuantity(1e-4));
     logTime("Solved");
     output.finish();
 }

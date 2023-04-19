@@ -127,6 +127,6 @@ set(PROJECT_SOURCES
         source/UnitTests/TransportEquationSolver/Methods/UTSQuantityFlow.h
         source/UnitTests/TransportEquationSolver/Methods/UTMesh.cpp
         source/UnitTests/TransportEquationSolver/Methods/UTMesh.h
-        source/TransportEquationSolver/Methods/GasSolidFlow.h source/TransportEquationSolver/Methods/PostProcessors.cpp source/TransportEquationSolver/Methods/PostProcessors.h)
+        source/TransportEquationSolver/Methods/GasSolidFlow.h source/TransportEquationSolver/Methods/PostProcessors.cpp source/TransportEquationSolver/Methods/PostProcessors.h source/TransportEquationSolver/Methods/FlowMachine.h source/TransportEquationSolver/Methods/SolidFlowMachine.h source/TransportEquationSolver/Methods/GasSolidFlowMachine.h)
 
 add_executable(TransportEquation ${PROJECT_SOURCES} ${PROJECT_HEADERS})

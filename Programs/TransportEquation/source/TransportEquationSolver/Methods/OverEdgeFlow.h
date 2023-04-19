@@ -10,7 +10,7 @@
 template<typename Q, typename F>
 class OverEdgeFlow {
 public:
-    virtual F calc(Mesh<Q>& l, Mesh<Q>& r, double dt, int dirLR) = 0;
+    virtual vector<F> calc(Mesh<Q>& l, Mesh<Q>& r, double dt, int dirLR) const = 0;
 };
 
 

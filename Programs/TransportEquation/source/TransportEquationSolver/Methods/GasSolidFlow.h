@@ -14,18 +14,20 @@
 class GasSolidFlow : public OverEdgeFlow<GSQuantity, GSFlow> {
 
 public:
-    GSFlow calc(Mesh<GSQuantity>& l, Mesh<GSQuantity>& r, double dt, int dirLR) override {
+    vector<GSFlow> calc(Mesh<GSQuantity>& l, Mesh<GSQuantity>& r, double dt, int dirLR) const override {
         GSQuantity QL = l.getQuantity();
         GSQuantity QR = r.getQuantity();
         double eps = 1e-10;
+        GSFlow result = zero(QL);
         if(QL.isSolid(eps) && QR.isGas(eps) || QR.isSolid(eps) && QL.isGas(eps))
-            return CRPnoPadding(QL, QR, dt, eps, dirLR);
-        if(QL.isDiscontinuous(eps) || QR.isDiscontinuous(eps)||QL.isSolid(eps) && QR.isGas(eps) || QR.isSolid(eps) && QL.isGas(eps))
-            return CRP(QL, QR, dt, l.dx(), eps, dirLR);
-        if(QL.isSolid(eps) && QR.isSolid(eps))
-            return zero(QL);
-        // else gas ->|-> gas case
-        return RP(QL, QR, dt);
+            result = CRPnoPadding(QL, QR, dt, eps, dirLR);
+        else if(QL.isDiscontinuous(eps) || QR.isDiscontinuous(eps))
+            result = CRP(QL, QR, dt, l.dx(), eps, dirLR);
+        else if(QL.isSolid(eps) && QR.isSolid(eps))
+            result = zero(QL);
+        else // gas ->|-> gas case
+            result = RP(QL, QR, dt);
+        return {result};
     }
 
 };
