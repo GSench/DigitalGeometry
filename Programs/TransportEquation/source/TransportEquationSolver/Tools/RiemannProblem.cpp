@@ -147,6 +147,7 @@ vector<GSFlow> CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double
         swap(QLCalc, QRCalc);
         dirLR = inverseDirLR(dirLR);
     }
+    GSFlow FR = GSFlow(QRCalc);
 
     // only SL, GL cases are considered
     double xs = (solidCase(config) ? QLCalc.volumeFraction() - 1 : QRCalc.volumeFraction()) * dx;
@@ -157,7 +158,7 @@ vector<GSFlow> CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double
     GSQuantity QL_avg = gasCase(config) ?
             QLCalc :
             (QLCalc + QRCalc) / (QLCalc.volumeFraction() + QRCalc.volumeFraction());
-
+    GSFlow FL = GSFlow(QL_avg);
 
     double ul = QL_avg.velocity();
     double al = QL_avg.soundSpeed();
@@ -182,22 +183,38 @@ vector<GSFlow> CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double
             QL_avg.getGamma(),
             vs
     );
-    GSFlow FStar = GSFlow(QL_avg) + sl * toFlow(QStar - QL_avg);
+    GSFlow FStar = FL + sl * toFlow(QStar - QL_avg);
 
     GSFlow FBorder = solidCase(config) ?
-            (GSFlow(QL_avg)*(1.0-tau2) + FStar * (tau2 - tau1))*dt :
-            (GSFlow(QL_avg)*tau2 + FStar * (tau1 - tau2))*dt ;
+            (FL*(1.0-tau2) + FStar * (tau2 - tau1))*dt :
+            (FL*tau2 + FStar * (tau1 - tau2))*dt ;
 
     GSFlow flow = FBorder;
 
-    GSFlow GMinus = -1.0 * (FStar - vs* toFlow(QStar))*t1;
-    GSFlow GPlus = -1.0 * (FStar - vs* toFlow(QStar))*(dt-t1);
+    double n = leftDiscontinuousCase(config) ? -1.0 : 1.0;
+    GSFlow G = n * (FStar - vs* toFlow(QStar));
+
+    GSFlow GMinus = solidCase(config) ? G*tau1*dt : G*(1.0-tau1)*dt;
+    GSFlow GPlus = solidCase(config) ? G*(1.0-tau1)*dt : G*tau1*dt;
+
+    double t3 = -(dx - xs)/ifZero(vs, eps);
+    double tau3 = t3>=0 && t3<=dt ? t3/dt : 1.0;
+
+    if(solidCase(config)){
+        double t3 = (-dx - xs)/ifZero(vs, eps);
+        double tau3 = t3>=0 && t3<=dt ? t3/dt : 1.0;
+        GMinus *= tau3;
+    } else {
+        double t3 = (dx - xs)/ifZero(vs, eps);
+        double tau3 = t3>=0 && t3<=dt ? t3/dt : 1.0;
+        GPlus *= tau3;
+    }
 
     if(solidCase(config)){
         GMinus *= 0.0;
     }
 
-    if(QL.isSolid(eps)) {
+    if(rightDiscontinuousCase(config)) {
         flow.inverse();
         GMinus.inverse();
         GPlus.inverse();

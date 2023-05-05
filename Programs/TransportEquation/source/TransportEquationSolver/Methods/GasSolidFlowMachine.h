@@ -22,7 +22,9 @@ public:
         GSFlow GRMinus = FlowsRight[1];
         GSFlow GLPlus = FlowsLeft[2];
         GSQuantity QCurr = currMeshQ.getQuantity();
-        GSQuantity QNext = QCurr - ((FR - GRMinus) - (FL - GLPlus))/p.getDx();
+        GSQuantity QNext = QCurr - ((FR - GRMinus) - (FL + GLPlus))/p.getDx();
+        GSFlow totalGasFlow = (FL - FR)/p.getDx();
+        GSFlow totalSolidFlow = (GRMinus + GLPlus)/p.getDx();
         return QNext;
     }
 };
