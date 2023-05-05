@@ -211,12 +211,12 @@ void GasSolid1DMoveTest() {
     const string resultFilePath = downDir(testDir, "GasSolid1DMoveTest.txt");
     cout << "result file: " << resultFilePath << endl;
     logTime("Initialization");
-    int N = 128;
-    int T = 5000;
+    int N = 16;
+    int T = 10;
     double vs = 1.0;
     GasSolidFlow GFlow;
     GasSolidFlowMachine flowMachine;
-    TESolver1DParams params(1.0/N, N, 0.5/T, T);
+    TESolver1DParams params(1.0/N, N, 0.3*1.0/N/vs, T);
     TESolver1DOutput<GSQuantity> output = minimal1DOutput<GSQuantity>(resultFilePath, params.getNTimeSteps(), 100, gsQuantityPrinter());
     //TESolver1DOutput<GSQuantity> output = terminal1DOutput<GSQuantity>(params.getNTimeSteps(), gsQuantityPrinter());
     output.printHeader(params);

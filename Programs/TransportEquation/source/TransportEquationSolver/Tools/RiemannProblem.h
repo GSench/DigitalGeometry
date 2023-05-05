@@ -12,7 +12,7 @@
 using namespace std;
 
 vector<GSFlow> RP(const GSQuantity& QL, const GSQuantity& QR, double dt);
-vector<GSFlow> CRPnoPadding(const GSQuantity& QL, const GSQuantity& QR, double dt, double eps, int dirLR);
+vector<GSFlow> CRPnoPadding(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, double eps, int dirLR);
 vector<GSFlow> CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, double eps, int dirLR);
 GSFlow CRPMastering(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, double eps, int dirLR);
 GSFlow CRPnoPaddingMastering(const GSQuantity& QL, const GSQuantity& QR, double dt, double eps, int dirLR);
