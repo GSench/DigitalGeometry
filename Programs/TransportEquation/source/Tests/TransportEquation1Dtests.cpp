@@ -229,7 +229,7 @@ void GasSolid1DMoveTest() {
     f.setQuantity(N*6/10-1, inter);
     f.apply();
     logTime("Initialization finished; Start solving");
-    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, false, noPostProcessGSQuantity());//postProcessGSQuantity(1e-4));
+    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, false, postProcessGSQuantityAlfa());
     logTime("Solved");
     output.finish();
 }

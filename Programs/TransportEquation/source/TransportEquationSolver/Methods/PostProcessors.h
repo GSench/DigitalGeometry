@@ -15,6 +15,7 @@ function<void(Mesh<SQuantity>&)> noPostProcessSQuantity();
 
 function<void(Mesh<GSQuantity>&)> postProcessGSQuantity(double eps);
 
+function<void(Mesh<GSQuantity>&)> postProcessGSQuantityAlfa();
 
 
 #endif //TRANSPORTEQUATION_POSTPROCESSORS_H

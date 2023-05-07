@@ -44,3 +44,11 @@ function<void(Mesh<GSQuantity>&)> postProcessGSQuantity(double eps) {
         mesh.setQuantity(updQ);
     };
 }
+
+function<void(Mesh<GSQuantity>&)> postProcessGSQuantityAlfa() {
+    return [=](Mesh<GSQuantity> &mesh) -> void {
+        GSQuantity updQ = mesh.getQuantity();
+        updQ.applyVolumeFraction(updQ.volumeFraction());
+        mesh.setQuantity(updQ);
+    };
+}
