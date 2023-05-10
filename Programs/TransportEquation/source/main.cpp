@@ -42,8 +42,8 @@ int main() {
     //SodTest();
     //GasTest2();
     //GasTest3();
-    //GasSolid1DStaticTest();
-    //GasSolid1DTransportTest();
+    GasSolid1DStaticTest();
+    GasSolid1DTransportTest();
     GasSolid1DMoveTest();
     return 0;
 }

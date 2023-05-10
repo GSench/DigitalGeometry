@@ -168,9 +168,7 @@ vector<GSFlow> CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double
     double t1 = -xs/ifZero(vs, eps);
     double tau1 = t1>=0 && t1<=dt ? t1/dt : 1.0;
 
-    GSQuantity QL_avg = gasCase(config) ?
-            QLCalc :
-            (QLCalc + QRCalc) / (QLCalc.volumeFraction() + QRCalc.volumeFraction());
+    GSQuantity QL_avg = (QLCalc + QRCalc) / (QLCalc.volumeFraction() + QRCalc.volumeFraction());
     GSFlow FL = GSFlow(QL_avg);
 
     double ul = QL_avg.velocity();
