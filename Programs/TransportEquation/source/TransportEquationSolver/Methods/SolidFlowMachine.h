@@ -15,7 +15,9 @@ public:
             const Mesh<SQuantity>& currMeshQ,
             const vector<SFlow>& FlowsLeft,
             const vector<SFlow>& FlowsRight,
-            const TESolver1DParams& p
+            const TESolver1DParams& p,
+            bool debugMode,
+            Logger& logger
     ) const override {
         SQuantity qResult = currMeshQ.getQuantity() - (FlowsRight[0] - FlowsLeft[0])/p.getDx();
         return qResult;

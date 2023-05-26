@@ -15,7 +15,9 @@ public:
             const Mesh<GSQuantity>& currMeshQ,
             const vector<GSFlow>& FlowsLeft,
             const vector<GSFlow>& FlowsRight,
-            const TESolver1DParams& p
+            const TESolver1DParams& p,
+            bool debugMode,
+            Logger& logger
     ) const override {
         GSFlow FR = FlowsRight[0];
         GSFlow FL = FlowsLeft[0];
@@ -25,6 +27,15 @@ public:
         GSQuantity QNext = QCurr - ((FR - GRMinus) - (FL + GLPlus))/p.getDx();
         GSFlow totalGasFlow = (FL - FR)/p.getDx();
         GSFlow totalSolidFlow = (GRMinus + GLPlus)/p.getDx();
+        if(debugMode){
+            logger.log("FINAL CELL FLOWS");
+            logger.log("Q current", QCurr.toString());
+            logger.log("FL", FR.toString());
+            logger.log("FR", FR.toString());
+            logger.log("GR-", GRMinus.toString());
+            logger.log("GL+", GLPlus.toString());
+            logger.log("Q next", QNext.toString());
+        }
         return QNext;
     }
 };

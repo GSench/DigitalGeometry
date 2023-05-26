@@ -251,14 +251,34 @@ vector<GSFlow> CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double
     GSFlow GMinus = solidCase(config) ? G*tau1*dt : G*(1.0-tau1)*dt;
     GSFlow GPlus = solidCase(config) ? G*(1.0-tau1)*dt : G*tau1*dt;
 
+    if(debugMode){
+        logger.log("G flows");
+        logger.log("n", to_string(n));
+        logger.log("G", G.toString());
+        logger.log("G-", GMinus.toString());
+        logger.log("G+", GPlus.toString());
+    }
+
     if(solidCase(config)){
         double t3 = (-dx - xs)/ifZero(vs, eps);
         double tau3 = t3>=0 && t3<=dt ? t3/dt : 1.0;
         GMinus *= tau3;
+        if(debugMode){
+            logger.log("t3", to_string(t3));
+            logger.log("tau3", to_string(tau3));
+            logger.log("G-", GMinus.toString());
+            logger.log("G+", GPlus.toString());
+        }
     } else {
         double t3 = (dx - xs)/ifZero(vs, eps);
         double tau3 = t3>=0 && t3<=dt ? t3/dt : 1.0;
         GPlus *= tau3;
+        if(debugMode){
+            logger.log("t3", to_string(t3));
+            logger.log("tau3", to_string(tau3));
+            logger.log("G-", GMinus.toString());
+            logger.log("G+", GPlus.toString());
+        }
     }
 
     if(solidCase(config)){
@@ -270,6 +290,13 @@ vector<GSFlow> CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double
         GMinus.inverse();
         GPlus.inverse();
         swap(GMinus, GPlus);
+    }
+
+    if(debugMode){
+        logger.log("after switching config back");
+        logger.log("F", flow.toString());
+        logger.log("G-", GMinus.toString());
+        logger.log("G+", GPlus.toString());
     }
 
     return {flow, GMinus, GPlus};

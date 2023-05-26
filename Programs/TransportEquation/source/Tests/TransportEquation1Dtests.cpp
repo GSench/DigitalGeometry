@@ -43,7 +43,7 @@ void Solver1DStripMovementTest() {
     f.apply();
     logTime("Initialization finished; Start solving");
     Logger logger(FILE_OUTPUT, downDir(testDir, "logs.txt"));
-    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, false, noPostProcessSQuantity(), true, logger);
+    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, false, noPostProcessSQuantity(), false, logger);
     logTime("Solved");
     output.finish();
 }
@@ -237,7 +237,7 @@ void GasSolid1DMoveTest() {
     f.apply();
     logTime("Initialization finished; Start solving");
     Logger logger(FILE_OUTPUT, downDir(testDir, "logs.txt"));
-    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, false, postProcessGSQuantityAlfa(), false, logger);
+    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, true, postProcessGSQuantityAlfa(), false, logger);
     logTime("Solved");
     output.finish();
 }
@@ -266,7 +266,7 @@ void GasSolid1DBorderTest() {
     f.apply();
     logTime("Initialization finished; Start solving");
     Logger logger(FILE_OUTPUT, downDir(testDir, "logs.txt"));
-    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, false, postProcessGSQuantityAlfa(), false, logger);
+    SolveTransportEquation1D(f, params, GFlow, flowMachine, output, true, postProcessGSQuantityAlfa(), true, logger);
     logTime("Solved");
     output.finish();
 }

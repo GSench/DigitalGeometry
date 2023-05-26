@@ -9,12 +9,13 @@ template<typename Q, typename F>
 void updateCell(Mesh<Q> &f,
                 const TESolver1DParams &p,
                 const OverEdgeFlow<Q,F>& flowCalculator,
-                const FlowMachine<Q,F>& flowMachine
-        , bool debugMode, Logger& logger
+                const FlowMachine<Q,F>& flowMachine,
+                bool debugMode,
+                Logger& logger
 ){
     vector<F> fL = flowCalculator.calc(*(f.prev()), f, p.getDt(), L, debugMode, logger);
     vector<F> fR = flowCalculator.calc(f, *(f.next()), p.getDt(), R, debugMode, logger);
-    Q fNext = flowMachine.calculateCell(f, fL,fR, p);
+    Q fNext = flowMachine.calculateCell(f, fL,fR, p, debugMode, logger);
     f.setQuantity(fNext);
 }
 
@@ -22,16 +23,20 @@ template<typename Q, typename F>
 void TESolverStep(Mesh<Q>& f,
                   const TESolver1DParams& p,
                   const OverEdgeFlow<Q,F>& flowCalculator,
-                  const FlowMachine<Q,F>& flowMachine
-        , bool debugMode, Logger& logger
+                  const FlowMachine<Q,F>& flowMachine,
+                  bool debugMode,
+                  Logger& logger
 ){
     Mesh<Q>* fIter = &f;
+    int i = 0;
     do {
-        updateCell<Q,F>(*fIter, p, flowCalculator, flowMachine);
+        if(debugMode) logger.log("CELL", to_string(i));
+        updateCell<Q,F>(*fIter, p, flowCalculator, flowMachine, debugMode, logger);
         fIter = fIter->next();
     }
     while (!fIter->isBorder());
-    updateCell<Q,F>(*fIter, p, flowCalculator, flowMachine);
+    if(debugMode) logger.log("CELL", to_string(i));
+    updateCell<Q,F>(*fIter, p, flowCalculator, flowMachine, debugMode, logger);
 }
 
 template<typename Q>
@@ -54,11 +59,13 @@ void SolveTransportEquation1D(Mesh<Q>& f,
                               const FlowMachine<Q,F>& flowMachine,
                               TESolver1DOutput<Q> &output,
                               bool usePostProcess,
-                              const function<void(Mesh<Q>&)>& postProcess
-        , bool debugMode, Logger& logger
+                              const function<void(Mesh<Q>&)>& postProcess,
+                              bool debugMode,
+                              Logger& logger
 ) {
     output.print(f, 0);
     for (int n = 0; n < p.getNTimeSteps(); n++) {
+        if(debugMode) logger.log("TIME STEP", to_string(n+1));
         TESolverStep<Q,F>(f, p, flowCalculator, flowMachine, debugMode, logger);
         f.apply();
         if(usePostProcess) {

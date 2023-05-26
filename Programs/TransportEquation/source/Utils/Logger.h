@@ -41,7 +41,7 @@ public:
     }
 
     void log(const string& msg){
-        print(msg);
+        print(msg+"\n");
     }
 
     void finish(){

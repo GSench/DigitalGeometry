@@ -39,7 +39,7 @@ public:
     }
     void applyVolumeFraction(double volumeFraction){
         if(gasSolidState[0]==0.0 || gasSolidState[0]==-0.0) gasSolidState*=0.0;
-        gasSolidState = gasSolidState/gasSolidState[0]*volumeFraction;
+        else gasSolidState = gasSolidState/gasSolidState[0]*volumeFraction;
     }
     double density() const {
         return gasSolidState[0] < 1e-10 ? 0 : gasSolidState[1] / gasSolidState[0];

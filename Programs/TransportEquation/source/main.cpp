@@ -44,7 +44,7 @@ int main() {
     //GasTest3();
     //GasSolid1DStaticTest();
     //GasSolid1DTransportTest();
-    //GasSolid1DMoveTest();
+    GasSolid1DMoveTest();
     GasSolid1DBorderTest();
     return 0;
 }

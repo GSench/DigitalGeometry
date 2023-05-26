@@ -48,7 +48,8 @@ function<void(Mesh<GSQuantity>&)> postProcessGSQuantity(double eps) {
 function<void(Mesh<GSQuantity>&)> postProcessGSQuantityAlfa() {
     return [=](Mesh<GSQuantity> &mesh) -> void {
         GSQuantity updQ = mesh.getQuantity();
-        updQ.applyVolumeFraction(updQ.volumeFraction());
+        if(updQ.isSolid(1e-4))
+            updQ.applyVolumeFraction(0.0);
         mesh.setQuantity(updQ);
     };
 }

@@ -13,7 +13,7 @@ using namespace std;
 template<typename Q, typename F>
 class FlowMachine {
 public:
-    virtual Q calculateCell(const Mesh<Q>& currMeshQ, const vector<F>& FlowsLeft, const vector<F>& FlowsRight, const TESolver1DParams& p) const = 0;
+    virtual Q calculateCell(const Mesh<Q>& currMeshQ, const vector<F>& FlowsLeft, const vector<F>& FlowsRight, const TESolver1DParams& p, bool debugMode, Logger& logger) const = 0;
 };
 
 
