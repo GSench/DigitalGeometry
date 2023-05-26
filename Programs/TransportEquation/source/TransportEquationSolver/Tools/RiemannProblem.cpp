@@ -12,6 +12,8 @@ const int GR = 3;
 const int GS = 4;
 const int SG = 5;
 
+const string configTitles[] = {"SL", "SR", "GL", "GR", "GS", "SG"};
+
 pair<double, double> RPWaves(double ul, double ur, double al, double ar){
     return {
         /*sl=*/min(0., min(ul-al, avg<double>({ul,ur})-avg<double>({al,ar}))),
@@ -148,11 +150,20 @@ vector<GSFlow> CRPnoPadding(const GSQuantity& QL, const GSQuantity& QR, double d
     return {flow, GMinus, GPlus};
 }
 
-vector<GSFlow> CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, double eps, int dirLR){
+vector<GSFlow> CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double dx, double eps, int dirLR, bool debugMode, Logger& logger){
 
     int config = defineConfig(QL, QR, eps);
+
+    if(debugMode){
+        logger.log("CRP");
+        logger.log("QL", QL.toString());
+        logger.log("QR", QR.toString());
+        logger.log("config", configTitles[config]);
+    }
+
     GSQuantity QLCalc = QL;
     GSQuantity QRCalc = QR;
+
     // Reconfiguring discontinuity right to left
     if(rightDiscontinuousCase(config)){
         QLCalc.inverse();
@@ -160,6 +171,13 @@ vector<GSFlow> CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double
         swap(QLCalc, QRCalc);
         dirLR = inverseDirLR(dirLR);
     }
+
+    if(debugMode){
+        logger.log("Calculation quantities");
+        logger.log("QLCalc", QLCalc.toString());
+        logger.log("QRCalc", QRCalc.toString());
+    }
+
     GSFlow FR = GSFlow(QRCalc);
 
     // only SL, GL cases are considered
@@ -194,6 +212,7 @@ vector<GSFlow> CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double
             QL_avg.getGamma(),
             vs
     );
+
     GSFlow FStar = FL + sl * toFlow(QStar - QL_avg);
 
     GSFlow FBorder = solidCase(config) ?
@@ -201,6 +220,30 @@ vector<GSFlow> CRP(const GSQuantity& QL, const GSQuantity& QR, double dt, double
             (FL*tau2 + FStar * (tau1 - tau2))*dt ;
 
     GSFlow flow = FBorder;
+
+    if(debugMode){
+        logger.log("Calculation values");
+        logger.log("xs", to_string(xs));
+        logger.log("vs", to_string(vs));
+        logger.log("t1", to_string(t1));
+        logger.log("tau1", to_string(tau1));
+        logger.log("QLAvg", QL_avg.toString());
+        logger.log("ul", to_string(ul));
+        logger.log("al", to_string(al));
+        logger.log("sl", to_string(sl));
+        logger.log("t2", to_string(t2));
+        logger.log("tau2", to_string(tau2));
+
+        logger.log("Q* calculation:");
+        logger.log("rhoL", to_string(rhoL));
+        logger.log("pL", to_string(pL));
+        logger.log("El", to_string(El));
+        logger.log("Q*", QStar.toString());
+
+        logger.log("F flows");
+        logger.log("F*", FStar.toString());
+        logger.log("F", flow.toString());
+    }
 
     double n = leftDiscontinuousCase(config) ? -1.0 : 1.0;
     GSFlow G = n * (FStar - vs* toFlow(QStar));

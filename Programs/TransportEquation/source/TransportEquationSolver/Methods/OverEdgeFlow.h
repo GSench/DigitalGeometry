@@ -6,11 +6,12 @@
 #define TRANSPORTEQUATION_OVEREDGEFLOW_H
 
 #include "Mesh.h"
+#include "../../Utils/Logger.h"
 
 template<typename Q, typename F>
 class OverEdgeFlow {
 public:
-    virtual vector<F> calc(Mesh<Q>& l, Mesh<Q>& r, double dt, int dirLR) const = 0;
+    virtual vector<F> calc(Mesh<Q>& l, Mesh<Q>& r, double dt, int dirLR, bool debugMode, Logger& logger) const = 0;
 };
 
 

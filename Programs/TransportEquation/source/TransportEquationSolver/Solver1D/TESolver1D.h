@@ -10,9 +10,10 @@ void updateCell(Mesh<Q> &f,
                 const TESolver1DParams &p,
                 const OverEdgeFlow<Q,F>& flowCalculator,
                 const FlowMachine<Q,F>& flowMachine
+        , bool debugMode, Logger& logger
 ){
-    vector<F> fL = flowCalculator.calc(*(f.prev()), f, p.getDt(), L);
-    vector<F> fR = flowCalculator.calc(f, *(f.next()), p.getDt(), R);
+    vector<F> fL = flowCalculator.calc(*(f.prev()), f, p.getDt(), L, debugMode, logger);
+    vector<F> fR = flowCalculator.calc(f, *(f.next()), p.getDt(), R, debugMode, logger);
     Q fNext = flowMachine.calculateCell(f, fL,fR, p);
     f.setQuantity(fNext);
 }
@@ -22,6 +23,7 @@ void TESolverStep(Mesh<Q>& f,
                   const TESolver1DParams& p,
                   const OverEdgeFlow<Q,F>& flowCalculator,
                   const FlowMachine<Q,F>& flowMachine
+        , bool debugMode, Logger& logger
 ){
     Mesh<Q>* fIter = &f;
     do {
@@ -53,10 +55,11 @@ void SolveTransportEquation1D(Mesh<Q>& f,
                               TESolver1DOutput<Q> &output,
                               bool usePostProcess,
                               const function<void(Mesh<Q>&)>& postProcess
+        , bool debugMode, Logger& logger
 ) {
     output.print(f, 0);
     for (int n = 0; n < p.getNTimeSteps(); n++) {
-        TESolverStep<Q,F>(f, p, flowCalculator, flowMachine);
+        TESolverStep<Q,F>(f, p, flowCalculator, flowMachine, debugMode, logger);
         f.apply();
         if(usePostProcess) {
             TESolverPostProcessStep<Q>(f, postProcess);

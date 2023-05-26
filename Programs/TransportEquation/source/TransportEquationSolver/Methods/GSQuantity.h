@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <utility>
+#include <string>
 #include "../../math/Vector.h"
 #include "../../math/MathUtils.h"
 
@@ -135,6 +136,17 @@ public:
 
     void operator/=(double s) {
         gasSolidState/=s;
+    }
+
+    string toString() const {
+        return "{("
+               + to_string(gasSolidState[0]) + ","
+               + to_string(gasSolidState[1]) + ","
+               + to_string(gasSolidState[2]) + ","
+               + to_string(gasSolidState[3]) + ","
+               + ")"
+               + ", vs: " + to_string(solidVelocity)
+               +'}';
     }
 };
 

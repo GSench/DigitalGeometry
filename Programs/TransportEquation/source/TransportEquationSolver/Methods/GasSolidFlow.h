@@ -14,7 +14,7 @@
 class GasSolidFlow : public OverEdgeFlow<GSQuantity, GSFlow> {
 
 public:
-    vector<GSFlow> calc(Mesh<GSQuantity>& l, Mesh<GSQuantity>& r, double dt, int dirLR) const override {
+    vector<GSFlow> calc(Mesh<GSQuantity>& l, Mesh<GSQuantity>& r, double dt, int dirLR, bool debugMode, Logger& logger) const override {
         GSQuantity QL = l.getQuantity();
         GSQuantity QR = r.getQuantity();
         double eps = 1e-10;
@@ -22,7 +22,7 @@ public:
         if(QL.isSolid(eps) && QR.isGas(eps) || QR.isSolid(eps) && QL.isGas(eps))
             result = CRPnoPadding(QL, QR, dt, l.dx(), eps, dirLR);
         else if(QL.isDiscontinuous(eps) || QR.isDiscontinuous(eps))
-            result = CRP(QL, QR, dt, l.dx(), eps, dirLR);
+            result = CRP(QL, QR, dt, l.dx(), eps, dirLR, debugMode, logger);
         else if(QL.isSolid(eps) && QR.isSolid(eps))
             result = {zero(QL), zero(QL), zero(QL)};
         else // gas ->|-> gas case

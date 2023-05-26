@@ -7,8 +7,11 @@
 
 #include <cmath>
 #include <utility>
+#include <string>
 #include "../../math/Vector.h"
 #include "GSQuantity.h"
+
+using namespace std;
 
 class GSFlow {
 private:
@@ -134,6 +137,17 @@ public:
 
     void operator/=(double s) {
         gasSolidState/=s;
+    }
+
+    string toString(){
+        return "{("
+               + to_string(gasSolidState[0]) + ","
+               + to_string(gasSolidState[1]) + ","
+               + to_string(gasSolidState[2]) + ","
+               + to_string(gasSolidState[3]) + ","
+               + ")"
+               + ", vs: " + to_string(solidVelocity)
+               +'}';
     }
 };
 
